@@ -1,8 +1,5 @@
-# Ignore formatting in these generated or vendor files
-node_modules/
-.next/
-out/
-public/
-*.min.js
-*.min.css
-package-lock.json
+# .prettierignore
+build
+coverage
+node_modules
+public

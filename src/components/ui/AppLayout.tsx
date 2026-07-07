@@ -1,7 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { Sidebar } from './Sidebar';
+import { ReactNode, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Sidebar from './Sidebar';
 import { AppLogo } from './AppLogo';
 
 interface AppLayoutProps {
@@ -13,16 +14,62 @@ interface AppLayoutProps {
  * top navigation bar. Sidebar collapses to bottom nav on mobile.
  */
 export function AppLayout({ children }: AppLayoutProps) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024; // lg breakpoint is 1024px
+      setIsMobile(mobile);
+      if (!mobile) {
+        setMobileOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   return (
     <div
       className="flex min-h-screen"
       style={{ background: 'var(--bg-primary)' }}
     >
-      {/* ─── Desktop Sidebar ─── */}
-      <Sidebar />
+      {/* ─── Sidebar ─── */}
+      <Sidebar
+        collapsed={collapsed}
+        mobileOpen={mobileOpen}
+        onToggleCollapse={() => setCollapsed(!collapsed)}
+        onMobileClose={() => setMobileOpen(false)}
+        currentPath={pathname}
+        isMobile={isMobile}
+      />
+
+      {/* Backdrop overlay for mobile sidebar */}
+      {isMobile && mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          role="presentation"
+        />
+      )}
 
       {/* ─── Main Content Area ─── */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-60">
+      <div
+        className="flex-1 flex flex-col min-w-0 sidebar-transition"
+        style={{
+          paddingLeft: isMobile ? 0 : collapsed ? '64px' : '240px',
+          transition: 'padding-left 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        }}
+      >
         {/* Top Bar (mobile + desktop header) */}
         <header
           className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 h-16 border-b"
@@ -33,8 +80,20 @@ export function AppLayout({ children }: AppLayoutProps) {
             WebkitBackdropFilter: 'blur(12px)',
           }}
         >
-          {/* Mobile logo */}
-          <div className="lg:hidden">
+          {/* Mobile menu trigger and logo */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <button
+              type="button"
+              className="p-2 -ml-2 text-muted-foreground hover:text-foreground interactive"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </svg>
+            </button>
             <AppLogo size="sm" />
           </div>
 

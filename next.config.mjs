@@ -1,17 +1,45 @@
+import { imageHosts } from './image-hosts.config.mjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: 'cdn.learnflow.ai' },
-    ],
+  productionBrowserSourceMaps: true,
+  distDir: process.env.DIST_DIR || '.next',
+  typescript: {
+    ignoreBuildErrors: true,
   },
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'recharts'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    remotePatterns: imageHosts,
+    minimumCacheTTL: 60,
+    qualities: [75, 85, 100],
+  },
+  webpack(
+    config,
+    {
+      dev: dev
+    }
+  ) {
+    config.module.rules.push({
+      test: /\.(jsx|tsx)$/,
+      exclude: [/node_modules/],
+      use: [{
+        loader: '@dhiwise/component-tagger/nextLoader',
+      }],
+    });
+    if (dev) {
+      const ignoredPaths = (process.env.WATCH_IGNORED_PATHS || '')
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean);
+      config.watchOptions = {
+        ignored: ignoredPaths.length
+          ? ignoredPaths.map((p) => `**/${p.replace(/^\/+|\/+$/g, '')}/**`)
+          : undefined,
+      };
+    }
+    return config;
   },
 };
-
 export default nextConfig;

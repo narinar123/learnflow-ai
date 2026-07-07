@@ -15,20 +15,48 @@ module.exports = {
       },
       colors: {
         primary: {
+          DEFAULT: 'var(--primary, #6366F1)',
+          foreground: 'var(--primary-foreground, #FFFFFF)',
           100: '#EEF2FF',
           400: '#818CF8',
           500: '#6366F1',
           600: '#4F46E5',
         },
+        foreground: 'var(--foreground, #0F0A1E)',
+        border: 'var(--border, #E2E8F0)',
+        card: {
+          DEFAULT: 'var(--card, #FFFFFF)',
+          foreground: 'var(--card-foreground, #0F0A1E)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted, #F1F5F9)',
+          foreground: 'var(--muted-foreground, #6B6880)',
+        },
         secondary: {
+          DEFAULT: 'var(--secondary, #A855F7)',
+          foreground: 'var(--secondary-foreground, #3B1FA8)',
           400: '#C084FC',
           500: '#A855F7',
         },
         accent: {
+          DEFAULT: 'var(--accent, #10B981)',
+          foreground: 'var(--accent-foreground, #003D32)',
           emerald: '#10B981',
           amber: '#F59E0B',
           rose: '#F43F5E',
           blue: '#3B82F6',
+        },
+        danger: {
+          DEFAULT: 'var(--danger, #EF4444)',
+          foreground: 'var(--danger-foreground, #FFFFFF)',
+        },
+        warning: {
+          DEFAULT: 'var(--warning, #F59E0B)',
+          foreground: 'var(--warning-foreground, #FFFFFF)',
+        },
+        success: {
+          DEFAULT: 'var(--success, #10B981)',
+          foreground: 'var(--success-foreground, #FFFFFF)',
         },
         neutral: {
           0: '#FFFFFF',
