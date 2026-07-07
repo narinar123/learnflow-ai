@@ -2,86 +2,34 @@
 
 import Link from 'next/link';
 import { Sparkles, ArrowRight, Star, Clock, Users } from 'lucide-react';
-
-interface RecommendedCourse {
-  id: string;
-  title: string;
-  instructor: string;
-  category: string;
-  thumbnail: string;
-  rating: number;
-  students: number;
-  duration: string;
-  reason: string;
-  price: string;
-  isPro: boolean;
-  accentColor: string;
-}
-
-const recommendations: RecommendedCourse[] = [
-  {
-    id: 'r1',
-    title: 'TypeScript — The Complete Developer Guide',
-    instructor: 'Stephen Grider',
-    category: 'Web Dev',
-    thumbnail: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400&h=225&fit=crop',
-    rating: 4.8,
-    students: 12400,
-    duration: '24h',
-    reason: 'Pairs well with your React skills',
-    price: '₹999',
-    isPro: true,
-    accentColor: 'var(--color-primary-500)',
-  },
-  {
-    id: 'r2',
-    title: 'Deep Learning A–Z: Neural Networks & ChatGPT',
-    instructor: 'Kirill Eremenko',
-    category: 'AI & ML',
-    thumbnail: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=225&fit=crop',
-    rating: 4.7,
-    students: 8200,
-    duration: '36h',
-    reason: 'Next step in your ML journey',
-    price: '₹1,499',
-    isPro: false,
-    accentColor: 'var(--color-secondary-500)',
-  },
-  {
-    id: 'r3',
-    title: 'Figma Mastery — From Components to Design Systems',
-    instructor: 'Courtney Price',
-    category: 'Design',
-    thumbnail: 'https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=400&h=225&fit=crop',
-    rating: 4.9,
-    students: 5600,
-    duration: '18h',
-    reason: 'Complements your UI/UX progress',
-    price: 'Free',
-    isPro: false,
-    accentColor: 'var(--color-accent-emerald)',
-  },
-  {
-    id: 'r4',
-    title: 'System Design Interview — Mastering Scale',
-    instructor: 'Alex Xu',
-    category: 'Engineering',
-    thumbnail: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=225&fit=crop',
-    rating: 4.6,
-    students: 19800,
-    duration: '28h',
-    reason: 'Trending in your cohort',
-    price: '₹799',
-    isPro: true,
-    accentColor: 'var(--color-accent-amber)',
-  },
-];
+import { courses, instructors } from '@/lib/data';
 
 /**
  * AIRecommendations — Horizontally scrollable course cards
  * recommended by the AI based on learner history and goals.
  */
 export function AIRecommendations() {
+  // Pull a subset of courses as recommended ones
+  const recommendedCourses = courses
+    .filter((c) => c.featured || c.trending)
+    .slice(1, 5) // Skip first, grab next 4
+    .map((course) => {
+      const instructor = instructors.find((i) => i.id === course.instructorId);
+      const reasons = [
+        'Complements your coding progress',
+        'Next step in your analytics journey',
+        'Complements your design progress',
+        'Trending in your cohort',
+      ];
+      
+      const idx = courses.indexOf(course) % reasons.length;
+      return {
+        ...course,
+        instructorName: instructor?.name || 'Expert Instructor',
+        reason: reasons[idx],
+      };
+    });
+
   return (
     <section aria-labelledby="ai-recs-heading">
       {/* Section Header */}
@@ -128,21 +76,21 @@ export function AIRecommendations() {
       >
         <Sparkles size={14} style={{ color: 'var(--color-primary-400)', flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
         <p>
-          Based on your progress in <strong style={{ color: 'var(--text-primary)' }}>React & Next.js</strong> and{' '}
-          <strong style={{ color: 'var(--text-primary)' }}>UI/UX Design</strong>, these courses will advance your skills
-          the most. Personalized for your 2h/day study goal.
+          Based on your progress in <strong style={{ color: 'var(--text-primary)' }}>Python for Beginners</strong> and{' '}
+          <strong style={{ color: 'var(--text-primary)' }}>UI/UX Design Masterclass</strong>, these courses will advance your skills
+          the most. Personalized for your 45-minute daily study goal.
         </p>
       </div>
 
       {/* Scrollable Cards */}
       <div
-        className="scroll-x-hidden"
+        className="overflow-x-auto scrollbar-thin"
         style={{ paddingBottom: '8px' }}
         role="list"
         aria-label="AI recommended courses"
       >
         <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
-          {recommendations.map((course) => (
+          {recommendedCourses.map((course) => (
             <RecommendedCourseCard key={course.id} course={course} />
           ))}
         </div>
@@ -151,13 +99,15 @@ export function AIRecommendations() {
   );
 }
 
-function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
+function RecommendedCourseCard({ course }: { course: any }) {
+  const accentColor = 'var(--color-primary-500)';
+
   return (
     <article
       className="card p-0 overflow-hidden course-card flex flex-col"
       style={{ width: 260, minWidth: 260 }}
       role="listitem"
-      aria-label={`${course.title} by ${course.instructor} — rated ${course.rating} stars`}
+      aria-label={`${course.title} by ${course.instructorName} — rated ${course.rating} stars`}
     >
       {/* Thumbnail */}
       <div className="relative" style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
@@ -165,7 +115,7 @@ function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
         <img
           src={course.thumbnail}
           alt={`${course.title} course thumbnail`}
-          className="course-card-thumbnail w-full h-full"
+          className="course-card-thumbnail w-full h-full object-cover"
         />
         {/* Overlay badges */}
         <div className="absolute top-2 left-2 right-2 flex justify-between">
@@ -173,13 +123,13 @@ function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
             className="badge text-white"
             style={{
               fontSize: '0.65rem',
-              background: course.accentColor,
+              background: accentColor,
               border: 'none',
             }}
           >
             {course.category}
           </span>
-          {course.isPro && (
+          {course.includedInPro && (
             <span
               className="badge text-white"
               style={{
@@ -213,7 +163,7 @@ function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
           {course.title}
         </h3>
         <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-          {course.instructor}
+          {course.instructorName}
         </p>
 
         {/* Meta row */}
@@ -223,9 +173,9 @@ function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
             <span style={{ color: 'var(--color-accent-amber)', fontWeight: 600 }}>{course.rating}</span>
           </span>
           <span aria-hidden="true">·</span>
-          <span className="flex items-center gap-0.5" aria-label={`${course.students.toLocaleString()} students`}>
+          <span className="flex items-center gap-0.5" aria-label={`${course.enrolledCount.toLocaleString()} students`}>
             <Users size={11} aria-hidden="true" />
-            {(course.students / 1000).toFixed(1)}k
+            {(course.enrolledCount / 1000).toFixed(1)}k
           </span>
           <span aria-hidden="true">·</span>
           <span className="flex items-center gap-0.5" aria-label={`${course.duration} total`}>
@@ -237,20 +187,19 @@ function RecommendedCourseCard({ course }: { course: RecommendedCourse }) {
         {/* CTA */}
         <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: '1px solid var(--border-color)' }}>
           <span
-            className="font-bold"
+            className="font-bold text-xs"
             style={{
-              fontSize: '0.9375rem',
-              color: course.price === 'Free' ? 'var(--color-accent-emerald)' : 'var(--text-primary)',
+              color: course.isFree ? 'var(--color-accent-emerald)' : 'var(--text-primary)',
             }}
-            aria-label={`Price: ${course.price}`}
+            aria-label={`Price: ${course.isFree ? 'Free' : `₹${course.price}`}`}
           >
-            {course.price}
+            {course.isFree ? 'Free' : `₹${course.price.toLocaleString()}`}
           </span>
           <Link
-            href={`/courses/${course.id}`}
+            href={`/courses/${course.slug}`}
             className="btn"
             style={{
-              background: course.accentColor,
+              background: accentColor,
               color: '#fff',
               fontSize: '0.75rem',
               padding: '5px 12px',

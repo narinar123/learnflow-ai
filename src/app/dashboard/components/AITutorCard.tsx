@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Sparkles, Send, ArrowRight } from 'lucide-react';
+import { demoUser } from '@/lib/data';
 
 const quickPrompts = [
-  'Explain React Server Components',
-  'Give me a 5-question quiz',
+  'Explain Python lists vs tuples',
+  'Give me a 3-question quiz',
   'Create my study plan',
   "What should I learn next?",
 ];
@@ -19,6 +20,7 @@ export function AITutorCard() {
   const [query, setQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
+  const [remainingQueries, setRemainingQueries] = useState(demoUser.aiQueriesRemaining);
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
@@ -26,14 +28,37 @@ export function AITutorCard() {
     setIsTyping(true);
     setResponse(null);
 
-    // Simulate AI response
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsTyping(false);
-    setResponse(
-      text.toLowerCase().includes('react')
-        ? 'React Server Components (RSC) are components that run exclusively on the server, allowing you to fetch data directly without client-side JavaScript overhead. They reduce bundle size and improve initial page load performance.'
-        : 'Great question! Based on your current progress, I recommend focusing on your Machine Learning module next. You\'re 34% through — completing 2 more lessons today would maintain your streak!'
-    );
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json();
+      setResponse(data.reply || "Sorry, I am having trouble connecting right now.");
+      setRemainingQueries((prev) => {
+        const next = Math.max(0, prev - 1);
+        demoUser.aiQueriesRemaining = next;
+        return next;
+      });
+    } catch {
+      // Fallback
+      setTimeout(() => {
+        setIsTyping(false);
+        setResponse(
+          text.toLowerCase().includes('python')
+            ? 'In Python, lists are mutable (can be changed) and defined with brackets [], while tuples are immutable (cannot be changed) and defined with parentheses ().'
+            : 'Based on your progress in Python for Beginners (45% completed), I recommend finishing the next module on loops. You\'re doing great!'
+        );
+        setRemainingQueries((prev) => {
+          const next = Math.max(0, prev - 1);
+          demoUser.aiQueriesRemaining = next;
+          return next;
+        });
+      }, 1000);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handlePromptClick = (prompt: string) => {
@@ -45,6 +70,8 @@ export function AITutorCard() {
     handleSend(query);
     setQuery('');
   };
+
+  const usagePercent = Math.round((remainingQueries / 50) * 100);
 
   return (
     <section
@@ -76,8 +103,8 @@ export function AITutorCard() {
             >
               AI Tutor
             </h2>
-            <p className="text-xs" style={{ color: 'var(--color-primary-400)' }}>
-              38/50 queries today
+            <p className="text-[10px]" style={{ color: 'var(--color-primary-400)' }}>
+              {remainingQueries}/50 queries today
             </p>
           </div>
         </div>
@@ -86,13 +113,13 @@ export function AITutorCard() {
         <div
           className="w-20 progress-track"
           style={{ height: 4 }}
-          aria-label="AI query usage: 38 of 50"
+          aria-label={`AI query usage: ${remainingQueries} of 50`}
         >
           <div
             className="progress-fill primary"
-            style={{ width: '76%' }}
+            style={{ width: `${usagePercent}%` }}
             role="progressbar"
-            aria-valuenow={38}
+            aria-valuenow={remainingQueries}
             aria-valuemin={0}
             aria-valuemax={50}
           />
@@ -146,11 +173,8 @@ export function AITutorCard() {
                   {[0, 1, 2].map((i) => (
                     <div
                       key={i}
-                      className="w-2 h-2 rounded-full"
-                      style={{
-                        background: 'var(--color-primary-400)',
-                        animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite`,
-                      }}
+                      className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce"
+                      style={{ animationDelay: `${i * 150}ms` }}
                     />
                   ))}
                 </div>

@@ -2,8 +2,10 @@
 
 import { ReactNode, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from './Sidebar';
 import { AppLogo } from './AppLogo';
+import { demoUser } from '@/lib/data';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -40,7 +42,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div
-      className="flex min-h-screen"
+      className="flex min-h-screen animate-fade-in"
       style={{ background: 'var(--bg-primary)' }}
     >
       {/* ─── Sidebar ─── */}
@@ -103,11 +105,10 @@ export function AppLayout({ children }: AppLayoutProps) {
           {/* Right side: notifications + avatar */}
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
-            <button
-              type="button"
+            <Link
+              href="/notifications"
               aria-label="Notifications"
-              className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-colors interactive"
-              style={{ background: 'var(--bg-surface-2)' }}
+              className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:bg-white/[0.04] border border-[var(--border-color)] bg-[var(--bg-surface-2)]"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -115,15 +116,14 @@ export function AppLayout({ children }: AppLayoutProps) {
               </svg>
               {/* Unread dot */}
               <span
-                className="absolute top-2 right-2.5 w-2 h-2 rounded-full"
-                style={{ background: 'var(--color-accent-rose)' }}
-                aria-label="3 unread notifications"
+                className="absolute top-2 right-2.5 w-1.5 h-1.5 rounded-full bg-rose-500"
+                aria-label="New notifications"
               />
-            </button>
+            </Link>
 
             {/* AI Query Count */}
             <div
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
               style={{
                 background: 'rgba(99, 102, 241, 0.1)',
                 border: '1px solid rgba(99, 102, 241, 0.2)',
@@ -134,21 +134,21 @@ export function AppLayout({ children }: AppLayoutProps) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
-              38/50 AI
+              <span>{demoUser.aiQueriesRemaining}/50 AI</span>
             </div>
 
             {/* User Avatar */}
-            <button
-              type="button"
-              aria-label="Open user menu"
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 interactive"
-              style={{
-                background: 'linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500))',
-                color: '#fff',
-              }}
+            <Link
+              href="/profile"
+              aria-label="Open user profile"
+              className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center border border-[var(--border-color)] flex-shrink-0"
             >
-              PS
-            </button>
+              <img 
+                src={demoUser.avatar}
+                alt={demoUser.name}
+                className="w-full h-full object-cover"
+              />
+            </Link>
           </div>
         </header>
 

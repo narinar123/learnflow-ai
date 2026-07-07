@@ -2,68 +2,27 @@
 
 import Link from 'next/link';
 import { Play, BookOpen, ArrowRight } from 'lucide-react';
-
-interface Course {
-  id: string;
-  title: string;
-  instructor: string;
-  category: string;
-  progress: number;
-  totalLessons: number;
-  completedLessons: number;
-  thumbnail: string;
-  lastLesson: string;
-  timeLeft: string;
-  accentColor: string;
-}
-
-const activeCourses: Course[] = [
-  {
-    id: '1',
-    title: 'Advanced React & Next.js 14 — App Router Mastery',
-    instructor: 'Sarah Johnson',
-    category: 'Web Development',
-    progress: 68,
-    totalLessons: 42,
-    completedLessons: 29,
-    thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=225&fit=crop',
-    lastLesson: 'Server Actions & Mutations',
-    timeLeft: '4h 20m remaining',
-    accentColor: 'var(--color-primary-500)',
-  },
-  {
-    id: '2',
-    title: 'Machine Learning with Python — Zero to Production',
-    instructor: 'Dr. Arjun Mehta',
-    category: 'AI & ML',
-    progress: 34,
-    totalLessons: 56,
-    completedLessons: 19,
-    thumbnail: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=225&fit=crop',
-    lastLesson: 'Linear Regression Deep Dive',
-    timeLeft: '12h 15m remaining',
-    accentColor: 'var(--color-secondary-500)',
-  },
-  {
-    id: '3',
-    title: 'UI/UX Design System Fundamentals',
-    instructor: 'Meera Patel',
-    category: 'Design',
-    progress: 88,
-    totalLessons: 24,
-    completedLessons: 21,
-    thumbnail: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=225&fit=crop',
-    lastLesson: 'Component Library Setup',
-    timeLeft: '1h 10m remaining',
-    accentColor: 'var(--color-accent-emerald)',
-  },
-];
+import { demoUser, courses } from '@/lib/data';
 
 /**
  * ActiveCourses — Shows in-progress courses with progress bars,
  * last-lesson info, and quick-continue CTA.
  */
 export function ActiveCourses() {
+  // Fetch actual enrolled courses from the data layer
+  const enrolledCourses = courses
+    .filter((c) => demoUser.enrolledCourseIds.includes(c.id))
+    .map((course) => {
+      const progress = demoUser.courseProgress[course.id as keyof typeof demoUser.courseProgress] || 0;
+      const completedCount = Math.round((progress / 100) * course.lessonsCount);
+      return {
+        ...course,
+        progress,
+        completedCount,
+      };
+    })
+    .filter((c) => c.progress < 100); // Only show in-progress courses
+
   return (
     <section aria-labelledby="active-courses-heading">
       <div className="flex items-center justify-between mb-4">
@@ -75,7 +34,7 @@ export function ActiveCourses() {
           Continue Learning
         </h2>
         <Link
-          href="/courses/my-courses"
+          href="/courses"
           className="flex items-center gap-1 text-sm font-medium hover:underline"
           style={{ color: 'var(--color-primary-400)' }}
           aria-label="View all my courses"
@@ -86,16 +45,23 @@ export function ActiveCourses() {
       </div>
 
       <div className="space-y-4" role="list" aria-label="Active courses">
-        {activeCourses.map((course) => (
-          <CourseProgressCard key={course.id} course={course} />
-        ))}
+        {enrolledCourses.length === 0 ? (
+          <div className="p-8 text-center border border-[var(--border-color)] rounded-2xl bg-[var(--bg-surface-2)]">
+            <p className="text-xs text-[var(--text-secondary)]">No courses in progress. Explore our catalog to start learning!</p>
+          </div>
+        ) : (
+          enrolledCourses.map((course) => (
+            <CourseProgressCard key={course.id} course={course} />
+          ))
+        )}
       </div>
     </section>
   );
 }
 
-function CourseProgressCard({ course }: { course: Course }) {
+function CourseProgressCard({ course }: { course: any }) {
   const isAlmostDone = course.progress >= 80;
+  const accentColor = 'var(--color-primary-500)';
 
   return (
     <article
@@ -145,9 +111,6 @@ function CourseProgressCard({ course }: { course: Course }) {
               >
                 {course.title}
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                by {course.instructor}
-              </p>
             </div>
 
             {isAlmostDone && (
@@ -161,21 +124,15 @@ function CourseProgressCard({ course }: { course: Course }) {
             )}
           </div>
 
-          {/* Last lesson */}
-          <p className="text-xs mt-2 mb-3 truncate" style={{ color: 'var(--text-secondary)' }}>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Next: </span>
-            {course.lastLesson}
-          </p>
-
           {/* Progress */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mt-3">
             <div className="flex-1">
               <div className="progress-track" style={{ height: 6 }}>
                 <div
                   className="progress-fill"
                   style={{
                     width: `${course.progress}%`,
-                    background: course.accentColor,
+                    background: accentColor,
                     transition: 'width 500ms ease',
                   }}
                   role="progressbar"
@@ -186,20 +143,20 @@ function CourseProgressCard({ course }: { course: Course }) {
                 />
               </div>
             </div>
-            <span className="text-xs font-semibold flex-shrink-0" style={{ color: course.accentColor }}>
+            <span className="text-xs font-semibold flex-shrink-0" style={{ color: accentColor }}>
               {course.progress}%
             </span>
           </div>
 
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between mt-3 pt-2 border-t border-[var(--border-color)]">
             <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-              {course.completedLessons}/{course.totalLessons} lessons · {course.timeLeft}
+              {course.completedCount}/{course.lessonsCount} lessons • {course.duration}
             </span>
             <Link
-              href={`/courses/${course.id}/continue`}
+              href={`/courses/${course.slug}`}
               className="btn"
               style={{
-                background: course.accentColor,
+                background: accentColor,
                 color: '#fff',
                 fontSize: '0.75rem',
                 padding: '5px 14px',
