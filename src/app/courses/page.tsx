@@ -56,9 +56,17 @@ export default function CoursesPage() {
                 <Sparkles size={12} aria-hidden="true" />
                 AI-Powered Recommendations Active
               </span>
-              <h1 className="text-display font-bold text-[var(--text-primary)]" style={{ fontSize: '2rem' }}>
-                Explore Course Catalog
-              </h1>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <h1 className="text-display font-bold text-[var(--text-primary)]" style={{ fontSize: '2rem' }}>
+                  Explore Course Catalog
+                </h1>
+                <Link
+                  href="/courses/manage"
+                  className="btn-secondary py-1.5 px-4 text-xs font-semibold rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 shrink-0 w-fit"
+                >
+                  ⚙️ Manage Courses
+                </Link>
+              </div>
               <p className="text-[var(--text-secondary)] text-sm sm:text-base leading-relaxed">
                 Unlock structured, high-impact learning paths. Complete modules, earn credentials, and test your knowledge with the help of your personal AI tutor.
               </p>

@@ -1,4 +1,4 @@
-// LearnFlow AI — Production Data Layer
+// GUIDESOFT IT SOLUTIONS — Production Data Layer
 // Real structured data — no placeholders
 
 export interface Instructor {
@@ -788,7 +788,7 @@ export const testimonials = [
     location: 'Chennai',
     avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=64&h=64&fit=crop&crop=face',
     rating: 5,
-    text: "I'm 58 and terrified of online learning. LearnFlow AI made it so easy and encouraging. I earned my first digital marketing certificate last week and my grandkids are jealous! The app works perfectly on my iPad.",
+    text: "I'm 58 and terrified of online learning. GUIDESOFT IT SOLUTIONS made it so easy and encouraging. I earned my first digital marketing certificate last week and my grandkids are jealous! The app works perfectly on my iPad.",
     course: 'Digital Marketing & SEO',
   },
   {
@@ -799,7 +799,7 @@ export const testimonials = [
     location: 'Mumbai',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=face',
     rating: 5,
-    text: 'Our team of 25 uses LearnFlow AI for quarterly upskilling. The admin dashboard makes tracking everyone\'s progress effortless. Completion rates went from 34% on our old platform to 91% here. Worth every rupee.',
+    text: 'Our team of 25 uses GUIDESOFT IT SOLUTIONS for quarterly upskilling. The admin dashboard makes tracking everyone\'s progress effortless. Completion rates went from 34% on our old platform to 91% here. Worth every rupee.',
     course: 'Team Learning Plan',
   },
   {
@@ -812,5 +812,79 @@ export const testimonials = [
     rating: 5,
     text: 'The UI/UX course with Priya Nair is the best design course I\'ve taken — and I\'ve tried Coursera, Udemy, and Interaction Design Foundation. The case studies are real briefs from actual companies. My portfolio went from 0 to job-ready in 3 months.',
     course: 'UI/UX Design Masterclass',
+  },
+];
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  courses: string[];
+  icon: string;
+  level: string;
+  outcomes: string[];
+}
+
+export const learningPaths: LearningPath[] = [
+  {
+    id: 'full-stack-web',
+    title: 'Full-Stack Web Developer',
+    description: 'Go from zero to full-stack. Master HTML, CSS, JavaScript, React, Node.js, and PostgreSQL to build production-ready web applications.',
+    duration: '6 months',
+    courses: ['web-dev-fundamentals', 'javascript-advanced', 'react-mastery', 'nodejs-backend', 'postgresql-essentials', 'system-design'],
+    icon: '🌐',
+    level: 'Beginner to Advanced',
+    outcomes: ['Build full-stack apps from scratch', 'Deploy to production on cloud platforms', 'Ace technical interviews'],
+  },
+  {
+    id: 'data-science-ai',
+    title: 'Data Science & AI Engineer',
+    description: 'Master Python, statistics, machine learning, and deep learning. Build real ML pipelines and deploy models at scale.',
+    duration: '8 months',
+    courses: ['python-for-data', 'statistics-fundamentals', 'machine-learning-core', 'deep-learning-pytorch', 'mlops-production', 'ai-product-design'],
+    icon: '🤖',
+    level: 'Intermediate',
+    outcomes: ['Build and deploy ML models', 'Work with large datasets', 'Understand AI ethics and governance'],
+  },
+  {
+    id: 'ui-ux-design',
+    title: 'UI/UX Designer',
+    description: 'Learn user research, wireframing, Figma, design systems, and usability testing. Build a portfolio that gets you hired.',
+    duration: '4 months',
+    courses: ['design-thinking', 'figma-mastery', 'ux-research-methods', 'design-systems', 'portfolio-projects'],
+    icon: '🎨',
+    level: 'Beginner',
+    outcomes: ['Design pixel-perfect interfaces', 'Conduct user research', 'Build a job-ready portfolio'],
+  },
+  {
+    id: 'cloud-devops',
+    title: 'Cloud & DevOps Engineer',
+    description: 'Master AWS, Docker, Kubernetes, CI/CD pipelines, and infrastructure as code. Become a cloud-native DevOps engineer.',
+    duration: '5 months',
+    courses: ['linux-foundations', 'aws-core', 'docker-kubernetes', 'terraform-iac', 'cicd-pipelines'],
+    icon: '☁️',
+    level: 'Intermediate',
+    outcomes: ['Deploy apps on AWS', 'Automate infrastructure', 'Implement DevSecOps practices'],
+  },
+  {
+    id: 'cybersecurity',
+    title: 'Cybersecurity Professional',
+    description: 'Learn network security, ethical hacking, penetration testing, and incident response. Prepare for CompTIA Security+ and CEH.',
+    duration: '6 months',
+    courses: ['networking-basics', 'ethical-hacking', 'penetration-testing', 'soc-operations', 'cloud-security'],
+    icon: '🔐',
+    level: 'Beginner to Intermediate',
+    outcomes: ['Conduct penetration tests', 'Respond to security incidents', 'Earn industry certifications'],
+  },
+  {
+    id: 'mobile-dev',
+    title: 'Mobile App Developer',
+    description: 'Build beautiful cross-platform mobile apps with React Native and Flutter. Ship to both iOS and Android from a single codebase.',
+    duration: '5 months',
+    courses: ['react-native-core', 'flutter-fundamentals', 'mobile-ui-patterns', 'app-store-publishing', 'mobile-backend'],
+    icon: '📱',
+    level: 'Intermediate',
+    outcomes: ['Publish apps to App Store & Google Play', 'Build offline-capable apps', 'Integrate device APIs'],
   },
 ];

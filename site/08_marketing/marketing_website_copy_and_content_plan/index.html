@@ -1,0 +1,1883 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Marketing Website Copy &amp; Content Plan : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/08_marketing/marketing_website_copy_and_content_plan/">
+<meta property="og:title" content="Marketing Website Copy &amp; Content Plan - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/08_marketing/marketing_website_copy_and_content_plan/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marketing Website Copy &amp; Content Plan - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/08_marketing/marketing_website_copy_and_content_plan.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Marketing Website Copy &amp; Content Plan
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Marketing%20Website%20Copy%20%26%20Content%20Plan%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Brand%20Voice%20%26%20Tone%0A%0A%7C%20Attribute%20%7C%20Description%20%7C%20In%20Practice%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20**Empowering**%20%7C%20We%20believe%20in%20our%20users&#039;%20potential%20%7C%20%22You&#039;ve%20got%20this.%22%20not%20%22We&#039;ll%20help%20you%20succeed.%22%20%7C%0A%7C%20**Smart%20%26%20Friendly**%20%7C%20Expert%20knowledge%2C%20approachable%20delivery%20%7C%20No%20jargon%20without%20explanation%20%7C%0A%7C%20**Encouraging**%20%7C%20Celebrate%20small%20wins%20%7C%20%22Every%20lesson%20is%20a%20step%20forward.%22%20%7C%0A%7C%20**Clear%20%26%20Direct**%20%7C%20No%20marketing%20fluff%20%7C%20%22Learn%20Python%20in%208%20hours%22%20not%20%22Unlock%20your%20potential%20with%20our%20comprehensive%20Python%20journey%22%20%7C%0A%7C%20**Human**%20%7C%20Technology%20in%20service%20of%20people%20%7C%20%22AI%20that%20learns%20how%20you%20learn%22%20%7C%0A%0A**Voice%20Examples%3A**%0A-%20%E2%9C%85%20%22Your%20AI%20tutor%2C%20always%20ready.%22%0A-%20%E2%9D%8C%20%22Revolutionary%20AI-powered%20paradigm%20shifting%20educational%20solutions.%22%0A-%20%E2%9C%85%20%22500%2B%20courses.%200%20boring%20lessons.%22%0A-%20%E2%9D%8C%20%22A%20comprehensive%20catalog%20of%20expertly%20curated%20content%20across%20diverse%20domains.%22%0A%0A---%0A%0A%23%23%202.%20Marketing%20Website%20%E2%80%94%20Page-by-Page%20Copy%0A%0A%23%23%23%202.1%20Home%20Page%20(Landing%20Page)%0A%0A%23%23%23%23%20Navigation%0A%60%60%60%0ALogo%3A%20%22LearnFlow%20AI%22%0ALinks%3A%20Features%20%7C%20Courses%20%7C%20Pricing%20%7C%20For%20Teams%0ARight%3A%20%5BLog%20In%5D%20%5BGet%20Started%20Free%20%E2%86%92%5D%0A%60%60%60%0A%0A%23%23%23%23%20Hero%20Section%0A%60%60%60%0AOverline%3A%20AI-POWERED%20LEARNING%20PLATFORM%0AHeadline%3A%20Learn%20Smarter.%0A%20%20%20%20%20%20%20%20%20%20Grow%20Faster.%0ASubheadline%3A%20Your%20AI%20tutor%20knows%20your%20learning%20style%2C%20fills%20your%20gaps%2C%20and%20keeps%20you%20motivated%20%E2%80%94%20from%20your%20first%20lesson%20to%20your%20last%20certificate.%0ACTA%201%3A%20%5BGet%20Started%20Free%20%E2%86%92%5D%20%20(no%20credit%20card%20required)%0ACTA%202%3A%20%5B%E2%96%B6%20Watch%20Demo%5D%0ATrust%20badge%3A%20%E2%AD%90%20Rated%204.9%2F5%20by%20100%2C000%2B%20learners%20%7C%20500%2B%20Expert%20Courses%20%7C%20Learn%20Anywhere%0A%60%60%60%0A%0A%23%23%23%23%20Social%20Proof%20Bar%0A%60%60%60%0A%22Trusted%20by%20learners%20from%22%0A%5BCompany%20Logo%5D%20%5BCompany%20Logo%5D%20%5BCompany%20Logo%5D%20%5BCompany%20Logo%5D%20%5BCompany%20Logo%5D%0A%60%60%60%0A%0A%23%23%23%23%20Features%20Section%20(3%20cards)%0A%60%60%60%0ASection%20header%3A%20Why%20LearnFlow%20AI%3F%0A%0ACard%201%20%E2%80%94%20AI%20That%20Knows%20You%0AIcon%3A%20Brain%2Fsparkle%0ATitle%3A%20%22Your%20personal%20AI%20tutor%22%0ABody%3A%20%22Not%20a%20chatbot.%20A%20real%20tutor%20that%20understands%20your%20course%20content%2C%20explains%20concepts%20in%20your%20language%2C%20generates%20quizzes%2C%20and%20creates%20personalized%20study%20plans%20%E2%80%94%20all%20based%20on%20what%20you&#039;re%20actually%20learning.%22%0ALink%3A%20%22Meet%20your%20AI%20Tutor%20%E2%86%92%22%0A%0ACard%202%20%E2%80%94%20Learn%20%26%20Earn%0AIcon%3A%20Certificate%2Fbadge%0ATitle%3A%20%22Certificates%20that%20matter%22%0ABody%3A%20%22Complete%20courses%2C%20earn%20verified%20certificates%20you%20can%20share%20on%20LinkedIn%2C%20add%20to%20your%20portfolio%2C%20and%20show%20employers.%20Every%20certificate%20includes%20a%20blockchain-verified%20QR%20code%20for%20instant%20validation.%22%0ALink%3A%20%22Browse%20certified%20courses%20%E2%86%92%22%0A%0ACard%203%20%E2%80%94%20Learn%20Anywhere%0AIcon%3A%20Devices%0ATitle%3A%20%22All%20your%20devices%2C%20one%20account%22%0ABody%3A%20%22Start%20on%20your%20iPhone%20during%20your%20commute.%20Continue%20on%20your%20laptop%20at%20work.%20Finish%20on%20your%20iPad%20at%20home.%20Offline%20mode%20means%20no%20Wi-Fi%2C%20no%20problem.%22%0ALink%3A%20%22Download%20the%20app%20%E2%86%92%22%0A%60%60%60%0A%0A%23%23%23%23%20How%20It%20Works%20Section%0A%60%60%60%0ASection%20header%3A%20From%20Zero%20to%20Certified%20in%203%20Steps%0A%0AStep%201%3A%20%22Tell%20us%20your%20goal%22%0ABody%3A%20%22Choose%20your%20role%20%E2%80%94%20student%2C%20professional%2C%20job%20seeker%20%E2%80%94%20and%20your%20interests.%20Our%20AI%20instantly%20curates%20the%20perfect%20learning%20path%20for%20you.%22%0A%0AStep%202%3A%20%22Learn%20your%20way%22%0ABody%3A%20%22Watch%20expert-led%20video%20lessons%2C%20complete%20AI-generated%20quizzes%2C%20chat%20with%20your%20AI%20tutor%2C%20and%20track%20your%20progress%20%E2%80%94%20all%20on%20one%20platform.%22%0A%0AStep%203%3A%20%22Earn%20%26%20advance%22%0ABody%3A%20%22Complete%20courses%2C%20earn%20certificates%2C%20climb%20the%20leaderboard%2C%20and%20share%20your%20achievements.%20Your%20next%20opportunity%20is%20one%20certificate%20away.%22%0A%60%60%60%0A%0A%23%23%23%23%20Stats%20Section%0A%60%60%60%0A100%2C000%2B%20Active%20Learners%0A500%2B%20Expert%20Courses%0A92%25%20Course%20Completion%20Rate%0A4.9%E2%98%85%20Average%20Rating%0A%E2%82%B90%20to%20Start%0A50%2B%20Expert%20Instructors%0A%60%60%60%0A%0A%23%23%23%23%20Course%20Preview%20Grid%0A%60%60%60%0ASection%20header%3A%20%22What%20will%20you%20learn%20today%3F%22%0ASubheader%3A%20Explore%20our%20most%20popular%20courses%0A%5BCourse%20Grid%20%E2%80%94%204%20cards%2C%202%20rows%5D%0A%5BBrowse%20All%20500%2B%20Courses%20%E2%86%92%5D%0A%60%60%60%0A%0A%23%23%23%23%20Testimonials%20Section%0A%60%60%60%0ASection%20header%3A%20%22Learners%20love%20LearnFlow%20AI%22%0A%0ATestimonial%201%3A%0A%22I%20went%20from%20knowing%20nothing%20about%20Python%20to%20landing%20my%20first%20developer%20job%20in%203%20months.%20The%20AI%20tutor%20explains%20things%20better%20than%20my%20university%20professors.%22%0A%E2%80%94%20Rohan%20Verma%2C%20Software%20Developer%2C%20Bengaluru%20%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%0A%0ATestimonial%202%3A%0A%22I&#039;m%2058%20and%20I%20was%20terrified%20of%20online%20learning.%20LearnFlow%20AI%20made%20it%20easy%2C%20fun%2C%20and%20I%20earned%20my%20first%20certificate%20last%20week!%20My%20grandkids%20are%20jealous.%22%0A%E2%80%94%20Kamala%20Iyer%2C%20Retired%20Teacher%2C%20Chennai%20%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%0A%0ATestimonial%203%3A%0A%22Our%20team%20of%2025%20uses%20LearnFlow%20AI%20for%20quarterly%20upskilling.%20The%20admin%20dashboard%20makes%20tracking%20everyone&#039;s%20progress%20effortless.%20Worth%20every%20rupee.%22%0A%E2%80%94%20Anjali%20Mehta%2C%20L%26D%20Manager%2C%20Mumbai%20%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%0A%60%60%60%0A%0A%23%23%23%23%20Pricing%20Teaser%0A%60%60%60%0ASection%20header%3A%20%22Simple%20pricing%20for%20every%20learner%22%0A%0AFree%3A%20%E2%82%B90%2Fforever%20%E2%80%94%2010%20courses%2C%2010%20AI%20queries%2Fday%0APro%3A%20%E2%82%B9599%2Fmonth%20%E2%80%94%20Unlimited%20everything%2C%20offline%20access%0A%5BSee%20All%20Plans%20%E2%86%92%5D%0A%60%60%60%0A%0A%23%23%23%23%20App%20Download%20Section%0A%60%60%60%0ASection%20header%3A%20%22Learn%20on%20the%20go%22%0ABody%3A%20Download%20LearnFlow%20AI%20and%20study%20anywhere%20%E2%80%94%20even%20offline.%0A%5BApp%20Store%20Badge%5D%20%5BPlay%20Store%20Badge%5D%0AQR%20Code%3A%20Scan%20to%20download%0A%60%60%60%0A%0A%23%23%23%23%20Final%20CTA%20Band%0A%60%60%60%0ABackground%3A%20Gradient%20(indigo%E2%86%92purple)%0AHeadline%3A%20%22Your%20learning%20journey%20starts%20today.%22%0ASubheadline%3A%20%22Join%20100%2C000%2B%20learners.%20Your%20first%2010%20courses%20are%20free.%20No%20credit%20card%20required.%22%0ACTA%3A%20%5BCreate%20Free%20Account%20%E2%86%92%5D%0ATrust%3A%20%22Already%20have%20an%20account%3F%20Log%20In%22%0A%60%60%60%0A%0A%23%23%23%23%20Footer%0A%60%60%60%0AColumn%201%20%E2%80%94%20LearnFlow%20AI%0ALogo%20%2B%20tagline%20%22AI-powered%20learning%20for%20everyone%22%0ASocial%3A%20LinkedIn%20%7C%20Twitter%2FX%20%7C%20YouTube%20%7C%20Instagram%0A%0AColumn%202%20%E2%80%94%20Product%0AFeatures%0ACourses%0APricing%0AFor%20Teams%20(Institutions)%0ABlog%0AChangelog%0A%0AColumn%203%20%E2%80%94%20Company%0AAbout%20Us%0ACareers%0APress%0AContact%0A%0AColumn%204%20%E2%80%94%20Support%0AHelp%20Center%0AFor%20Trainers%0ACommunity%20Forum%0AStatus%20Page%0A%0ALegal%3A%20Terms%20of%20Service%20%7C%20Privacy%20Policy%20%7C%20Cookie%20Policy%0ACopyright%3A%20%C2%A9%202026%20LearnFlow%20AI.%20All%20rights%20reserved.%20Made%20with%20%E2%9D%A4%EF%B8%8F%20in%20India.%0A%60%60%60%0A%0A---%0A%0A%23%23%23%202.2%20Features%20Page%0A%0A%60%60%60%0AHero%3A%0AHeadline%3A%20%22Everything%20you%20need%20to%20learn%2C%20grow%2C%20and%20succeed.%22%0ASubheadline%3A%20%22Powerful%20features%20designed%20for%20real-world%20learning%20outcomes%2C%20not%20just%20feature%20checkboxes.%22%0A%0AFeature%201%20%E2%80%94%20AI%20Tutor%0AHeadline%3A%20%22An%20AI%20tutor%20that%20actually%20understands%20your%20course%22%0ABody%3A%20%22Ask%20anything%2C%20get%20expert%20answers%20grounded%20in%20your%20course%20material.%20Your%20AI%20tutor%20doesn&#039;t%20guess%20%E2%80%94%20it%20retrieves%20the%20most%20relevant%20content%20from%20your%20lessons%20and%20explains%20it%20in%20plain%20language.%20Available%2024%2F7%2C%20never%20impatient.%22%0AStats%3A%20%2293%25%20of%20learners%20say%20AI%20responses%20are%20helpful%20or%20very%20helpful%22%0A%0AFeature%202%20%E2%80%94%20Gamification%0AHeadline%3A%20%22Learning%20that&#039;s%20actually%20addictive%22%0ABody%3A%20%22XP%20points%2C%20levels%2C%20badges%2C%20daily%20quests%2C%20streak%20trackers%2C%20and%20global%20leaderboards.%20We&#039;ve%20taken%20the%20psychology%20of%20engagement%20from%20the%20best%20games%20and%20applied%20it%20to%20your%20education.%20The%20result%3F%20You%20actually%20want%20to%20learn.%22%0A%0AFeature%203%20%E2%80%94%20Cross-Platform%0AHeadline%3A%20%22One%20account%2C%20every%20device%22%0ABody%3A%20%22Native%20iOS%20and%20Android%20apps%2C%20a%20full-featured%20web%20app%2C%20and%20a%20desktop%20app%20for%20Windows%20and%20macOS.%20Seamless%20sync%20means%20you%20can%20pause%20a%20video%20on%20your%20phone%20and%20continue%20on%20your%20laptop%20without%20missing%20a%20second.%22%0A%0AFeature%204%20%E2%80%94%20Offline%20Learning%0AHeadline%3A%20%22No%20Wi-Fi%3F%20No%20problem.%22%0ABody%3A%20%22Download%20lessons%20before%20you%20travel%2C%20commute%2C%20or%20go%20somewhere%20with%20poor%20connectivity.%20Offline%20mode%20works%20exactly%20like%20online%20mode%20%E2%80%94%20including%20quizzes%2C%20notes%2C%20and%20progress%20tracking.%22%0A%0AFeature%205%20%E2%80%94%20Certificates%0AHeadline%3A%20%22Certificates%20with%20real-world%20credibility%22%0ABody%3A%20%22Every%20certificate%20is%20blockchain-verified%20and%20linkable.%20Share%20directly%20to%20LinkedIn%2C%20add%20the%20credential%20to%20your%20resume%2C%20or%20send%20the%20verification%20URL%20to%20any%20employer.%20QR%20codes%20allow%20instant%20verification.%22%0A%0AFeature%206%20%E2%80%94%20Team%20Learning%0AHeadline%3A%20%22Bring%20your%20whole%20team%20along%22%0ABody%3A%20%22Institution%20plan%20gives%20your%20organization%20a%20centralized%20dashboard%20to%20assign%20courses%2C%20track%20completion%2C%20and%20measure%20ROI.%20Bulk%20enrollment%2C%20progress%20reports%2C%20and%20team%20leaderboards%20included.%22%0A%60%60%60%0A%0A---%0A%0A%23%23%23%202.3%20Pricing%20Page%0A%0A%60%60%60%0AHero%3A%0AHeadline%3A%20%22Start%20free.%20Scale%20as%20you%20grow.%22%0ASubheadline%3A%20%22No%20hidden%20fees.%20No%20confusing%20tiers.%20Just%20straightforward%20pricing.%22%0AToggle%3A%20%5BMonthly%5D%20%5BAnnual%20%E2%80%94%20Save%2020%25%5D%0A%0APlan%201%20%E2%80%94%20Free%0APrice%3A%20%E2%82%B90%2Fforever%0ATagline%3A%20%22Perfect%20for%20exploring%22%0AFeatures%3A%0A%E2%9C%93%20Access%20to%2010%20free%20courses%0A%E2%9C%93%2010%20AI%20tutor%20queries%20per%20day%0A%E2%9C%93%20Basic%20progress%20tracking%0A%E2%9C%93%205-day%20streak%20tracking%0A%E2%9C%93%203%20quiz%20attempts%20per%20quiz%0A%E2%9C%97%20No%20offline%20access%0A%E2%9C%97%20No%20certificates%0A%E2%9C%97%20Limited%20AI%20features%0ACTA%3A%20%5BGet%20Started%20Free%5D%0A%0APlan%202%20%E2%80%94%20Pro%20(Most%20Popular)%0APrice%3A%20%E2%82%B9599%2Fmonth%20(or%20%E2%82%B95%2C988%2Fyear)%0AAnnual%3A%20%E2%82%B9499%2Fmonth%2C%20billed%20annually%0ATagline%3A%20%22For%20serious%20learners%22%0AFeatures%3A%0A%E2%9C%93%20Unlimited%20course%20access%20(500%2B)%0A%E2%9C%93%20Unlimited%20AI%20tutor%20queries%0A%E2%9C%93%20Offline%20lesson%20download%0A%E2%9C%93%20Verified%20certificates%20for%20all%20courses%0A%E2%9C%93%20Full%20gamification%20(all%20badges%2C%20leaderboard)%0A%E2%9C%93%20Advanced%20progress%20analytics%0A%E2%9C%93%20Priority%20customer%20support%0A%E2%9C%93%20Multi-device%20sync%20(up%20to%205%20devices)%0A%E2%9C%93%20AI%20study%20plans%0A%E2%9C%97%20No%20live%20sessions%0ACTA%3A%20%5BStart%207-Day%20Free%20Trial%20%E2%86%92%5D%0ABadge%3A%20MOST%20POPULAR%0A%0APlan%203%20%E2%80%94%20Premium%0APrice%3A%20%E2%82%B9999%2Fmonth%20(or%20%E2%82%B99%2C988%2Fyear)%0ATagline%3A%20%22For%20professionals%20who%20mean%20business%22%0AFeatures%3A%0A%E2%9C%93%20Everything%20in%20Pro%0A%E2%9C%93%20Live%20Q%26A%20sessions%20with%20instructors%0A%E2%9C%93%201-on-1%20AI%20coaching%20sessions%0A%E2%9C%93%20Downloadable%20course%20materials%20as%20PDF%0A%E2%9C%93%20LinkedIn%20Certificate%20integration%0A%E2%9C%93%20Priority%20certificate%20issuance%20(24h)%0A%E2%9C%93%20Dedicated%20learning%20advisor%0A%E2%9C%93%20Early%20access%20to%20new%20courses%0ACTA%3A%20%5BStart%207-Day%20Free%20Trial%20%E2%86%92%5D%0A%0APlan%204%20%E2%80%94%20Teams%20(Institution)%0APrice%3A%20Custom%20pricing%0ATagline%3A%20%22For%20organizations%22%0AFeatures%3A%0A%E2%9C%93%20Everything%20in%20Premium%20for%20all%20seats%0A%E2%9C%93%20Admin%20dashboard%0A%E2%9C%93%20Course%20assignment%20%26%20deadlines%0A%E2%9C%93%20Team%20progress%20reports%0A%E2%9C%93%20Custom%20branding%20(logo)%0A%E2%9C%93%20SSO%20(SAML%2FGoogle%20Workspace)%0A%E2%9C%93%20Bulk%20onboarding%0A%E2%9C%93%20Dedicated%20account%20manager%0ACTA%3A%20%5BContact%20Sales%20%E2%86%92%5D%0A%0AFAQ%20Section%3A%0AQ%3A%20Can%20I%20switch%20plans%20anytime%3F%0AA%3A%20Yes.%20You%20can%20upgrade%20or%20downgrade%20at%20any%20time.%20Pro-rated%20credits%20apply.%0A%0AQ%3A%20What%20happens%20to%20my%20progress%20if%20I%20downgrade%20to%20Free%3F%0AA%3A%20All%20your%20progress%2C%20certificates%2C%20and%20notes%20are%20saved.%20You%20just%20lose%20access%20to%20premium%20courses.%0A%0AQ%3A%20Is%20there%20a%20student%20discount%3F%0AA%3A%20Yes!%20Verified%20students%20get%2040%25%20off%20Pro%20with%20a%20valid%20.edu%20email%20address.%0A%0AQ%3A%20Do%20you%20offer%20refunds%3F%0AA%3A%20Yes.%2014-day%20money-back%20guarantee%2C%20no%20questions%20asked.%0A%0AQ%3A%20Can%20I%20use%20my%20account%20on%20multiple%20devices%3F%0AA%3A%20Pro%20allows%20up%20to%205%20devices%20simultaneously.%20Free%20allows%202.%0A%0ATrust%20section%3A%0A%F0%9F%94%92%20Secure%20payments%20via%20Razorpay%0A%E2%9C%85%2014-day%20money-back%20guarantee%0A%F0%9F%8C%90%20Cancel%20anytime%20%E2%80%94%20no%20lock-in%0A%F0%9F%93%9E%20Chat%20support%207%20days%20a%20week%0A%60%60%60%0A%0A---%0A%0A%23%23%23%202.4%20About%20Page%0A%0A%60%60%60%0AHero%3A%0AHeadline%3A%20%22We%20believe%20everyone%20deserves%20a%20great%20teacher.%22%0ASubheadline%3A%20%22LearnFlow%20AI%20was%20built%20by%20learners%2C%20for%20learners%20%E2%80%94%20with%20one%20mission%3A%20make%20world-class%20education%20available%20to%20everyone.%22%0A%0AMission%20Section%3A%0ATitle%3A%20%22Our%20Mission%22%0ABody%3A%20%22The%20best%20education%20shouldn&#039;t%20depend%20on%20where%20you&#039;re%20born%2C%20what%20you%20can%20afford%2C%20or%20which%20university%20accepted%20you.%20With%20AI%2C%20we%20can%20personalize%20learning%20at%20scale%20%E2%80%94%20giving%20every%20learner%20their%20own%20tutor%2C%20study%20plan%2C%20and%20path%20to%20success.%20That&#039;s%20the%20world%20we&#039;re%20building.%22%0A%0AStory%20Section%3A%0ATitle%3A%20%22How%20it%20started%22%0ABody%3A%20%22LearnFlow%20AI%20began%20when%20our%20founder%2C%20a%20self-taught%20developer%2C%20struggled%20to%20find%20quality%2C%20affordable%20courses%20that%20adapted%20to%20how%20she%20learned.%20She%20hired%20a%20tutor%2C%20and%20it%20changed%20everything%20%E2%80%94%20but%20tutors%20are%20expensive.%20So%20she%20built%20an%20AI%20one%20instead.%20The%20rest%2C%20as%20they%20say%2C%20is%20learning%20history.%22%0A%0AValues%3A%0AValue%201%3A%20%22Learning%20is%20for%20everyone%22%20%E2%80%94%20We%20believe%20in%20radical%20accessibility.%20Our%20Free%20plan%20isn&#039;t%20a%20gimmick%3B%20it&#039;s%20a%20commitment.%0AValue%202%3A%20%22AI%20should%20empower%2C%20not%20replace%22%20%E2%80%94%20Our%20AI%20tutors%20support%20human%20instructors%20and%20learners.%20Technology%20serves%20education%2C%20not%20the%20other%20way%20around.%0AValue%203%3A%20%22Progress%20over%20perfection%22%20%E2%80%94%20We%20celebrate%20progress.%20Every%20lesson%20completed%2C%20every%20badge%20earned%2C%20every%20streak%20maintained%20matters.%0AValue%204%3A%20%22Privacy%20is%20a%20right%22%20%E2%80%94%20We%20never%20sell%20your%20data.%20We%20use%20it%20only%20to%20improve%20your%20learning%20experience.%0A%0ATeam%20Section%3A%0A%5BTeam%20photos%20%2B%20names%20%2B%20roles%20%E2%80%94%20placeholder%20in%20this%20draft%5D%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20SEO%20Strategy%0A%0A%23%23%23%203.1%20Target%20Keywords%0A%0A**Primary%20Keywords%3A**%0A-%20%22online%20learning%20platform%20India%22%0A-%20%22AI%20learning%20platform%22%0A-%20%22online%20courses%20with%20certificate%22%0A-%20%22learn%20to%20code%20online%22%0A-%20%22e-learning%20app%20India%22%0A%0A**Long-tail%20Keywords%3A**%0A-%20%22best%20online%20courses%20for%20job%20seekers%20in%20India%22%0A-%20%22Python%20course%20with%20certificate%20free%22%0A-%20%22AI%20tutor%20for%20learning%22%0A-%20%22online%20learning%20app%20with%20offline%20support%22%0A-%20%22courses%20for%20career%20change%20India%22%0A%0A%23%23%23%203.2%20SEO%20Meta%20Specifications%0A%0A**Home%20Page%3A**%0A%60%60%60%0ATitle%3A%20LearnFlow%20AI%20%E2%80%94%20AI-Powered%20Learning%20Platform%20%7C%20500%2B%20Courses%20%7C%20Free%20to%20Start%0AMeta%3A%20Learn%20with%20your%20personal%20AI%20tutor.%20500%2B%20expert-led%20courses%2C%20verified%20certificates%2C%20offline%20support.%20Join%20100%2C000%2B%20learners%20on%20LearnFlow%20AI.%20Free%20to%20start.%0AOG%20Title%3A%20LearnFlow%20AI%20%E2%80%94%20Learn%20Smarter.%20Grow%20Faster.%0AOG%20Image%3A%201200%C3%97630%20hero%20graphic%20with%20logo%0A%60%60%60%0A%0A**Pricing%20Page%3A**%0A%60%60%60%0ATitle%3A%20LearnFlow%20AI%20Pricing%20%E2%80%94%20Free%2C%20Pro%20%26%20Premium%20Plans%0AMeta%3A%20Transparent%20pricing%20for%20every%20learner.%20Start%20free%20forever%20or%20upgrade%20to%20Pro%20from%20%E2%82%B9599%2Fmonth.%207-day%20free%20trial.%2014-day%20money-back%20guarantee.%0A%60%60%60%0A%0A**Course%20Catalog%3A**%0A%60%60%60%0ATitle%3A%20%5BCategory%5D%20Courses%20Online%20%E2%80%94%20Certificates%20Included%20%7C%20LearnFlow%20AI%0AMeta%3A%20Browse%20%5BN%5D%20%5BCategory%5D%20courses.%20Expert%20instructors%2C%20AI-powered%20learning%2C%20verified%20certificates.%20Start%20for%20free.%0A%60%60%60%0A%0A%23%23%23%203.3%20Content%20Marketing%20Calendar%20(Month%201)%0A%0A%7C%20Week%20%7C%20Content%20Type%20%7C%20Topic%20%7C%20Keyword%20Target%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20W1%20%7C%20Blog%20Post%20%7C%20%2210%20High-Demand%20Skills%20to%20Learn%20in%202026%22%20%7C%20%22in-demand%20skills%202026%22%20%7C%0A%7C%20W1%20%7C%20Social%20%7C%20Course%20highlight%20reel%20(Instagram%20Reel)%20%7C%20Brand%20awareness%20%7C%0A%7C%20W2%20%7C%20Blog%20Post%20%7C%20%22How%20AI%20is%20Personalizing%20Online%20Education%22%20%7C%20%22AI%20online%20learning%22%20%7C%0A%7C%20W2%20%7C%20Social%20%7C%20Learner%20success%20story%20(LinkedIn)%20%7C%20Social%20proof%20%7C%0A%7C%20W3%20%7C%20Blog%20Post%20%7C%20%22Free%20Python%20Courses%20That%20Actually%20Get%20You%20Hired%22%20%7C%20%22Python%20course%20free%20India%22%20%7C%0A%7C%20W3%20%7C%20Email%20%7C%20Newsletter%3A%20Weekly%20learning%20tips%20%7C%20Retention%20%7C%0A%7C%20W4%20%7C%20Blog%20Post%20%7C%20%22What%20Certificate%20Should%20You%20Earn%20for%20a%20Tech%20Job%3F%22%20%7C%20%22online%20certificate%20for%20job%22%20%7C%0A%7C%20W4%20%7C%20Social%20%7C%20Trainer%20spotlight%20(Instagram%20Story)%20%7C%20Community%20%7C%0A%0A---%0A%0A%23%23%204.%20Paid%20Marketing%20Strategy%0A%0A%23%23%23%204.1%20Google%20Ads%0A**Campaigns%3A**%0A-%20Brand%20(brand%20protection)%3A%20%22LearnFlow%20AI%22%2C%20%22LearnFlow%22%0A-%20Category%3A%20%22Python%20course%20online%22%2C%20%22Data%20science%20certification%20India%22%0A-%20Competitor%3A%20%22Coursera%20alternative%20India%22%2C%20%22Udemy%20alternative%20India%22%0A%0A**Budget%20Allocation%3A**%0A-%20Brand%3A%2010%25%0A-%20Category%3A%2060%25%0A-%20Competitor%3A%2030%25%0A%0A**Target%20CPA%3A**%20%E2%82%B9400%20per%20free%20signup%20%2F%20%E2%82%B91%2C200%20per%20Pro%20subscriber%0A%0A%23%23%23%204.2%20Meta%2FInstagram%20Ads%0A**Formats%3A**%20Reels%20(primary)%2C%20Stories%2C%20Feed%0A**Audience%20targeting%3A**%2018%E2%80%9335%2C%20India%2C%20interests%3A%20technology%2C%20career%2C%20education%2C%20coding%0A**Creative%20strategy%3A**%20Learner%20transformation%20stories%20(before%2Fafter)%2C%20AI%20demo%20videos%2C%20certificate%20unboxing%0A%0A%23%23%23%204.3%20YouTube%20Pre-roll%0A**Target%3A**%20Tutorial%20content%20(Python%2C%20Excel%2C%20Design)%20viewers%0A**Creative%3A**%2015-second%20non-skippable%3A%20%22The%20AI%20tutor%20that%20explains%20what%20you%20just%20watched%2C%20better.%22%0A%0A---%0A%0A%23%23%205.%20App%20Store%20Optimization%20(ASO)%0A%0A%23%23%23%205.1%20iOS%20App%20Store%0A%60%60%60%0AName%3A%20LearnFlow%20AI%3A%20Online%20Courses%0ASubtitle%3A%20AI%20Tutor%20%2B%20Certificates%0ADescription%20(first%20255%20chars)%3A%0A%22Your%20personal%20AI%20tutor%20%2B%20500%20expert-led%20courses%20%2B%20verified%20certificates%20%E2%80%94%20all%20on%20one%20app.%20%0ALearn%20Python%2C%20Design%2C%20Finance%2C%20and%20more.%20Start%20for%20free.%20Earn%20certificates.%20Advance%20your%20career.%22%0AKeywords%3A%20online%20courses%2C%20e-learning%2C%20AI%20tutor%2C%20certificate%2C%20learn%20to%20code%2C%20Python%2C%20English%2C%20IELTS%0ACategories%3A%20Education%20(Primary)%2C%20Productivity%20(Secondary)%0A%60%60%60%0A%0A%23%23%23%205.2%20Google%20Play%20Store%0A%60%60%60%0ATitle%3A%20LearnFlow%20AI%20%E2%80%94%20Online%20Learning%0AShort%20Description%3A%20AI%20tutor%20%2B%20500%20courses%20%2B%20certificates.%20Learn%20anywhere%2C%20anytime.%0AFull%20Description%3A%20%5BFull%20marketing%20copy%2C%20same%20key%20points%20as%20iOS%2C%204000%20chars%5D%0ACategory%3A%20Education%0AContent%20Rating%3A%20Everyone%0A%60%60%60%0A%0A**Screenshot%20Strategy%20(8%20screenshots%20per%20platform)%3A**%0A1.%20Dashboard%20with%20streak%20%2B%20AI%20chat%20visible%0A2.%20Video%20lesson%20player%20(course%20content%20quality)%0A3.%20AI%20chat%20explaining%20a%20concept%0A4.%20Badge%2Fcertificate%20earned%20celebration%0A5.%20Course%20catalog%20(breadth)%0A6.%20Leaderboard%20(community)%0A7.%20Offline%20mode%20indicator%0A8.%20Pricing%20plans%20(value%20communication)%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>08 Marketing</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Marketing Website Copy &amp; Content Plan</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="marketing-website-copy-content-plan" class="docmd-heading"><a href="#marketing-website-copy-content-plan" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Marketing Website Copy &amp; Content Plan</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="marketing-website-copy-content-plan-1-brand-voice-tone" class="docmd-heading"><a href="#marketing-website-copy-content-plan-1-brand-voice-tone" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Brand Voice &amp; Tone</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+<th>In Practice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Empowering</strong></td>
+<td>We believe in our users’ potential</td>
+<td>“You’ve got this.” not “We’ll help you succeed.”</td>
+</tr>
+<tr>
+<td><strong>Smart &amp; Friendly</strong></td>
+<td>Expert knowledge, approachable delivery</td>
+<td>No jargon without explanation</td>
+</tr>
+<tr>
+<td><strong>Encouraging</strong></td>
+<td>Celebrate small wins</td>
+<td>“Every lesson is a step forward.”</td>
+</tr>
+<tr>
+<td><strong>Clear &amp; Direct</strong></td>
+<td>No marketing fluff</td>
+<td>“Learn Python in 8 hours” not “Unlock your potential with our comprehensive Python journey”</td>
+</tr>
+<tr>
+<td><strong>Human</strong></td>
+<td>Technology in service of people</td>
+<td>“AI that learns how you learn”</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Voice Examples:</strong></p>
+<ul>
+<li>✅ “Your AI tutor, always ready.”</li>
+<li>❌ “Revolutionary AI-powered paradigm shifting educational solutions.”</li>
+<li>✅ “500+ courses. 0 boring lessons.”</li>
+<li>❌ “A comprehensive catalog of expertly curated content across diverse domains.”</li>
+</ul>
+<hr>
+<h2 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Marketing Website — Page-by-Page Copy</h2>
+<h3 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.1 Home Page (Landing Page)</h3>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-navigation" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-navigation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Navigation</h4>
+<pre class="hljs"><code>Logo<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LearnFlow AI&quot;</span>
+Links<span class="hljs-punctuation">:</span> Features <span class="hljs-punctuation">|</span> Courses <span class="hljs-punctuation">|</span> Pricing <span class="hljs-punctuation">|</span> For Teams
+Right<span class="hljs-punctuation">:</span> [Log In] [Get Started Free →]
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-hero-section" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-hero-section" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hero Section</h4>
+<pre class="hljs"><code>Overline<span class="hljs-punctuation">:</span> AI<span class="hljs-punctuation">-</span>POWERED LEARNING PLATFORM
+Headline<span class="hljs-punctuation">:</span> Learn Smarter.
+          Grow Faster.
+Subheadline<span class="hljs-punctuation">:</span> Your AI tutor knows your learning style, fills your gaps, and keeps you motivated — <span class="hljs-keyword">from</span> your first lesson to your last certificate.
+CTA <span class="hljs-number">1</span><span class="hljs-punctuation">:</span> [Get Started Free →]  (no credit card required)
+CTA <span class="hljs-number">2</span><span class="hljs-punctuation">:</span> [▶ Watch Demo]
+Trust badge<span class="hljs-punctuation">:</span> ⭐ Rated <span class="hljs-number">4.9</span><span class="hljs-punctuation">/</span><span class="hljs-number">5</span> by <span class="hljs-number">100</span>,<span class="hljs-number">000</span><span class="hljs-punctuation">+</span> learners <span class="hljs-punctuation">|</span> <span class="hljs-number">500</span><span class="hljs-punctuation">+</span> Expert Courses <span class="hljs-punctuation">|</span> Learn Anywhere
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-social-proof-bar" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-social-proof-bar" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Social Proof Bar</h4>
+<pre class="hljs"><code><span class="hljs-string">&quot;Trusted by learners from&quot;</span>
+[Company Logo] [Company Logo] [Company Logo] [Company Logo] [Company Logo]
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-features-section-3-cards" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-features-section-3-cards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Features Section (3 cards)</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> Why LearnFlow AI<span class="hljs-punctuation">?</span>
+
+Card <span class="hljs-number">1</span> — AI That Knows You
+Icon<span class="hljs-punctuation">:</span> Brain<span class="hljs-punctuation">/</span>sparkle
+Title<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your personal AI tutor&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Not a chatbot. A real tutor that understands your course content, explains concepts in your language, generates quizzes, and creates personalized study plans — all based on what you&#039;re actually learning.&quot;</span>
+Link<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Meet your AI Tutor →&quot;</span>
+
+Card <span class="hljs-number">2</span> — Learn <span class="hljs-punctuation">&amp;</span> Earn
+Icon<span class="hljs-punctuation">:</span> Certificate<span class="hljs-punctuation">/</span>badge
+Title<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Certificates that matter&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Complete courses, earn verified certificates you can share on LinkedIn, add to your portfolio, and show employers. Every certificate includes a blockchain-verified QR code for instant validation.&quot;</span>
+Link<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Browse certified courses →&quot;</span>
+
+Card <span class="hljs-number">3</span> — Learn Anywhere
+Icon<span class="hljs-punctuation">:</span> Devices
+Title<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;All your devices, one account&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Start on your iPhone during your commute. Continue on your laptop at work. Finish on your iPad at home. Offline mode means no Wi-Fi, no problem.&quot;</span>
+Link<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Download the app →&quot;</span>
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-how-it-works-section" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-how-it-works-section" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>How It Works Section</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> From Zero to Certified <span class="hljs-keyword">in</span> <span class="hljs-number">3</span> Steps
+
+Step <span class="hljs-number">1</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Tell us your goal&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Choose your role — student, professional, job seeker — and your interests. Our AI instantly curates the perfect learning path for you.&quot;</span>
+
+Step <span class="hljs-number">2</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learn your way&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Watch expert-led video lessons, complete AI-generated quizzes, chat with your AI tutor, and track your progress — all on one platform.&quot;</span>
+
+Step <span class="hljs-number">3</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Earn &amp; advance&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Complete courses, earn certificates, climb the leaderboard, and share your achievements. Your next opportunity is one certificate away.&quot;</span>
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-stats-section" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-stats-section" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Stats Section</h4>
+<pre class="hljs"><code><span class="hljs-number">100</span>,<span class="hljs-number">000</span><span class="hljs-punctuation">+</span> Active Learners
+<span class="hljs-number">500</span><span class="hljs-punctuation">+</span> Expert Courses
+<span class="hljs-number">92</span><span class="hljs-punctuation">%</span> Course Completion Rate
+<span class="hljs-number">4.9</span>★ Average Rating
+₹<span class="hljs-number">0</span> to Start
+<span class="hljs-number">50</span><span class="hljs-punctuation">+</span> Expert Instructors
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-course-preview-grid" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-course-preview-grid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Course Preview Grid</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What will you learn today?&quot;</span>
+Subheader<span class="hljs-punctuation">:</span> Explore our most popular courses
+[Course Grid — <span class="hljs-number">4</span> cards, <span class="hljs-number">2</span> rows]
+[Browse All <span class="hljs-number">500</span><span class="hljs-punctuation">+</span> Courses →]
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-testimonials-section" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-testimonials-section" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Testimonials Section</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learners love LearnFlow AI&quot;</span>
+
+Testimonial <span class="hljs-number">1</span><span class="hljs-punctuation">:</span>
+<span class="hljs-string">&quot;I went from knowing nothing about Python to landing my first developer job in 3 months. The AI tutor explains things better than my university professors.&quot;</span>
+— Rohan Verma, Software Developer, Bengaluru ⭐⭐⭐⭐⭐
+
+Testimonial <span class="hljs-number">2</span><span class="hljs-punctuation">:</span>
+<span class="hljs-string">&quot;I&#039;m 58 and I was terrified of online learning. LearnFlow AI made it easy, fun, and I earned my first certificate last week! My grandkids are jealous.&quot;</span>
+— Kamala Iyer, Retired Teacher, Chennai ⭐⭐⭐⭐⭐
+
+Testimonial <span class="hljs-number">3</span><span class="hljs-punctuation">:</span>
+<span class="hljs-string">&quot;Our team of 25 uses LearnFlow AI for quarterly upskilling. The admin dashboard makes tracking everyone&#039;s progress effortless. Worth every rupee.&quot;</span>
+— Anjali Mehta, L<span class="hljs-punctuation">&amp;</span>D Manager, Mumbai ⭐⭐⭐⭐⭐
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-pricing-teaser" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-pricing-teaser" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Pricing Teaser</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Simple pricing for every learner&quot;</span>
+
+Free<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">0</span><span class="hljs-punctuation">/</span>forever — <span class="hljs-number">10</span> courses, <span class="hljs-number">10</span> AI queries<span class="hljs-punctuation">/</span>day
+Pro<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">599</span><span class="hljs-punctuation">/</span>month — Unlimited everything, offline access
+[See All Plans →]
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-app-download-section" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-app-download-section" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>App Download Section</h4>
+<pre class="hljs"><code>Section header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learn on the go&quot;</span>
+Body<span class="hljs-punctuation">:</span> Download LearnFlow AI and study anywhere — even offline.
+[App Store Badge] [Play Store Badge]
+QR Code<span class="hljs-punctuation">:</span> Scan to download
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-final-cta-band" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-final-cta-band" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Final CTA Band</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> <span class="hljs-title function_">Gradient</span> (indigo→purple)
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your learning journey starts today.&quot;</span>
+Subheadline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Join 100,000+ learners. Your first 10 courses are free. No credit card required.&quot;</span>
+CTA<span class="hljs-punctuation">:</span> [Create Free Account →]
+Trust<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Already have an account? Log In&quot;</span>
+</code></pre>
+<h4 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-footer" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-footer" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Footer</h4>
+<pre class="hljs"><code>Column <span class="hljs-number">1</span> — LearnFlow AI
+Logo <span class="hljs-punctuation">+</span> tagline <span class="hljs-string">&quot;AI-powered learning for everyone&quot;</span>
+Social<span class="hljs-punctuation">:</span> LinkedIn <span class="hljs-punctuation">|</span> Twitter<span class="hljs-punctuation">/</span>X <span class="hljs-punctuation">|</span> YouTube <span class="hljs-punctuation">|</span> Instagram
+
+Column <span class="hljs-number">2</span> — Product
+Features
+Courses
+Pricing
+For <span class="hljs-title function_">Teams</span> (Institutions)
+Blog
+Changelog
+
+Column <span class="hljs-number">3</span> — Company
+About Us
+Careers
+Press
+Contact
+
+Column <span class="hljs-number">4</span> — Support
+Help Center
+For Trainers
+Community Forum
+Status Page
+
+Legal<span class="hljs-punctuation">:</span> Terms <span class="hljs-keyword">of</span> Service <span class="hljs-punctuation">|</span> Privacy Policy <span class="hljs-punctuation">|</span> Cookie Policy
+Copyright<span class="hljs-punctuation">:</span> © <span class="hljs-number">2026</span> LearnFlow AI. All rights reserved. Made <span class="hljs-keyword">with</span> ❤️ <span class="hljs-keyword">in</span> India.
+</code></pre>
+<hr>
+<h3 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-22-features-page" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-22-features-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.2 Features Page</h3>
+<pre class="hljs"><code>Hero<span class="hljs-punctuation">:</span>
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Everything you need to learn, grow, and succeed.&quot;</span>
+Subheadline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Powerful features designed for real-world learning outcomes, not just feature checkboxes.&quot;</span>
+
+Feature <span class="hljs-number">1</span> — AI Tutor
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;An AI tutor that actually understands your course&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ask anything, get expert answers grounded in your course material. Your AI tutor doesn&#039;t guess — it retrieves the most relevant content from your lessons and explains it in plain language. Available 24/7, never impatient.&quot;</span>
+Stats<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;93% of learners say AI responses are helpful or very helpful&quot;</span>
+
+Feature <span class="hljs-number">2</span> — Gamification
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learning that&#039;s actually addictive&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;XP points, levels, badges, daily quests, streak trackers, and global leaderboards. We&#039;ve taken the psychology of engagement from the best games and applied it to your education. The result? You actually want to learn.&quot;</span>
+
+Feature <span class="hljs-number">3</span> — Cross<span class="hljs-punctuation">-</span>Platform
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;One account, every device&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Native iOS and Android apps, a full-featured web app, and a desktop app for Windows and macOS. Seamless sync means you can pause a video on your phone and continue on your laptop without missing a second.&quot;</span>
+
+Feature <span class="hljs-number">4</span> — Offline Learning
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;No Wi-Fi? No problem.&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Download lessons before you travel, commute, or go somewhere with poor connectivity. Offline mode works exactly like online mode — including quizzes, notes, and progress tracking.&quot;</span>
+
+Feature <span class="hljs-number">5</span> — Certificates
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Certificates with real-world credibility&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Every certificate is blockchain-verified and linkable. Share directly to LinkedIn, add the credential to your resume, or send the verification URL to any employer. QR codes allow instant verification.&quot;</span>
+
+Feature <span class="hljs-number">6</span> — Team Learning
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Bring your whole team along&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Institution plan gives your organization a centralized dashboard to assign courses, track completion, and measure ROI. Bulk enrollment, progress reports, and team leaderboards included.&quot;</span>
+</code></pre>
+<hr>
+<h3 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-23-pricing-page" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-23-pricing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.3 Pricing Page</h3>
+<pre class="hljs"><code>Hero<span class="hljs-punctuation">:</span>
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Start free. Scale as you grow.&quot;</span>
+Subheadline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;No hidden fees. No confusing tiers. Just straightforward pricing.&quot;</span>
+Toggle<span class="hljs-punctuation">:</span> [Monthly] [Annual — Save <span class="hljs-number">20</span><span class="hljs-punctuation">%</span>]
+
+Plan <span class="hljs-number">1</span> — Free
+Price<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">0</span><span class="hljs-punctuation">/</span>forever
+Tagline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Perfect for exploring&quot;</span>
+Features<span class="hljs-punctuation">:</span>
+✓ Access to <span class="hljs-number">10</span> <span class="hljs-keyword">free</span> courses
+✓ <span class="hljs-number">10</span> AI tutor queries per day
+✓ Basic progress tracking
+✓ <span class="hljs-number">5</span><span class="hljs-punctuation">-</span>day streak tracking
+✓ <span class="hljs-number">3</span> quiz attempts per quiz
+✗ No offline access
+✗ No certificates
+✗ Limited AI features
+CTA<span class="hljs-punctuation">:</span> [Get Started Free]
+
+Plan <span class="hljs-number">2</span> — <span class="hljs-title function_">Pro</span> (Most Popular)
+Price<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">599</span><span class="hljs-punctuation">/</span><span class="hljs-title function_">month</span> (or ₹<span class="hljs-number">5</span>,<span class="hljs-number">988</span><span class="hljs-punctuation">/</span>year)
+Annual<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">499</span><span class="hljs-punctuation">/</span>month, billed annually
+Tagline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;For serious learners&quot;</span>
+Features<span class="hljs-punctuation">:</span>
+✓ Unlimited course <span class="hljs-title function_">access</span> (<span class="hljs-number">500</span><span class="hljs-punctuation">+</span>)
+✓ Unlimited AI tutor queries
+✓ Offline lesson download
+✓ Verified certificates <span class="hljs-keyword">for</span> all courses
+✓ Full <span class="hljs-title function_">gamification</span> (all badges, leaderboard)
+✓ Advanced progress analytics
+✓ Priority customer support
+✓ Multi<span class="hljs-punctuation">-</span>device <span class="hljs-title function_">sync</span> (up to <span class="hljs-number">5</span> devices)
+✓ AI study plans
+✗ No live sessions
+CTA<span class="hljs-punctuation">:</span> [Start <span class="hljs-number">7</span><span class="hljs-punctuation">-</span>Day Free Trial →]
+Badge<span class="hljs-punctuation">:</span> MOST POPULAR
+
+Plan <span class="hljs-number">3</span> — Premium
+Price<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">999</span><span class="hljs-punctuation">/</span><span class="hljs-title function_">month</span> (or ₹<span class="hljs-number">9</span>,<span class="hljs-number">988</span><span class="hljs-punctuation">/</span>year)
+Tagline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;For professionals who mean business&quot;</span>
+Features<span class="hljs-punctuation">:</span>
+✓ Everything <span class="hljs-keyword">in</span> Pro
+✓ Live Q<span class="hljs-punctuation">&amp;</span>A sessions <span class="hljs-keyword">with</span> instructors
+✓ <span class="hljs-number">1</span><span class="hljs-punctuation">-</span>on<span class="hljs-punctuation">-</span><span class="hljs-number">1</span> AI coaching sessions
+✓ Downloadable course materials <span class="hljs-keyword">as</span> PDF
+✓ LinkedIn Certificate integration
+✓ Priority certificate <span class="hljs-title function_">issuance</span> (24h)
+✓ Dedicated learning advisor
+✓ Early access to <span class="hljs-keyword">new</span> courses
+CTA<span class="hljs-punctuation">:</span> [Start <span class="hljs-number">7</span><span class="hljs-punctuation">-</span>Day Free Trial →]
+
+Plan <span class="hljs-number">4</span> — <span class="hljs-title function_">Teams</span> (Institution)
+Price<span class="hljs-punctuation">:</span> Custom pricing
+Tagline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;For organizations&quot;</span>
+Features<span class="hljs-punctuation">:</span>
+✓ Everything <span class="hljs-keyword">in</span> Premium <span class="hljs-keyword">for</span> all seats
+✓ Admin dashboard
+✓ Course assignment <span class="hljs-punctuation">&amp;</span> deadlines
+✓ Team progress reports
+✓ Custom <span class="hljs-title function_">branding</span> (logo)
+✓ <span class="hljs-title function_">SSO</span> (SAML<span class="hljs-punctuation">/</span>Google Workspace)
+✓ Bulk onboarding
+✓ Dedicated account manager
+CTA<span class="hljs-punctuation">:</span> [Contact Sales →]
+
+FAQ Section<span class="hljs-punctuation">:</span>
+Q<span class="hljs-punctuation">:</span> Can I <span class="hljs-keyword">switch</span> plans anytime<span class="hljs-punctuation">?</span>
+A<span class="hljs-punctuation">:</span> Yes. You can upgrade or downgrade at any time. Pro<span class="hljs-punctuation">-</span>rated credits apply.
+
+Q<span class="hljs-punctuation">:</span> What happens to my progress <span class="hljs-keyword">if</span> I downgrade to Free<span class="hljs-punctuation">?</span>
+A<span class="hljs-punctuation">:</span> All your progress, certificates, and notes are saved. You just lose access to premium courses.
+
+Q<span class="hljs-punctuation">:</span> Is there a student discount<span class="hljs-punctuation">?</span>
+A<span class="hljs-punctuation">:</span> Yes<span class="hljs-punctuation">!</span> Verified students get <span class="hljs-number">40</span><span class="hljs-punctuation">%</span> off Pro <span class="hljs-keyword">with</span> a valid .<span class="hljs-attr">edu</span> email address.
+
+Q<span class="hljs-punctuation">:</span> Do you offer refunds<span class="hljs-punctuation">?</span>
+A<span class="hljs-punctuation">:</span> Yes. <span class="hljs-number">14</span><span class="hljs-punctuation">-</span>day money<span class="hljs-punctuation">-</span>back guarantee, no questions asked.
+
+Q<span class="hljs-punctuation">:</span> Can I <span class="hljs-keyword">use</span> my account on multiple devices<span class="hljs-punctuation">?</span>
+A<span class="hljs-punctuation">:</span> Pro allows up to <span class="hljs-number">5</span> devices simultaneously. Free allows <span class="hljs-number">2</span>.
+
+Trust section<span class="hljs-punctuation">:</span>
+🔒 Secure payments via Razorpay
+✅ <span class="hljs-number">14</span><span class="hljs-punctuation">-</span>day money<span class="hljs-punctuation">-</span>back guarantee
+🌐 Cancel anytime — no lock<span class="hljs-punctuation">-</span><span class="hljs-keyword">in</span>
+📞 Chat support <span class="hljs-number">7</span> days a week
+</code></pre>
+<hr>
+<h3 id="marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-24-about-page" class="docmd-heading"><a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-24-about-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.4 About Page</h3>
+<pre class="hljs"><code>Hero<span class="hljs-punctuation">:</span>
+Headline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;We believe everyone deserves a great teacher.&quot;</span>
+Subheadline<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LearnFlow AI was built by learners, for learners — with one mission: make world-class education available to everyone.&quot;</span>
+
+Mission Section<span class="hljs-punctuation">:</span>
+Title<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Our Mission&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;The best education shouldn&#039;t depend on where you&#039;re born, what you can afford, or which university accepted you. With AI, we can personalize learning at scale — giving every learner their own tutor, study plan, and path to success. That&#039;s the world we&#039;re building.&quot;</span>
+
+Story Section<span class="hljs-punctuation">:</span>
+Title<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;How it started&quot;</span>
+Body<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LearnFlow AI began when our founder, a self-taught developer, struggled to find quality, affordable courses that adapted to how she learned. She hired a tutor, and it changed everything — but tutors are expensive. So she built an AI one instead. The rest, as they say, is learning history.&quot;</span>
+
+Values<span class="hljs-punctuation">:</span>
+Value <span class="hljs-number">1</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learning is for everyone&quot;</span> — We believe <span class="hljs-keyword">in</span> radical accessibility. Our Free plan isn<span class="hljs-string">&#039;t a gimmick; it&#039;</span>s a commitment.
+Value <span class="hljs-number">2</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;AI should empower, not replace&quot;</span> — Our AI tutors support human instructors and learners. Technology serves education, not the other way around.
+Value <span class="hljs-number">3</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Progress over perfection&quot;</span> — We celebrate progress. Every lesson completed, every badge earned, every streak maintained matters.
+Value <span class="hljs-number">4</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Privacy is a right&quot;</span> — We never sell your data. We <span class="hljs-keyword">use</span> it only to improve your learning experience.
+
+Team Section<span class="hljs-punctuation">:</span>
+[Team photos <span class="hljs-punctuation">+</span> names <span class="hljs-punctuation">+</span> roles — placeholder <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span> draft]
+</code></pre>
+<hr>
+<h2 id="marketing-website-copy-content-plan-3-seo-strategy" class="docmd-heading"><a href="#marketing-website-copy-content-plan-3-seo-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. SEO Strategy</h2>
+<h3 id="marketing-website-copy-content-plan-3-seo-strategy-31-target-keywords" class="docmd-heading"><a href="#marketing-website-copy-content-plan-3-seo-strategy-31-target-keywords" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Target Keywords</h3>
+<p><strong>Primary Keywords:</strong></p>
+<ul>
+<li>“online learning platform India”</li>
+<li>“AI learning platform”</li>
+<li>“online courses with certificate”</li>
+<li>“learn to code online”</li>
+<li>“e-learning app India”</li>
+</ul>
+<p><strong>Long-tail Keywords:</strong></p>
+<ul>
+<li>“best online courses for job seekers in India”</li>
+<li>“Python course with certificate free”</li>
+<li>“AI tutor for learning”</li>
+<li>“online learning app with offline support”</li>
+<li>“courses for career change India”</li>
+</ul>
+<h3 id="marketing-website-copy-content-plan-3-seo-strategy-32-seo-meta-specifications" class="docmd-heading"><a href="#marketing-website-copy-content-plan-3-seo-strategy-32-seo-meta-specifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 SEO Meta Specifications</h3>
+<p><strong>Home Page:</strong></p>
+<pre class="hljs"><code>Title<span class="hljs-punctuation">:</span> LearnFlow AI — AI<span class="hljs-punctuation">-</span>Powered Learning Platform <span class="hljs-punctuation">|</span> <span class="hljs-number">500</span><span class="hljs-punctuation">+</span> Courses <span class="hljs-punctuation">|</span> Free to Start
+Meta<span class="hljs-punctuation">:</span> Learn <span class="hljs-keyword">with</span> your personal AI tutor. <span class="hljs-number">500</span><span class="hljs-punctuation">+</span> expert<span class="hljs-punctuation">-</span>led courses, verified certificates, offline support. Join <span class="hljs-number">100</span>,<span class="hljs-number">000</span><span class="hljs-punctuation">+</span> learners on LearnFlow AI. Free to start.
+OG Title<span class="hljs-punctuation">:</span> LearnFlow AI — Learn Smarter. Grow Faster.
+OG Image<span class="hljs-punctuation">:</span> <span class="hljs-number">1200</span>×<span class="hljs-number">630</span> hero graphic <span class="hljs-keyword">with</span> logo
+</code></pre>
+<p><strong>Pricing Page:</strong></p>
+<pre class="hljs"><code>Title<span class="hljs-punctuation">:</span> LearnFlow AI Pricing — Free, Pro <span class="hljs-punctuation">&amp;</span> Premium Plans
+Meta<span class="hljs-punctuation">:</span> Transparent pricing <span class="hljs-keyword">for</span> every learner. Start <span class="hljs-keyword">free</span> forever or upgrade to Pro <span class="hljs-keyword">from</span> ₹<span class="hljs-number">599</span><span class="hljs-punctuation">/</span>month. <span class="hljs-number">7</span><span class="hljs-punctuation">-</span>day <span class="hljs-keyword">free</span> trial. <span class="hljs-number">14</span><span class="hljs-punctuation">-</span>day money<span class="hljs-punctuation">-</span>back guarantee.
+</code></pre>
+<p><strong>Course Catalog:</strong></p>
+<pre class="hljs"><code>Title<span class="hljs-punctuation">:</span> [Category] Courses Online — Certificates Included <span class="hljs-punctuation">|</span> LearnFlow AI
+Meta<span class="hljs-punctuation">:</span> Browse [N] [Category] courses. Expert instructors, AI<span class="hljs-punctuation">-</span>powered learning, verified certificates. Start <span class="hljs-keyword">for</span> <span class="hljs-keyword">free</span>.
+</code></pre>
+<h3 id="marketing-website-copy-content-plan-3-seo-strategy-33-content-marketing-calendar-month-1" class="docmd-heading"><a href="#marketing-website-copy-content-plan-3-seo-strategy-33-content-marketing-calendar-month-1" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 Content Marketing Calendar (Month 1)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Content Type</th>
+<th>Topic</th>
+<th>Keyword Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W1</td>
+<td>Blog Post</td>
+<td>“10 High-Demand Skills to Learn in 2026”</td>
+<td>“in-demand skills 2026”</td>
+</tr>
+<tr>
+<td>W1</td>
+<td>Social</td>
+<td>Course highlight reel (Instagram Reel)</td>
+<td>Brand awareness</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>Blog Post</td>
+<td>“How AI is Personalizing Online Education”</td>
+<td>“AI online learning”</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>Social</td>
+<td>Learner success story (LinkedIn)</td>
+<td>Social proof</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>Blog Post</td>
+<td>“Free Python Courses That Actually Get You Hired”</td>
+<td>“Python course free India”</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>Email</td>
+<td>Newsletter: Weekly learning tips</td>
+<td>Retention</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>Blog Post</td>
+<td>“What Certificate Should You Earn for a Tech Job?”</td>
+<td>“online certificate for job”</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>Social</td>
+<td>Trainer spotlight (Instagram Story)</td>
+<td>Community</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="marketing-website-copy-content-plan-4-paid-marketing-strategy" class="docmd-heading"><a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Paid Marketing Strategy</h2>
+<h3 id="marketing-website-copy-content-plan-4-paid-marketing-strategy-41-google-ads" class="docmd-heading"><a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-41-google-ads" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 Google Ads</h3>
+<p><strong>Campaigns:</strong></p>
+<ul>
+<li>Brand (brand protection): “LearnFlow AI”, “LearnFlow”</li>
+<li>Category: “Python course online”, “Data science certification India”</li>
+<li>Competitor: “Coursera alternative India”, “Udemy alternative India”</li>
+</ul>
+<p><strong>Budget Allocation:</strong></p>
+<ul>
+<li>Brand: 10%</li>
+<li>Category: 60%</li>
+<li>Competitor: 30%</li>
+</ul>
+<p><strong>Target CPA:</strong> ₹400 per free signup / ₹1,200 per Pro subscriber</p>
+<h3 id="marketing-website-copy-content-plan-4-paid-marketing-strategy-42-metainstagram-ads" class="docmd-heading"><a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-42-metainstagram-ads" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Meta/Instagram Ads</h3>
+<p><strong>Formats:</strong> Reels (primary), Stories, Feed<br>
+<strong>Audience targeting:</strong> 18–35, India, interests: technology, career, education, coding<br>
+<strong>Creative strategy:</strong> Learner transformation stories (before/after), AI demo videos, certificate unboxing</p>
+<h3 id="marketing-website-copy-content-plan-4-paid-marketing-strategy-43-youtube-pre-roll" class="docmd-heading"><a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-43-youtube-pre-roll" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.3 YouTube Pre-roll</h3>
+<p><strong>Target:</strong> Tutorial content (Python, Excel, Design) viewers<br>
+<strong>Creative:</strong> 15-second non-skippable: “The AI tutor that explains what you just watched, better.”</p>
+<hr>
+<h2 id="marketing-website-copy-content-plan-5-app-store-optimization-aso" class="docmd-heading"><a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. App Store Optimization (ASO)</h2>
+<h3 id="marketing-website-copy-content-plan-5-app-store-optimization-aso-51-ios-app-store" class="docmd-heading"><a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso-51-ios-app-store" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 iOS App Store</h3>
+<pre class="hljs"><code>Name<span class="hljs-punctuation">:</span> LearnFlow AI<span class="hljs-punctuation">:</span> Online Courses
+Subtitle<span class="hljs-punctuation">:</span> AI Tutor <span class="hljs-punctuation">+</span> Certificates
+<span class="hljs-title function_">Description</span> (first <span class="hljs-number">255</span> chars)<span class="hljs-punctuation">:</span>
+<span class="hljs-string">&quot;Your personal AI tutor + 500 expert-led courses + verified certificates — all on one app. 
+Learn Python, Design, Finance, and more. Start for free. Earn certificates. Advance your career.&quot;</span>
+Keywords<span class="hljs-punctuation">:</span> online courses, e<span class="hljs-punctuation">-</span>learning, AI tutor, certificate, learn to code, Python, English, IELTS
+Categories<span class="hljs-punctuation">:</span> <span class="hljs-title function_">Education</span> (Primary), <span class="hljs-title function_">Productivity</span> (Secondary)
+</code></pre>
+<h3 id="marketing-website-copy-content-plan-5-app-store-optimization-aso-52-google-play-store" class="docmd-heading"><a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso-52-google-play-store" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Google Play Store</h3>
+<pre class="hljs"><code>Title<span class="hljs-punctuation">:</span> LearnFlow AI — Online Learning
+Short Description<span class="hljs-punctuation">:</span> AI tutor <span class="hljs-punctuation">+</span> <span class="hljs-number">500</span> courses <span class="hljs-punctuation">+</span> certificates. Learn anywhere, anytime.
+Full Description<span class="hljs-punctuation">:</span> [Full marketing copy, same key points <span class="hljs-keyword">as</span> iOS, <span class="hljs-number">4000</span> chars]
+Category<span class="hljs-punctuation">:</span> Education
+Content Rating<span class="hljs-punctuation">:</span> Everyone
+</code></pre>
+<p><strong>Screenshot Strategy (8 screenshots per platform):</strong></p>
+<ol>
+<li>Dashboard with streak + AI chat visible</li>
+<li>Video lesson player (course content quality)</li>
+<li>AI chat explaining a concept</li>
+<li>Badge/certificate earned celebration</li>
+<li>Course catalog (breadth)</li>
+<li>Leaderboard (community)</li>
+<li>Offline mode indicator</li>
+<li>Pricing plans (value communication)</li>
+</ol>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            CRM Strategy &amp; Member Engagement
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Pitch Deck &amp; Presentation Script
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#marketing-website-copy-content-plan" class="toc-link">Marketing Website Copy &amp; Content Plan</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#marketing-website-copy-content-plan-1-brand-voice-tone" class="toc-link">1. Brand Voice &amp; Tone</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy" class="toc-link">2. Marketing Website — Page-by-Page Copy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page" class="toc-link">2.1 Home Page (Landing Page)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-navigation" class="toc-link">Navigation</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-hero-section" class="toc-link">Hero Section</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-social-proof-bar" class="toc-link">Social Proof Bar</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-features-section-3-cards" class="toc-link">Features Section (3 cards)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-how-it-works-section" class="toc-link">How It Works Section</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-stats-section" class="toc-link">Stats Section</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-course-preview-grid" class="toc-link">Course Preview Grid</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-testimonials-section" class="toc-link">Testimonials Section</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-pricing-teaser" class="toc-link">Pricing Teaser</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-app-download-section" class="toc-link">App Download Section</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-final-cta-band" class="toc-link">Final CTA Band</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-21-home-page-landing-page-footer" class="toc-link">Footer</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-22-features-page" class="toc-link">2.2 Features Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-23-pricing-page" class="toc-link">2.3 Pricing Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-2-marketing-website-page-by-page-copy-24-about-page" class="toc-link">2.4 About Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#marketing-website-copy-content-plan-3-seo-strategy" class="toc-link">3. SEO Strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-3-seo-strategy-31-target-keywords" class="toc-link">3.1 Target Keywords</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-3-seo-strategy-32-seo-meta-specifications" class="toc-link">3.2 SEO Meta Specifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-3-seo-strategy-33-content-marketing-calendar-month-1" class="toc-link">3.3 Content Marketing Calendar (Month 1)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy" class="toc-link">4. Paid Marketing Strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-41-google-ads" class="toc-link">4.1 Google Ads</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-42-metainstagram-ads" class="toc-link">4.2 Meta/Instagram Ads</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-4-paid-marketing-strategy-43-youtube-pre-roll" class="toc-link">4.3 YouTube Pre-roll</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso" class="toc-link">5. App Store Optimization (ASO)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso-51-ios-app-store" class="toc-link">5.1 iOS App Store</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#marketing-website-copy-content-plan-5-app-store-optimization-aso-52-google-play-store" class="toc-link">5.2 Google Play Store</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

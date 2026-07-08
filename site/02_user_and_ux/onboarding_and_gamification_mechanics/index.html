@@ -1,0 +1,2636 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Onboarding &amp; Gamification Mechanics : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/02_user_and_ux/onboarding_and_gamification_mechanics/">
+<meta property="og:title" content="Onboarding &amp; Gamification Mechanics - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/02_user_and_ux/onboarding_and_gamification_mechanics/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Onboarding &amp; Gamification Mechanics - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/02_user_and_ux/onboarding_and_gamification_mechanics.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Onboarding &amp; Gamification Mechanics
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Onboarding%20%26%20Gamification%20Mechanics%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Onboarding%20Philosophy%0A%0A%23%23%23%20Core%20Principle%3A%20Value%20in%20Under%203%20Minutes%0AA%20new%20user%20should%20reach%20their%20%22aha%20moment%22%20%E2%80%94%20seeing%20their%20first%20personalized%20course%20recommendation%20and%20starting%20their%20first%20lesson%20%E2%80%94%20within%203%20minutes%20of%20installing%20the%20app.%20Every%20onboarding%20screen%20must%20earn%20its%20place%20by%20delivering%20value%20or%20collecting%20critical%20personalization%20data.%0A%0A%23%23%23%20Design%20Principles%0A-%20**Progressive%20disclosure%3A**%20Only%20ask%20what%20we%20need%20right%20now.%20Don&#039;t%20overwhelm.%0A-%20**Motivation-first%3A**%20Lead%20with%20outcomes%20(%22You%20could%20be%20job-ready%20in%208%20weeks%22)%20not%20features.%0A-%20**Smart%20defaults%3A**%20Pre-fill%20what%20we%20can%20from%20device%20settings%20(language%2C%20timezone).%0A-%20**Age-adaptive%20UI%3A**%20Font%20sizes%2C%20animation%20intensity%2C%20and%20language%20complexity%20auto-adjust%20based%20on%20age%20range%20selected%20during%20onboarding.%0A-%20**Skip-friendly%3A**%20Let%20users%20skip%20optional%20steps%20%E2%80%94%20we%20can%20collect%20data%20later%20through%20behavior.%0A%0A%23%23%23%20Age-Adaptive%20Modes%0A%7C%20Mode%20%7C%20Trigger%20%7C%20UI%20Changes%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Teen%20Mode%20(13%E2%80%9317)%20%7C%20Age%20range%20selection%20%7C%20Larger%20fonts%2C%20higher%20animation%20energy%2C%20social%20emphasis%20%7C%0A%7C%20Adult%20Mode%20(18%E2%80%9335)%20%7C%20Age%20range%20selection%20%7C%20Clean%2C%20efficient%2C%20professional%20language%20%7C%0A%7C%20Senior%20Mode%20(55%2B)%20%7C%20Age%20range%20selection%20%7C%2020px%2B%20body%20text%2C%20reduced%20animation%2C%20simplified%20navigation%2C%20phone%20support%20CTA%20%7C%0A%0A---%0A%0A%23%23%202.%20Onboarding%20Flow%20%E2%80%94%20Step%20by%20Step%0A%0A%23%23%23%20Step%201%3A%20Splash%20%2F%20Welcome%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20SplashWelcome%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20Full-screen%20hero%20with%20animated%20logo%2C%20tagline%20%22Learn%20Smarter.%20Grow%20Faster.%22%2C%20and%20%22Get%20Started%22%20%2F%20%22I%20already%20have%20an%20account%22%20CTAs%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Taps%20%22Get%20Started%22%20(new)%20or%20%22Login%22%20(returning)%20%7C%0A%7C%20**Data%20Collected**%20%7C%20None%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Returning%20users%20see%20their%20name%20and%20%22Welcome%20back%2C%20%5BName%5D%22%20%7C%0A%7C%20**Duration%20Target**%20%7C%20%3C%203%20seconds%20before%20interaction%20is%20possible%20%7C%0A%0A%23%23%23%20Step%202%3A%20Choose%20Your%20Path%20(Role%20Selection)%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20RoleSelection%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%204%20large%20icon%20cards%3A%20%F0%9F%8E%93%20Student%20%2F%20Learner%2C%20%F0%9F%92%BC%20Working%20Professional%2C%20%F0%9F%94%8D%20Job%20Seeker%2C%20%F0%9F%93%9A%20Trainer%20%2F%20Teach%20Online%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Taps%20one%20card%20(single%20selection)%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60user.role_type%60%20%3D%20%5Bstudent%2C%20professional%2C%20job_seeker%2C%20trainer%5D%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Role%20determines%20which%20goal%20options%20appear%20in%20Step%203%20%7C%0A%7C%20**Skip%20Option**%20%7C%20No%20(critical%20routing%20data)%20%7C%0A%0A%23%23%23%20Step%203%3A%20Set%20Your%20Learning%20Goal%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20GoalSelection%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20%22What&#039;s%20your%20main%20goal%3F%22%20with%206%20visual%20goal%20cards%20specific%20to%20their%20role%20%7C%0A%7C%20**Student%20goals**%20%7C%20Get%20a%20job%2C%20Learn%20new%20skills%2C%20Exam%20prep%2C%20Explore%20interests%2C%20Build%20a%20project%2C%20Earn%20a%20certificate%20%7C%0A%7C%20**Professional%20goals**%20%7C%20Get%20promoted%2C%20Change%20careers%2C%20Learn%20leadership%2C%20Build%20technical%20skills%2C%20Stay%20updated%2C%20Build%20side%20income%20%7C%0A%7C%20**Job%20Seeker%20goals**%20%7C%20Get%20hired%20quickly%2C%20Build%20a%20portfolio%2C%20Learn%20in-demand%20skills%2C%20Improve%20resume%2C%20Interview%20prep%2C%20Freelance%20work%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Selects%201%E2%80%932%20goals%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60user.primary_goal%60%2C%20%60user.secondary_goal%60%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Goals%20shape%20the%20AI%20recommendation%20engine&#039;s%20initial%20weighting%20%7C%0A%0A%23%23%23%20Step%204%3A%20Interest%20%2F%20Skill%20Category%20Selection%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20InterestSelection%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20Horizontal%20scrolling%20grid%20of%20category%20chips%20with%20icons%3A%20Technology%2C%20Design%2C%20Business%2C%20Data%20Science%2C%20Marketing%2C%20Finance%2C%20Language%2C%20Arts%2C%20etc.%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Selects%202%E2%80%935%20categories%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60user.interest_categories%5B%5D%60%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20%22You%20must%20choose%20at%20least%202%22%20nudge%20if%20fewer%20selected%20%7C%0A%7C%20**Skip%20Option**%20%7C%20Yes%20%E2%80%94%20%22I&#039;ll%20explore%20later%22%20link%20%7C%0A%0A%23%23%23%20Step%205%3A%20Learning%20Schedule%20Preference%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20ScheduleSetup%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20%22How%20much%20time%20can%20you%20dedicate%3F%22%20%E2%80%94%20illustrated%20slider%20or%20button%20row%3A%205%20min%2Fday%2C%2015%20min%2Fday%2C%2030%20min%2Fday%2C%201%20hr%2Fday%2C%20Let%20AI%20decide%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Selects%20a%20preference%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60user.daily_goal_minutes%60%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Sets%20the%20daily%20learning%20target%20for%20streak%20tracking%20and%20daily%20quest%20difficulty%20%7C%0A%7C%20**Skip%20Option**%20%7C%20Yes%20%E2%80%94%20defaults%20to%2015%20min%2Fday%20%7C%0A%0A%23%23%23%20Step%206%3A%20Profile%20Setup%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20ProfileSetup%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20%22Tell%20us%20a%20bit%20about%20yourself%22%20%E2%80%94%20Name%20field%2C%20optional%20profile%20photo%20upload%2C%20age%20range%20dropdown%20(13-17%2C%2018-25%2C%2026-35%2C%2036-50%2C%2050%2B)%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Enters%20name%20(required)%2C%20optionally%20adds%20photo%20and%20age%20range%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60user.display_name%60%2C%20%60user.avatar_url%60%2C%20%60user.age_range%60%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Age%20range%20triggers%20UI%20mode%20(Teen%2FAdult%2FSenior)%3B%20triggers%20COPPA-compliant%20flow%20for%2013-17%20%7C%0A%7C%20**Skip%20Option**%20%7C%20Photo%20and%20age%20are%20optional%3B%20name%20is%20required%20%7C%0A%0A%23%23%23%20Step%207%3A%20Personalized%20Course%20Recommendations%20Preview%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20RecommendationsPreview%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20%22We%20found%20courses%20for%20you!%22%20%E2%80%94%205%20AI-curated%20course%20cards%20based%20on%20steps%202%E2%80%934%2C%20with%20explanation%20chips%20(%22Based%20on%20your%20goal%3A%20Get%20a%20job%22)%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Swipes%20through%20cards%2C%20can%20tap%20to%20preview%2C%20taps%20%22Start%20with%20this%22%20or%20%22See%20all%20courses%22%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60onboarding.recommendation_accepted%60%20(true%2Ffalse)%2C%20%60onboarding.viewed_course_ids%5B%5D%60%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20If%20no%20good%20matches%20found%20(insufficient%20interest%20data)%2C%20shows%20top-rated%20courses%20instead%20%7C%0A%7C%20**Conversion%20Goal**%20%7C%20%E2%89%A5%2050%25%20of%20users%20enroll%20in%20a%20recommended%20course%20from%20this%20screen%20%7C%0A%0A%23%23%23%20Step%208%3A%20First%20Course%20Selection%20%2B%20Enroll%20CTA%0A%7C%20Element%20%7C%20Details%20%7C%0A%7C---%7C---%7C%0A%7C%20**Screen%20Name**%20%7C%20FirstEnrollPrompt%20%7C%0A%7C%20**What%20User%20Sees**%20%7C%20Single%20featured%20course%20card%20with%20%22Start%20Learning%20Free%22%20CTA%20and%20social%20proof%20(%224%2C823%20learners%20enrolled%22)%20%7C%0A%7C%20**What%20User%20Does**%20%7C%20Taps%20%22Start%20Learning%22%20%E2%86%92%20goes%20to%20lesson%20player%20(first%20lesson%20auto-plays)%20%7C%0A%7C%20**Data%20Collected**%20%7C%20%60onboarding.first_enrollment_completed%60%20%3D%20true%20%7C%0A%7C%20**Adaptive%20Behavior**%20%7C%20Onboarding%20officially%20ends%3B%20streak%20counter%20starts%3B%20first%20XP%20awarded%20%7C%0A%7C%20**Skip%20Option**%20%7C%20%22Explore%20on%20my%20own%22%20link%20goes%20to%20Dashboard%20%7C%0A%0A---%0A%0A%23%23%203.%20Gamification%20Engine%20Design%0A%0A%23%23%23%203.1%20Experience%20Points%20(XP)%20System%0A%0A%23%23%23%23%20XP%20Earned%20Per%20Action%0A%7C%20Action%20%7C%20XP%20Awarded%20%7C%20Notes%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Complete%20first%20lesson%20%7C%20100%20XP%20%7C%20Bonus%20for%20first%20time%20only%20%7C%0A%7C%20Complete%20a%20lesson%20(subsequent)%20%7C%2025%20XP%20%7C%20Per%20lesson%2C%20any%20course%20%7C%0A%7C%20Complete%20a%20course%20%7C%20500%20XP%20%7C%20Full%20course%20completion%20bonus%20%7C%0A%7C%20Pass%20a%20quiz%20(first%20attempt)%20%7C%2075%20XP%20%7C%20Full%20score%20bonus%3A%20%2B25%20XP%20%7C%0A%7C%20Pass%20a%20quiz%20(retry)%20%7C%2030%20XP%20%7C%20Partial%20credit%20%7C%0A%7C%20Maintain%20daily%20streak%20(%2B1%20day)%20%7C%2010%20XP%20%7C%20Applied%20at%20midnight%20%7C%0A%7C%20Complete%20a%20daily%20quest%20%7C%2050%20XP%20%7C%20Per%20quest%2C%203%20quests%2Fday%20max%20%7C%0A%7C%20Earn%20a%20badge%20%7C%2025%20XP%20%7C%20Per%20badge%20earned%20%7C%0A%7C%20Leave%20a%20course%20review%20%7C%2015%20XP%20%7C%20Once%20per%20course%20%7C%0A%7C%20Share%20a%20certificate%20%7C%2020%20XP%20%7C%20One-time%20per%20certificate%20%7C%0A%7C%20Complete%20onboarding%20%7C%20200%20XP%20%7C%20One-time%20bonus%20%7C%0A%7C%20Invite%20a%20friend%20(who%20enrolls)%20%7C%20150%20XP%20%7C%20Per%20successful%20referral%20%7C%0A%7C%20Take%20AI-generated%20practice%20quiz%20%7C%2030%20XP%20%7C%20Per%20quiz%20session%20%7C%0A%7C%20Watch%20a%20lesson%20preview%20(non-enrolled)%20%7C%202%20XP%20%7C%20Cap%20at%2010%20XP%2Fday%20from%20previews%20%7C%0A%0A%23%23%23%23%20XP%20Leveling%20Thresholds%0A%7C%20Level%20%7C%20Name%20%7C%20Total%20XP%20Required%20%7C%20XP%20to%20Next%20Level%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%201%20%7C%20Curious%20Beginner%20%7C%200%20%7C%20200%20%7C%0A%7C%202%20%7C%20Explorer%20%7C%20200%20%7C%20400%20%7C%0A%7C%203%20%7C%20Learner%20%7C%20600%20%7C%20600%20%7C%0A%7C%204%20%7C%20Scholar%20%7C%201%2C200%20%7C%20800%20%7C%0A%7C%205%20%7C%20Achiever%20%7C%202%2C000%20%7C%201%2C000%20%7C%0A%7C%206%20%7C%20Practitioner%20%7C%203%2C000%20%7C%201%2C500%20%7C%0A%7C%207%20%7C%20Specialist%20%7C%204%2C500%20%7C%202%2C000%20%7C%0A%7C%208%20%7C%20Expert%20%7C%206%2C500%20%7C%203%2C000%20%7C%0A%7C%209%20%7C%20Master%20%7C%209%2C500%20%7C%204%2C000%20%7C%0A%7C%2010%20%7C%20Grand%20Master%20%7C%2013%2C500%20%7C%205%2C000%20%7C%0A%7C%2011%20%7C%20Luminary%20%7C%2018%2C500%20%7C%207%2C000%20%7C%0A%7C%2012%20%7C%20Visionary%20%7C%2025%2C500%20%7C%2010%2C000%20%7C%0A%7C%2013%20%7C%20Sage%20%7C%2035%2C500%20%7C%2015%2C000%20%7C%0A%7C%2014%20%7C%20Legend%20%7C%2050%2C500%20%7C%2020%2C000%20%7C%0A%7C%2015%20%7C%20Titan%20%7C%2070%2C500%20%7C%20%E2%80%94%20%7C%0A%0A*Levels%2011%E2%80%9315%20are%20%22Prestige%22%20levels%20unlocked%20only%20by%20consistently%20completing%20courses%20and%20community%20contributions.*%0A%0A---%0A%0A%23%23%23%203.2%20Badge%20System%0A%0A%23%23%23%23%20Badge%20Categories%20%26%20Full%20Badge%20List%0A%0A%7C%20Badge%20Name%20%7C%20Category%20%7C%20Icon%20Description%20%7C%20Criteria%20%7C%20XP%20Reward%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20First%20Step%20%7C%20Learning%20%7C%20Footprints%20on%20a%20path%20%7C%20Complete%20your%20first%20lesson%20%7C%2025%20XP%20%7C%0A%7C%20Course%20Finisher%20%7C%20Learning%20%7C%20Checkered%20flag%20%7C%20Complete%20your%20first%20course%20%7C%2050%20XP%20%7C%0A%7C%20Knowledge%20Seeker%20%7C%20Learning%20%7C%20Open%20book%20with%20sparkles%20%7C%20Enroll%20in%205%20different%20courses%20%7C%2030%20XP%20%7C%0A%7C%20Deep%20Diver%20%7C%20Learning%20%7C%20Submarine%20%7C%20Complete%20a%20course%20with%2020%2B%20lessons%20%7C%2075%20XP%20%7C%0A%7C%20Quiz%20Ace%20%7C%20Achievement%20%7C%20Gold%20medal%20star%20%7C%20Score%20100%25%20on%20any%20quiz%20%7C%2050%20XP%20%7C%0A%7C%20Speed%20Learner%20%7C%20Achievement%20%7C%20Lightning%20bolt%20%7C%20Complete%20a%205-lesson%20course%20in%201%20day%20%7C%2040%20XP%20%7C%0A%7C%20Comeback%20Kid%20%7C%20Achievement%20%7C%20Rising%20phoenix%20%7C%20Pass%20a%20quiz%20after%203%20failed%20attempts%20%7C%2060%20XP%20%7C%0A%7C%20Certificate%20Earner%20%7C%20Achievement%20%7C%20Rolled%20certificate%20with%20ribbon%20%7C%20Earn%20your%20first%20certificate%20%7C%20100%20XP%20%7C%0A%7C%20Triple%20Crown%20%7C%20Achievement%20%7C%203%20laurel%20wreaths%20%7C%20Earn%203%20certificates%20%7C%20150%20XP%20%7C%0A%7C%203-Day%20Streak%20%7C%20Streak%20%7C%20Flame%20with%20%223%22%20%7C%20Maintain%20a%203-day%20learning%20streak%20%7C%2030%20XP%20%7C%0A%7C%20Week%20Warrior%20%7C%20Streak%20%7C%20Flame%20with%20%227%22%20%7C%20Maintain%20a%207-day%20streak%20%7C%2075%20XP%20%7C%0A%7C%20Unstoppable%20%7C%20Streak%20%7C%20Inferno%20flame%20%7C%20Maintain%20a%2030-day%20streak%20%7C%20300%20XP%20%7C%0A%7C%20Century%20Club%20%7C%20Streak%20%7C%20Diamond%20flame%20%7C%20Maintain%20a%20100-day%20streak%20%7C%201%2C000%20XP%20%7C%0A%7C%20Referral%20Champion%20%7C%20Social%20%7C%20Two%20connected%20people%20%7C%20Successfully%20refer%203%20friends%20who%20enroll%20%7C%20200%20XP%20%7C%0A%7C%20Reviewer%20%7C%20Social%20%7C%20Chat%20bubble%20with%20star%20%7C%20Leave%205%20course%20reviews%20%7C%2050%20XP%20%7C%0A%7C%20Early%20Bird%20%7C%20Special%20%7C%20Sunrise%20over%20mountains%20%7C%20Join%20in%20the%20first%201%2C000%20users%20%7C%20500%20XP%20%7C%0A%7C%20Night%20Owl%20%7C%20Special%20%7C%20Moon%20and%20stars%20%7C%20Complete%20a%20lesson%20between%2011%20PM%E2%80%933%20AM%20(10%20times)%20%7C%2040%20XP%20%7C%0A%7C%20Weekend%20Warrior%20%7C%20Special%20%7C%20Calendar%20with%20rocket%20%7C%20Study%20for%203%2B%20hours%20on%20a%20weekend%20%7C%2060%20XP%20%7C%0A%7C%20Community%20Hero%20%7C%20Social%20%7C%20Shield%20with%20heart%20%7C%20Be%20voted%20%22Most%20Helpful%22%20in%20community%20(Phase%202)%20%7C%20200%20XP%20%7C%0A%7C%20AI%20Enthusiast%20%7C%20Special%20%7C%20Robot%20head%20with%20lightbulb%20%7C%20Use%20the%20AI%20assistant%2050%20times%20%7C%2075%20XP%20%7C%0A%7C%20Goal%20Crusher%20%7C%20Achievement%20%7C%20Target%20with%20bullseye%20hit%20%7C%20Complete%20a%20full%20learning%20path%20aligned%20to%20your%20goal%20%7C%20500%20XP%20%7C%0A%7C%20All-Rounder%20%7C%20Learning%20%7C%20Circle%20of%20diverse%20icons%20%7C%20Enroll%20in%205%20different%20category%20courses%20%7C%20100%20XP%20%7C%0A%0A---%0A%0A%23%23%23%203.3%20Streak%20System%0A%0A%23%23%23%23%20Streak%20Milestones%20%26%20Rewards%0A%7C%20Streak%20Length%20%7C%20Milestone%20Name%20%7C%20Reward%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%201%20day%20%7C%20First%20Flame%20%7C%20%2B10%20XP%20%7C%0A%7C%203%20days%20%7C%20Warming%20Up%20%7C%20%2B30%20XP%20%2B%20%223-Day%20Streak%22%20badge%20%7C%0A%7C%207%20days%20%7C%20Week%20Warrior%20%7C%20%2B75%20XP%20%2B%20badge%20%2B%201%20Streak%20Freeze%20%7C%0A%7C%2014%20days%20%7C%20Fortnight%20Fighter%20%7C%20%2B150%20XP%20%7C%0A%7C%2030%20days%20%7C%20Monthly%20Master%20%7C%20%2B300%20XP%20%2B%20%22Unstoppable%22%20badge%20%2B%202%20Streak%20Freezes%20%7C%0A%7C%2050%20days%20%7C%20Half%20Century%20%7C%20%2B500%20XP%20%2B%20exclusive%20profile%20frame%20%7C%0A%7C%20100%20days%20%7C%20Century%20Club%20%7C%20%2B1%2C000%20XP%20%2B%20%22Century%20Club%22%20badge%20%2B%20premium%20certificate%20template%20%7C%0A%7C%20365%20days%20%7C%20Year%20of%20Learning%20%7C%20%2B5%2C000%20XP%20%2B%20%22Legend%20of%20the%20Year%22%20badge%20%2B%201%20month%20Pro%20free%20%7C%0A%0A%23%23%23%23%20Streak%20Freeze%20Mechanic%0A-%20**What%20it%20does%3A**%20Prevents%20streak%20from%20breaking%20if%20user%20misses%20one%20day%0A-%20**How%20to%20earn%3A**%20Awarded%20as%20milestone%20rewards%20(see%20above)%0A-%20**How%20to%20purchase%3A**%20100%20XP%20per%20freeze%2C%20or%20%E2%82%B929%20for%203%20freezes%20(IAP)%0A-%20**Max%20active%20freezes%3A**%203%20at%20any%20time%0A-%20**Auto-use%3A**%20Freeze%20is%20consumed%20automatically%20if%20user%20misses%20a%20day%20(no%20action%20required)%0A-%20**Notification%3A**%20%22Your%20streak%20freeze%20was%20used!%20You%20still%20have%20a%20%5BN%5D-day%20streak%20%F0%9F%94%A5%22%0A%0A---%0A%0A%23%23%23%203.4%20Daily%20Quests%20%26%20Challenges%0A%0A%23%23%23%23%20Daily%20Quest%20Pool%20(3%20assigned%20randomly%20per%20day)%0A%7C%20Quest%20Name%20%7C%20Requirement%20%7C%20XP%20Reward%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Morning%20Lesson%20%7C%20Complete%201%20lesson%20before%20noon%20%7C%2050%20XP%20%7C%0A%7C%20Quick%20Fire%20%7C%20Answer%205%20quiz%20questions%20%7C%2050%20XP%20%7C%0A%7C%20Deep%20Focus%20%7C%20Watch%2020%2B%20minutes%20of%20lesson%20content%20%7C%2060%20XP%20%7C%0A%7C%20Explorer%20%7C%20Open%203%20different%20course%20detail%20pages%20%7C%2030%20XP%20%7C%0A%7C%20Note%20Taker%20%7C%20Write%20notes%20in%202%20lessons%20%7C%2040%20XP%20%7C%0A%7C%20AI%20Conversation%20%7C%20Ask%20the%20AI%20assistant%20a%20question%20%7C%2030%20XP%20%7C%0A%7C%20Course%20Sprinter%20%7C%20Complete%202%20lessons%20in%20any%20course%20%7C%2050%20XP%20%7C%0A%7C%20Badge%20Hunter%20%7C%20Earn%20any%20badge%20today%20%7C%2025%20XP%20%7C%0A%7C%20Streak%20Keeper%20%7C%20Log%20in%20and%20complete%20any%20learning%20activity%20%7C%2020%20XP%20%7C%0A%7C%20Rating%20Champion%20%7C%20Rate%20a%20course%20you&#039;ve%20completed%20%7C%2015%20XP%20%7C%0A%7C%20Challenge%20Mode%20%7C%20Score%2080%25%2B%20on%20a%20quiz%20%7C%2060%20XP%20%7C%0A%7C%20Weekend%20Boost%20(Sat%2FSun%20only)%20%7C%20Complete%203%20lessons%20%7C%2075%20XP%20%7C%0A%7C%20Milestone%20Push%20%7C%20Reach%20a%20XP%2Flevel%20milestone%20today%20%7C%20100%20XP%20%7C%0A%7C%20Social%20Share%20%7C%20Share%20your%20progress%20or%20a%20certificate%20%7C%2025%20XP%20%7C%0A%7C%20Discovery%20Mode%20%7C%20Enroll%20in%20a%20new%20course%20%7C%2040%20XP%20%7C%0A%0A%23%23%23%23%20Weekly%20Challenge%0AOne%20challenge%20per%20week%2C%20announced%20Monday%2C%20ends%20Sunday%3A%0A-%20Example%3A%20%22Complete%20any%20full%20course%20this%20week%20%E2%86%92%20earn%20the%20&#039;Weekly%20Champion&#039;%20badge%20%2B%20500%20XP%22%0A-%20Difficulty%20scales%20with%20user%20level%0A%0A%23%23%23%23%20Monthly%20Grand%20Challenge%0AOne%20challenge%20per%20month%2C%20platform-wide%3A%0A-%20Example%3A%20%22July%20Learning%20Marathon%20%E2%80%94%20Most%20lessons%20completed%20this%20month%20wins%20a%203-month%20Pro%20subscription%22%0A-%20Leaderboard%20tracks%20progress%3B%20top%203%20win%20prizes%0A%0A---%0A%0A%23%23%23%203.5%20Leaderboards%0A%0A%23%23%23%23%20Leaderboard%20Types%0A%7C%20Type%20%7C%20Scope%20%7C%20Reset%20Cycle%20%7C%20Opt-out%3F%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20Global%20Leaderboard%20%7C%20All%20users%20by%20XP%20%7C%20Weekly%20(Mon%E2%80%93Sun)%20%7C%20Yes%20%7C%0A%7C%20Course%20Leaderboard%20%7C%20Enrolled%20users%20in%20same%20course%20%7C%20Never%20resets%20%7C%20No%20%7C%0A%7C%20Friends%20Leaderboard%20%7C%20User&#039;s%20followed%2Fconnected%20users%20%7C%20Weekly%20%7C%20N%2FA%20%7C%0A%7C%20Institution%20Leaderboard%20%7C%20Users%20within%20same%20org%20%7C%20Monthly%20%7C%20Institution%20Admin%20controls%20%7C%0A%0A%23%23%23%23%20Fair%20Play%20Rules%0A-%20Leaderboard%20XP%20counts%20only%20organic%20actions%20%E2%80%94%20no%20purchased%20XP%0A-%20Duplicate%20account%20detection%20prevents%20abuse%0A-%20Flagged%20accounts%20are%20removed%20from%20leaderboard%20pending%20review%0A-%20Ties%20broken%20by%20earliest%20timestamp%20of%20achieving%20the%20score%0A%0A---%0A%0A%23%23%23%203.6%20Level%20System%20%26%20Rewards%0A%0A%7C%20Level%20Milestone%20%7C%20Reward%20%7C%0A%7C---%7C---%7C%0A%7C%20Level%202%20%7C%20Profile%20badge%20%22Explorer%22%2C%20ability%20to%20leave%20reviews%20%7C%0A%7C%20Level%203%20%7C%201%20Streak%20Freeze%20unlocked%20%7C%0A%7C%20Level%205%20%7C%20Access%20to%20premium%20certificate%20border%20(Achievement%20style)%20%7C%0A%7C%20Level%207%20%7C%20AI%20Study%20Plan%20Generator%20unlocked%20(one%20plan%20free)%20%7C%0A%7C%20Level%2010%20%7C%20Exclusive%20profile%20frame%20%2B%20%22Grand%20Master%22%20badge%20%2B%2010%25%20course%20discount%20%7C%0A%7C%20Level%2012%20%7C%20Early%20access%20to%20new%20course%20releases%20%7C%0A%7C%20Level%2015%20%7C%20%22Titan%22%20profile%20frame%20%2B%20%22Titan%22%20badge%20%2B%201%20month%20Pro%20free%20%7C%0A%0A---%0A%0A%23%23%23%203.7%20Reward%20Store%20%2F%20Redemption%0A%0AUsers%20can%20redeem%20XP%20for%20rewards%3A%0A%0A%7C%20Reward%20%7C%20XP%20Cost%20%7C%20Notes%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Streak%20Freeze%20%7C%20100%20XP%20%7C%20Max%203%20active%20at%20once%20%7C%0A%7C%20Premium%20Certificate%20Border%20%7C%20500%20XP%20%7C%20Visual%20upgrade%20on%20certificate%20PDF%20%7C%0A%7C%2010%25%20Course%20Discount%20Coupon%20%7C%20750%20XP%20%7C%20Single-use%2C%20valid%2030%20days%20%7C%0A%7C%20AI%20Study%20Plan%20%7C%20300%20XP%20%7C%20Generates%20personalized%20weekly%20plan%20%7C%0A%7C%20Profile%20Frame%20(Rare)%20%7C%201%2C000%20XP%20%7C%20Cosmetic%2C%20limited-time%20frames%20%7C%0A%7C%201%20Month%20Basic%20Upgrade%20%7C%202%2C000%20XP%20%7C%20Temporary%20plan%20upgrade%20%7C%0A%7C%20Donate%20XP%20to%20Scholarship%20Fund%20%7C%20Any%20amount%20%7C%20Platform%20donates%20equivalent%20in%20INR%20to%20student%20scholarships%20%7C%0A%0A---%0A%0A%23%23%204.%20Age-Group%20Adaptation%0A%0A%7C%20Feature%20%7C%20Teens%20(13%E2%80%9317)%20%7C%20Young%20Adults%20(18%E2%80%9335)%20%7C%20Mid-Career%20(36%E2%80%9355)%20%7C%20Seniors%20(55%2B)%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Font%20Size%20(Body)%20%7C%2016px%20%7C%2015px%20%7C%2016px%20%7C%2020px%20%7C%0A%7C%20Animation%20Intensity%20%7C%20High%20(confetti%2C%20bounces)%20%7C%20Medium%20(smooth%20transitions)%20%7C%20Low%20(fade%2C%20slide)%20%7C%20Minimal%20%7C%0A%7C%20Gamification%20Emphasis%20%7C%20Very%20High%20(badges%2C%20peers%2C%20levels)%20%7C%20Medium%20(achievements%2C%20certs)%20%7C%20Low%20(progress%2C%20certification)%20%7C%20Optional%20(off%20by%20default)%20%7C%0A%7C%20Streak%20Reminder%20Style%20%7C%20Playful%20emoji%20push%20(%22Don&#039;t%20break%20your%20streak%20%F0%9F%94%A5!%22)%20%7C%20Clean%20(%22Your%20streak%3A%207%20days%22)%20%7C%20Calm%20(%22Your%20learning%20streak%20continues%22)%20%7C%20Gentle%20(%22Remember%20to%20learn%20today%22)%20%7C%0A%7C%20Language%20Complexity%20%7C%20Simple%2C%20casual%20%7C%20Professional%2C%20concise%20%7C%20Professional%2C%20formal%20%7C%20Simple%2C%20warm%2C%20patient%20%7C%0A%7C%20Help%20Access%20%7C%20Chat-first%20AI%20%7C%20Self-serve%20FAQ%20%7C%20Email%2FChat%20%7C%20Phone%20button%20always%20visible%20%7C%0A%7C%20Leaderboard%20%7C%20Shown%20prominently%20%7C%20Shown%20%7C%20Hidden%20by%20default%20%7C%20Hidden%20%7C%0A%7C%20Social%20Features%20%7C%20Friends%20leaderboard%20emphasized%20%7C%20Optional%20%7C%20Optional%20%7C%20Opt-in%20only%20%7C%0A%7C%20Notification%20Frequency%20%7C%20Up%20to%205%2Fday%20%7C%202%E2%80%933%2Fday%20%7C%201%E2%80%932%2Fday%20%7C%201%2Fday%20max%20%7C%0A%7C%20Default%20Learning%20Goal%20%7C%2015%20min%2Fday%20%7C%2020%20min%2Fday%20%7C%2015%20min%2Fday%20%7C%2010%20min%2Fday%20%7C%0A%0A---%0A%0A%23%23%205.%20Learning%20Path%20Design%0A%0A%23%23%23%205.1%20Structured%20Learning%20Phases%0A%60%60%60%0APhase%201%3A%20Foundation%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Beginner%20courses%20in%20chosen%20category%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Core%20concepts%2C%20short%20lessons%20(5%E2%80%9310%20min)%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20MCQ%20quizzes%20with%20instant%20feedback%0A%0APhase%202%3A%20Intermediate%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Unlocked%20after%20completing%20Phase%201%20assessment%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Project-based%20learning%2C%20case%20studies%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Complex%20quizzes%20with%20partial%20scoring%0A%0APhase%203%3A%20Advanced%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Unlocked%20after%20Phase%202%20quiz%20(score%20%E2%89%A5%2075%25)%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Expert-level%20content%2C%20real-world%20scenarios%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Peer%20review%20exercises%20(Phase%202%20feature)%0A%0APhase%204%3A%20Mastery%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Capstone%20project%20or%20proctored%20assessment%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Premium%20verifiable%20certificate%20issued%0A%20%20%E2%94%94%E2%94%80%E2%94%80%20Mentor%20session%20eligibility%20(Premium%20plan)%0A%60%60%60%0A%0A%23%23%23%205.2%20Pre-Assessment%20%26%20Adaptive%20Path%20Generation%0A-%20**Skill%20Gap%20Assessment%3A**%20Optional%205-minute%20diagnostic%20quiz%20on%20enrollment%0A-%20**Result%3A**%20AI%20calculates%20starting%20phase%20(skip%20beginner%20if%20advanced)%0A-%20**Path%20Generation%3A**%20Week-by-week%20schedule%20generated%20based%20on%20daily%20goal%2C%20course%20length%2C%20and%20assessment%20result%0A-%20**Re-routing%3A**%20If%20user%20consistently%20fails%20quizzes%2C%20AI%20suggests%20backing%20up%20one%20phase%0A%0A%23%23%23%205.3%20Course%20Sequence%20Logic%0A-%20**Prerequisites%3A**%20Courses%20can%20mark%20other%20courses%20as%20prerequisites%20(hard%20or%20soft)%0A-%20**Recommended%20Next%3A**%20Algorithm%20suggests%20most%20logical%20next%20course%20post-completion%0A-%20**Learning%20Track%3A**%20Curated%20sequences%20of%205%E2%80%938%20courses%20form%20a%20%22Track%22%20(e.g.%2C%20%22Full-Stack%20Developer%20Track%22)%20with%20a%20Track%20Certificate%20at%20the%20end%0A%0A---%0A%0A%23%23%206.%20Engagement%20%26%20Re-engagement%20Triggers%0A%0A%23%23%23%206.1%20Smart%20Push%20Notification%20Triggers%0A%0A%7C%20Trigger%20%7C%20Timing%20%7C%20Message%20Example%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Streak%20at%20risk%20%7C%202%20hours%20before%20midnight%20(if%20no%20activity)%20%7C%20%22%E2%9A%A0%EF%B8%8F%20Your%207-day%20streak%20ends%20tonight!%20Just%201%20lesson%20away.%22%20%7C%0A%7C%20Daily%20quest%20not%20done%20%7C%206%20PM%20local%20time%20(if%20not%20completed)%20%7C%20%22Your%20daily%20quests%20expire%20in%206%20hours.%20Earn%20150%20XP!%22%20%7C%0A%7C%20New%20course%20in%20interests%20%7C%20When%20published%20%7C%20%22New%3A%20%5BCourse%20Name%5D%20just%20launched%20in%20%5BInterest%5D%22%20%7C%0A%7C%20Lesson%2050%25%20done%20%7C%2024h%20after%20stopping%20mid-lesson%20%7C%20%22You%20were%20halfway%20through%20&#039;%5BLesson%20Name%5D&#039;.%20Resume%20now%3F%22%20%7C%0A%7C%20Course%20completion%20close%20%7C%20When%2080%25%20complete%20%7C%20%22You&#039;re%20almost%20done%20with%20&#039;%5BCourse%5D&#039;!%20Finish%20it%20today.%22%20%7C%0A%7C%20Leaderboard%20position%20change%20%7C%20When%20overtaken%20in%20weekly%20leaderboard%20%7C%20%22%5BUser%20X%5D%20just%20overtook%20you!%20Learn%20now%20to%20reclaim%20your%20spot.%22%20%7C%0A%7C%20Certificate%20ready%20%7C%20Immediately%20on%20generation%20%7C%20%22%F0%9F%8E%89%20Your%20certificate%20for%20&#039;%5BCourse%5D&#039;%20is%20ready!%20Download%20it.%22%20%7C%0A%7C%20Membership%20expiry%20%7C%207%20days%20and%201%20day%20before%20%7C%20%22Your%20Pro%20plan%20renews%20in%207%20days.%20Keep%20learning!%22%20%7C%0A%0A%23%23%23%206.2%20Win-Back%20Flow%20(Churned%20Users%2C%207%2B%20days%20inactive)%0A%0A**Day%207%3A**%20%22We%20miss%20you%2C%20%5BName%5D!%20You%20were%20%5BX%5D%25%20through%20%5BCourse%5D.%22%0A**Day%2014%3A**%20Streak%20recovery%20offer%20%E2%80%94%20%22Your%20%5BN%5D-day%20streak%20is%20at%20risk.%20Use%20a%20streak%20freeze%3F%22%0A**Day%2030%3A**%20%22You&#039;ve%20been%20away%20for%20a%20while.%20Here&#039;s%20what%20you%20missed%3A%20%5BX%20new%20courses%5D.%22%0A**Day%2060%3A**%20Personalized%20discount%20offer%20%E2%80%94%20%22Come%20back%20and%20get%2030%25%20off%20Pro%20for%203%20months.%22%0A**Day%2090%3A**%20Final%20re-engagement%20%E2%80%94%20survey%20asking%20why%20they%20left%20(data%20for%20product%20improvement).%0A%0A%23%23%23%206.3%20Smart%20Reminder%20Logic%0A-%20AI%20learns%20optimal%20notification%20time%20per%20user%20based%20on%20open-rate%20history%0A-%20Users%20in%20%22Do%20Not%20Disturb%22%20hours%20receive%20notifications%20queued%20for%20after%20that%20window%0A-%20Notification%20frequency%20caps%3A%20Free%20%3D%203%2Fday%2C%20Pro%20%3D%205%2Fday%20(user-configurable)%0A-%20All%20re-engagement%20messages%20are%20personalized%20with%20the%20user&#039;s%20actual%20course%20name%20and%20progress%20%25%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>02 User And Ux</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Onboarding &amp; Gamification Mechanics</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="onboarding-gamification-mechanics" class="docmd-heading"><a href="#onboarding-gamification-mechanics" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Onboarding &amp; Gamification Mechanics</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="onboarding-gamification-mechanics-1-onboarding-philosophy" class="docmd-heading"><a href="#onboarding-gamification-mechanics-1-onboarding-philosophy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Onboarding Philosophy</h2>
+<h3 id="onboarding-gamification-mechanics-1-onboarding-philosophy-core-principle-value-in-under-3-minutes" class="docmd-heading"><a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-core-principle-value-in-under-3-minutes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Core Principle: Value in Under 3 Minutes</h3>
+<p>A new user should reach their “aha moment” — seeing their first personalized course recommendation and starting their first lesson — within 3 minutes of installing the app. Every onboarding screen must earn its place by delivering value or collecting critical personalization data.</p>
+<h3 id="onboarding-gamification-mechanics-1-onboarding-philosophy-design-principles" class="docmd-heading"><a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-design-principles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Design Principles</h3>
+<ul>
+<li><strong>Progressive disclosure:</strong> Only ask what we need right now. Don’t overwhelm.</li>
+<li><strong>Motivation-first:</strong> Lead with outcomes (“You could be job-ready in 8 weeks”) not features.</li>
+<li><strong>Smart defaults:</strong> Pre-fill what we can from device settings (language, timezone).</li>
+<li><strong>Age-adaptive UI:</strong> Font sizes, animation intensity, and language complexity auto-adjust based on age range selected during onboarding.</li>
+<li><strong>Skip-friendly:</strong> Let users skip optional steps — we can collect data later through behavior.</li>
+</ul>
+<h3 id="onboarding-gamification-mechanics-1-onboarding-philosophy-age-adaptive-modes" class="docmd-heading"><a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-age-adaptive-modes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Age-Adaptive Modes</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Trigger</th>
+<th>UI Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Teen Mode (13–17)</td>
+<td>Age range selection</td>
+<td>Larger fonts, higher animation energy, social emphasis</td>
+</tr>
+<tr>
+<td>Adult Mode (18–35)</td>
+<td>Age range selection</td>
+<td>Clean, efficient, professional language</td>
+</tr>
+<tr>
+<td>Senior Mode (55+)</td>
+<td>Age range selection</td>
+<td>20px+ body text, reduced animation, simplified navigation, phone support CTA</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Onboarding Flow — Step by Step</h2>
+<h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-1-splash-welcome" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-1-splash-welcome" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 1: Splash / Welcome</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>SplashWelcome</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>Full-screen hero with animated logo, tagline “Learn Smarter. Grow Faster.”, and “Get Started” / “I already have an account” CTAs</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Taps “Get Started” (new) or “Login” (returning)</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td>None</td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Returning users see their name and “Welcome back, [Name]”</td>
+</tr>
+<tr>
+<td><strong>Duration Target</strong></td>
+<td>&lt; 3 seconds before interaction is possible</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-2-choose-your-path-role-selection" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-2-choose-your-path-role-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 2: Choose Your Path (Role Selection)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>RoleSelection</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>4 large icon cards: 🎓 Student / Learner, 💼 Working Professional, 🔍 Job Seeker, 📚 Trainer / Teach Online</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Taps one card (single selection)</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>user.role_type</code> = [student, professional, job_seeker, trainer]</td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Role determines which goal options appear in Step 3</td>
+</tr>
+<tr>
+<td><strong>Skip Option</strong></td>
+<td>No (critical routing data)</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-3-set-your-learning-goal" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-3-set-your-learning-goal" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 3: Set Your Learning Goal</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>GoalSelection</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>“What’s your main goal?” with 6 visual goal cards specific to their role</td>
+</tr>
+<tr>
+<td><strong>Student goals</strong></td>
+<td>Get a job, Learn new skills, Exam prep, Explore interests, Build a project, Earn a certificate</td>
+</tr>
+<tr>
+<td><strong>Professional goals</strong></td>
+<td>Get promoted, Change careers, Learn leadership, Build technical skills, Stay updated, Build side income</td>
+</tr>
+<tr>
+<td><strong>Job Seeker goals</strong></td>
+<td>Get hired quickly, Build a portfolio, Learn in-demand skills, Improve resume, Interview prep, Freelance work</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Selects 1–2 goals</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>user.primary_goal</code>, <code>user.secondary_goal</code></td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Goals shape the AI recommendation engine’s initial weighting</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-4-interest-skill-category-selection" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-4-interest-skill-category-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 4: Interest / Skill Category Selection</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>InterestSelection</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>Horizontal scrolling grid of category chips with icons: Technology, Design, Business, Data Science, Marketing, Finance, Language, Arts, etc.</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Selects 2–5 categories</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>user.interest_categories[]</code></td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>“You must choose at least 2” nudge if fewer selected</td>
+</tr>
+<tr>
+<td><strong>Skip Option</strong></td>
+<td>Yes — “I’ll explore later” link</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-5-learning-schedule-preference" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-5-learning-schedule-preference" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 5: Learning Schedule Preference</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>ScheduleSetup</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>“How much time can you dedicate?” — illustrated slider or button row: 5 min/day, 15 min/day, 30 min/day, 1 hr/day, Let AI decide</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Selects a preference</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>user.daily_goal_minutes</code></td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Sets the daily learning target for streak tracking and daily quest difficulty</td>
+</tr>
+<tr>
+<td><strong>Skip Option</strong></td>
+<td>Yes — defaults to 15 min/day</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-6-profile-setup" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-6-profile-setup" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 6: Profile Setup</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>ProfileSetup</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>“Tell us a bit about yourself” — Name field, optional profile photo upload, age range dropdown (13-17, 18-25, 26-35, 36-50, 50+)</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Enters name (required), optionally adds photo and age range</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>user.display_name</code>, <code>user.avatar_url</code>, <code>user.age_range</code></td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Age range triggers UI mode (Teen/Adult/Senior); triggers COPPA-compliant flow for 13-17</td>
+</tr>
+<tr>
+<td><strong>Skip Option</strong></td>
+<td>Photo and age are optional; name is required</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-7-personalized-course-recommendations-preview" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-7-personalized-course-recommendations-preview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 7: Personalized Course Recommendations Preview</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>RecommendationsPreview</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>“We found courses for you!” — 5 AI-curated course cards based on steps 2–4, with explanation chips (“Based on your goal: Get a job”)</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Swipes through cards, can tap to preview, taps “Start with this” or “See all courses”</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>onboarding.recommendation_accepted</code> (true/false), <code>onboarding.viewed_course_ids[]</code></td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>If no good matches found (insufficient interest data), shows top-rated courses instead</td>
+</tr>
+<tr>
+<td><strong>Conversion Goal</strong></td>
+<td>≥ 50% of users enroll in a recommended course from this screen</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-8-first-course-selection-enroll-cta" class="docmd-heading"><a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-8-first-course-selection-enroll-cta" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Step 8: First Course Selection + Enroll CTA</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Screen Name</strong></td>
+<td>FirstEnrollPrompt</td>
+</tr>
+<tr>
+<td><strong>What User Sees</strong></td>
+<td>Single featured course card with “Start Learning Free” CTA and social proof (“4,823 learners enrolled”)</td>
+</tr>
+<tr>
+<td><strong>What User Does</strong></td>
+<td>Taps “Start Learning” → goes to lesson player (first lesson auto-plays)</td>
+</tr>
+<tr>
+<td><strong>Data Collected</strong></td>
+<td><code>onboarding.first_enrollment_completed</code> = true</td>
+</tr>
+<tr>
+<td><strong>Adaptive Behavior</strong></td>
+<td>Onboarding officially ends; streak counter starts; first XP awarded</td>
+</tr>
+<tr>
+<td><strong>Skip Option</strong></td>
+<td>“Explore on my own” link goes to Dashboard</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="onboarding-gamification-mechanics-3-gamification-engine-design" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Gamification Engine Design</h2>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Experience Points (XP) System</h3>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-earned-per-action" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-earned-per-action" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>XP Earned Per Action</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>XP Awarded</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Complete first lesson</td>
+<td>100 XP</td>
+<td>Bonus for first time only</td>
+</tr>
+<tr>
+<td>Complete a lesson (subsequent)</td>
+<td>25 XP</td>
+<td>Per lesson, any course</td>
+</tr>
+<tr>
+<td>Complete a course</td>
+<td>500 XP</td>
+<td>Full course completion bonus</td>
+</tr>
+<tr>
+<td>Pass a quiz (first attempt)</td>
+<td>75 XP</td>
+<td>Full score bonus: +25 XP</td>
+</tr>
+<tr>
+<td>Pass a quiz (retry)</td>
+<td>30 XP</td>
+<td>Partial credit</td>
+</tr>
+<tr>
+<td>Maintain daily streak (+1 day)</td>
+<td>10 XP</td>
+<td>Applied at midnight</td>
+</tr>
+<tr>
+<td>Complete a daily quest</td>
+<td>50 XP</td>
+<td>Per quest, 3 quests/day max</td>
+</tr>
+<tr>
+<td>Earn a badge</td>
+<td>25 XP</td>
+<td>Per badge earned</td>
+</tr>
+<tr>
+<td>Leave a course review</td>
+<td>15 XP</td>
+<td>Once per course</td>
+</tr>
+<tr>
+<td>Share a certificate</td>
+<td>20 XP</td>
+<td>One-time per certificate</td>
+</tr>
+<tr>
+<td>Complete onboarding</td>
+<td>200 XP</td>
+<td>One-time bonus</td>
+</tr>
+<tr>
+<td>Invite a friend (who enrolls)</td>
+<td>150 XP</td>
+<td>Per successful referral</td>
+</tr>
+<tr>
+<td>Take AI-generated practice quiz</td>
+<td>30 XP</td>
+<td>Per quiz session</td>
+</tr>
+<tr>
+<td>Watch a lesson preview (non-enrolled)</td>
+<td>2 XP</td>
+<td>Cap at 10 XP/day from previews</td>
+</tr>
+</tbody>
+</table>
+</div><h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-leveling-thresholds" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-leveling-thresholds" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>XP Leveling Thresholds</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Name</th>
+<th>Total XP Required</th>
+<th>XP to Next Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Curious Beginner</td>
+<td>0</td>
+<td>200</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Explorer</td>
+<td>200</td>
+<td>400</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Learner</td>
+<td>600</td>
+<td>600</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Scholar</td>
+<td>1,200</td>
+<td>800</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Achiever</td>
+<td>2,000</td>
+<td>1,000</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Practitioner</td>
+<td>3,000</td>
+<td>1,500</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Specialist</td>
+<td>4,500</td>
+<td>2,000</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Expert</td>
+<td>6,500</td>
+<td>3,000</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Master</td>
+<td>9,500</td>
+<td>4,000</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Grand Master</td>
+<td>13,500</td>
+<td>5,000</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Luminary</td>
+<td>18,500</td>
+<td>7,000</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Visionary</td>
+<td>25,500</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Sage</td>
+<td>35,500</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Legend</td>
+<td>50,500</td>
+<td>20,000</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Titan</td>
+<td>70,500</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div><p><em>Levels 11–15 are “Prestige” levels unlocked only by consistently completing courses and community contributions.</em></p>
+<hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 Badge System</h3>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system-badge-categories-full-badge-list" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system-badge-categories-full-badge-list" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Badge Categories &amp; Full Badge List</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Badge Name</th>
+<th>Category</th>
+<th>Icon Description</th>
+<th>Criteria</th>
+<th>XP Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First Step</td>
+<td>Learning</td>
+<td>Footprints on a path</td>
+<td>Complete your first lesson</td>
+<td>25 XP</td>
+</tr>
+<tr>
+<td>Course Finisher</td>
+<td>Learning</td>
+<td>Checkered flag</td>
+<td>Complete your first course</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Knowledge Seeker</td>
+<td>Learning</td>
+<td>Open book with sparkles</td>
+<td>Enroll in 5 different courses</td>
+<td>30 XP</td>
+</tr>
+<tr>
+<td>Deep Diver</td>
+<td>Learning</td>
+<td>Submarine</td>
+<td>Complete a course with 20+ lessons</td>
+<td>75 XP</td>
+</tr>
+<tr>
+<td>Quiz Ace</td>
+<td>Achievement</td>
+<td>Gold medal star</td>
+<td>Score 100% on any quiz</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Speed Learner</td>
+<td>Achievement</td>
+<td>Lightning bolt</td>
+<td>Complete a 5-lesson course in 1 day</td>
+<td>40 XP</td>
+</tr>
+<tr>
+<td>Comeback Kid</td>
+<td>Achievement</td>
+<td>Rising phoenix</td>
+<td>Pass a quiz after 3 failed attempts</td>
+<td>60 XP</td>
+</tr>
+<tr>
+<td>Certificate Earner</td>
+<td>Achievement</td>
+<td>Rolled certificate with ribbon</td>
+<td>Earn your first certificate</td>
+<td>100 XP</td>
+</tr>
+<tr>
+<td>Triple Crown</td>
+<td>Achievement</td>
+<td>3 laurel wreaths</td>
+<td>Earn 3 certificates</td>
+<td>150 XP</td>
+</tr>
+<tr>
+<td>3-Day Streak</td>
+<td>Streak</td>
+<td>Flame with “3”</td>
+<td>Maintain a 3-day learning streak</td>
+<td>30 XP</td>
+</tr>
+<tr>
+<td>Week Warrior</td>
+<td>Streak</td>
+<td>Flame with “7”</td>
+<td>Maintain a 7-day streak</td>
+<td>75 XP</td>
+</tr>
+<tr>
+<td>Unstoppable</td>
+<td>Streak</td>
+<td>Inferno flame</td>
+<td>Maintain a 30-day streak</td>
+<td>300 XP</td>
+</tr>
+<tr>
+<td>Century Club</td>
+<td>Streak</td>
+<td>Diamond flame</td>
+<td>Maintain a 100-day streak</td>
+<td>1,000 XP</td>
+</tr>
+<tr>
+<td>Referral Champion</td>
+<td>Social</td>
+<td>Two connected people</td>
+<td>Successfully refer 3 friends who enroll</td>
+<td>200 XP</td>
+</tr>
+<tr>
+<td>Reviewer</td>
+<td>Social</td>
+<td>Chat bubble with star</td>
+<td>Leave 5 course reviews</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Early Bird</td>
+<td>Special</td>
+<td>Sunrise over mountains</td>
+<td>Join in the first 1,000 users</td>
+<td>500 XP</td>
+</tr>
+<tr>
+<td>Night Owl</td>
+<td>Special</td>
+<td>Moon and stars</td>
+<td>Complete a lesson between 11 PM–3 AM (10 times)</td>
+<td>40 XP</td>
+</tr>
+<tr>
+<td>Weekend Warrior</td>
+<td>Special</td>
+<td>Calendar with rocket</td>
+<td>Study for 3+ hours on a weekend</td>
+<td>60 XP</td>
+</tr>
+<tr>
+<td>Community Hero</td>
+<td>Social</td>
+<td>Shield with heart</td>
+<td>Be voted “Most Helpful” in community (Phase 2)</td>
+<td>200 XP</td>
+</tr>
+<tr>
+<td>AI Enthusiast</td>
+<td>Special</td>
+<td>Robot head with lightbulb</td>
+<td>Use the AI assistant 50 times</td>
+<td>75 XP</td>
+</tr>
+<tr>
+<td>Goal Crusher</td>
+<td>Achievement</td>
+<td>Target with bullseye hit</td>
+<td>Complete a full learning path aligned to your goal</td>
+<td>500 XP</td>
+</tr>
+<tr>
+<td>All-Rounder</td>
+<td>Learning</td>
+<td>Circle of diverse icons</td>
+<td>Enroll in 5 different category courses</td>
+<td>100 XP</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 Streak System</h3>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-milestones-rewards" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-milestones-rewards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Streak Milestones &amp; Rewards</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Streak Length</th>
+<th>Milestone Name</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 day</td>
+<td>First Flame</td>
+<td>+10 XP</td>
+</tr>
+<tr>
+<td>3 days</td>
+<td>Warming Up</td>
+<td>+30 XP + “3-Day Streak” badge</td>
+</tr>
+<tr>
+<td>7 days</td>
+<td>Week Warrior</td>
+<td>+75 XP + badge + 1 Streak Freeze</td>
+</tr>
+<tr>
+<td>14 days</td>
+<td>Fortnight Fighter</td>
+<td>+150 XP</td>
+</tr>
+<tr>
+<td>30 days</td>
+<td>Monthly Master</td>
+<td>+300 XP + “Unstoppable” badge + 2 Streak Freezes</td>
+</tr>
+<tr>
+<td>50 days</td>
+<td>Half Century</td>
+<td>+500 XP + exclusive profile frame</td>
+</tr>
+<tr>
+<td>100 days</td>
+<td>Century Club</td>
+<td>+1,000 XP + “Century Club” badge + premium certificate template</td>
+</tr>
+<tr>
+<td>365 days</td>
+<td>Year of Learning</td>
+<td>+5,000 XP + “Legend of the Year” badge + 1 month Pro free</td>
+</tr>
+</tbody>
+</table>
+</div><h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-freeze-mechanic" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-freeze-mechanic" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Streak Freeze Mechanic</h4>
+<ul>
+<li><strong>What it does:</strong> Prevents streak from breaking if user misses one day</li>
+<li><strong>How to earn:</strong> Awarded as milestone rewards (see above)</li>
+<li><strong>How to purchase:</strong> 100 XP per freeze, or ₹29 for 3 freezes (IAP)</li>
+<li><strong>Max active freezes:</strong> 3 at any time</li>
+<li><strong>Auto-use:</strong> Freeze is consumed automatically if user misses a day (no action required)</li>
+<li><strong>Notification:</strong> “Your streak freeze was used! You still have a [N]-day streak 🔥”</li>
+</ul>
+<hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.4 Daily Quests &amp; Challenges</h3>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-daily-quest-pool-3-assigned-randomly-per-day" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-daily-quest-pool-3-assigned-randomly-per-day" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Daily Quest Pool (3 assigned randomly per day)</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Quest Name</th>
+<th>Requirement</th>
+<th>XP Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Morning Lesson</td>
+<td>Complete 1 lesson before noon</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Quick Fire</td>
+<td>Answer 5 quiz questions</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Deep Focus</td>
+<td>Watch 20+ minutes of lesson content</td>
+<td>60 XP</td>
+</tr>
+<tr>
+<td>Explorer</td>
+<td>Open 3 different course detail pages</td>
+<td>30 XP</td>
+</tr>
+<tr>
+<td>Note Taker</td>
+<td>Write notes in 2 lessons</td>
+<td>40 XP</td>
+</tr>
+<tr>
+<td>AI Conversation</td>
+<td>Ask the AI assistant a question</td>
+<td>30 XP</td>
+</tr>
+<tr>
+<td>Course Sprinter</td>
+<td>Complete 2 lessons in any course</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Badge Hunter</td>
+<td>Earn any badge today</td>
+<td>25 XP</td>
+</tr>
+<tr>
+<td>Streak Keeper</td>
+<td>Log in and complete any learning activity</td>
+<td>20 XP</td>
+</tr>
+<tr>
+<td>Rating Champion</td>
+<td>Rate a course you’ve completed</td>
+<td>15 XP</td>
+</tr>
+<tr>
+<td>Challenge Mode</td>
+<td>Score 80%+ on a quiz</td>
+<td>60 XP</td>
+</tr>
+<tr>
+<td>Weekend Boost (Sat/Sun only)</td>
+<td>Complete 3 lessons</td>
+<td>75 XP</td>
+</tr>
+<tr>
+<td>Milestone Push</td>
+<td>Reach a XP/level milestone today</td>
+<td>100 XP</td>
+</tr>
+<tr>
+<td>Social Share</td>
+<td>Share your progress or a certificate</td>
+<td>25 XP</td>
+</tr>
+<tr>
+<td>Discovery Mode</td>
+<td>Enroll in a new course</td>
+<td>40 XP</td>
+</tr>
+</tbody>
+</table>
+</div><h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-weekly-challenge" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-weekly-challenge" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Weekly Challenge</h4>
+<p>One challenge per week, announced Monday, ends Sunday:</p>
+<ul>
+<li>Example: “Complete any full course this week → earn the ‘Weekly Champion’ badge + 500 XP”</li>
+<li>Difficulty scales with user level</li>
+</ul>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-monthly-grand-challenge" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-monthly-grand-challenge" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Monthly Grand Challenge</h4>
+<p>One challenge per month, platform-wide:</p>
+<ul>
+<li>Example: “July Learning Marathon — Most lessons completed this month wins a 3-month Pro subscription”</li>
+<li>Leaderboard tracks progress; top 3 win prizes</li>
+</ul>
+<hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.5 Leaderboards</h3>
+<h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-leaderboard-types" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-leaderboard-types" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Leaderboard Types</h4>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Scope</th>
+<th>Reset Cycle</th>
+<th>Opt-out?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Global Leaderboard</td>
+<td>All users by XP</td>
+<td>Weekly (Mon–Sun)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Course Leaderboard</td>
+<td>Enrolled users in same course</td>
+<td>Never resets</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Friends Leaderboard</td>
+<td>User’s followed/connected users</td>
+<td>Weekly</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Institution Leaderboard</td>
+<td>Users within same org</td>
+<td>Monthly</td>
+<td>Institution Admin controls</td>
+</tr>
+</tbody>
+</table>
+</div><h4 id="onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-fair-play-rules" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-fair-play-rules" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Fair Play Rules</h4>
+<ul>
+<li>Leaderboard XP counts only organic actions — no purchased XP</li>
+<li>Duplicate account detection prevents abuse</li>
+<li>Flagged accounts are removed from leaderboard pending review</li>
+<li>Ties broken by earliest timestamp of achieving the score</li>
+</ul>
+<hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-36-level-system-rewards" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-36-level-system-rewards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.6 Level System &amp; Rewards</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Level Milestone</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level 2</td>
+<td>Profile badge “Explorer”, ability to leave reviews</td>
+</tr>
+<tr>
+<td>Level 3</td>
+<td>1 Streak Freeze unlocked</td>
+</tr>
+<tr>
+<td>Level 5</td>
+<td>Access to premium certificate border (Achievement style)</td>
+</tr>
+<tr>
+<td>Level 7</td>
+<td>AI Study Plan Generator unlocked (one plan free)</td>
+</tr>
+<tr>
+<td>Level 10</td>
+<td>Exclusive profile frame + “Grand Master” badge + 10% course discount</td>
+</tr>
+<tr>
+<td>Level 12</td>
+<td>Early access to new course releases</td>
+</tr>
+<tr>
+<td>Level 15</td>
+<td>“Titan” profile frame + “Titan” badge + 1 month Pro free</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h3 id="onboarding-gamification-mechanics-3-gamification-engine-design-37-reward-store-redemption" class="docmd-heading"><a href="#onboarding-gamification-mechanics-3-gamification-engine-design-37-reward-store-redemption" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.7 Reward Store / Redemption</h3>
+<p>Users can redeem XP for rewards:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Reward</th>
+<th>XP Cost</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Streak Freeze</td>
+<td>100 XP</td>
+<td>Max 3 active at once</td>
+</tr>
+<tr>
+<td>Premium Certificate Border</td>
+<td>500 XP</td>
+<td>Visual upgrade on certificate PDF</td>
+</tr>
+<tr>
+<td>10% Course Discount Coupon</td>
+<td>750 XP</td>
+<td>Single-use, valid 30 days</td>
+</tr>
+<tr>
+<td>AI Study Plan</td>
+<td>300 XP</td>
+<td>Generates personalized weekly plan</td>
+</tr>
+<tr>
+<td>Profile Frame (Rare)</td>
+<td>1,000 XP</td>
+<td>Cosmetic, limited-time frames</td>
+</tr>
+<tr>
+<td>1 Month Basic Upgrade</td>
+<td>2,000 XP</td>
+<td>Temporary plan upgrade</td>
+</tr>
+<tr>
+<td>Donate XP to Scholarship Fund</td>
+<td>Any amount</td>
+<td>Platform donates equivalent in INR to student scholarships</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="onboarding-gamification-mechanics-4-age-group-adaptation" class="docmd-heading"><a href="#onboarding-gamification-mechanics-4-age-group-adaptation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Age-Group Adaptation</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Teens (13–17)</th>
+<th>Young Adults (18–35)</th>
+<th>Mid-Career (36–55)</th>
+<th>Seniors (55+)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Font Size (Body)</td>
+<td>16px</td>
+<td>15px</td>
+<td>16px</td>
+<td>20px</td>
+</tr>
+<tr>
+<td>Animation Intensity</td>
+<td>High (confetti, bounces)</td>
+<td>Medium (smooth transitions)</td>
+<td>Low (fade, slide)</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>Gamification Emphasis</td>
+<td>Very High (badges, peers, levels)</td>
+<td>Medium (achievements, certs)</td>
+<td>Low (progress, certification)</td>
+<td>Optional (off by default)</td>
+</tr>
+<tr>
+<td>Streak Reminder Style</td>
+<td>Playful emoji push (“Don’t break your streak 🔥!”)</td>
+<td>Clean (“Your streak: 7 days”)</td>
+<td>Calm (“Your learning streak continues”)</td>
+<td>Gentle (“Remember to learn today”)</td>
+</tr>
+<tr>
+<td>Language Complexity</td>
+<td>Simple, casual</td>
+<td>Professional, concise</td>
+<td>Professional, formal</td>
+<td>Simple, warm, patient</td>
+</tr>
+<tr>
+<td>Help Access</td>
+<td>Chat-first AI</td>
+<td>Self-serve FAQ</td>
+<td>Email/Chat</td>
+<td>Phone button always visible</td>
+</tr>
+<tr>
+<td>Leaderboard</td>
+<td>Shown prominently</td>
+<td>Shown</td>
+<td>Hidden by default</td>
+<td>Hidden</td>
+</tr>
+<tr>
+<td>Social Features</td>
+<td>Friends leaderboard emphasized</td>
+<td>Optional</td>
+<td>Optional</td>
+<td>Opt-in only</td>
+</tr>
+<tr>
+<td>Notification Frequency</td>
+<td>Up to 5/day</td>
+<td>2–3/day</td>
+<td>1–2/day</td>
+<td>1/day max</td>
+</tr>
+<tr>
+<td>Default Learning Goal</td>
+<td>15 min/day</td>
+<td>20 min/day</td>
+<td>15 min/day</td>
+<td>10 min/day</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="onboarding-gamification-mechanics-5-learning-path-design" class="docmd-heading"><a href="#onboarding-gamification-mechanics-5-learning-path-design" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Learning Path Design</h2>
+<h3 id="onboarding-gamification-mechanics-5-learning-path-design-51-structured-learning-phases" class="docmd-heading"><a href="#onboarding-gamification-mechanics-5-learning-path-design-51-structured-learning-phases" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 Structured Learning Phases</h3>
+<pre class="hljs"><code>Phase <span class="hljs-number">1</span><span class="hljs-punctuation">:</span> Foundation
+  └── Beginner courses <span class="hljs-keyword">in</span> chosen category
+  └── Core concepts, short <span class="hljs-title function_">lessons</span> (<span class="hljs-number">5</span>–<span class="hljs-number">10</span> min)
+  └── MCQ quizzes <span class="hljs-keyword">with</span> instant feedback
+
+Phase <span class="hljs-number">2</span><span class="hljs-punctuation">:</span> Intermediate
+  └── Unlocked after completing Phase <span class="hljs-number">1</span> assessment
+  └── Project<span class="hljs-punctuation">-</span>based learning, <span class="hljs-keyword">case</span> studies
+  └── Complex quizzes <span class="hljs-keyword">with</span> partial scoring
+
+Phase <span class="hljs-number">3</span><span class="hljs-punctuation">:</span> Advanced
+  └── Unlocked after Phase <span class="hljs-number">2</span> <span class="hljs-title function_">quiz</span> (score ≥ <span class="hljs-number">75</span><span class="hljs-punctuation">%</span>)
+  └── Expert<span class="hljs-punctuation">-</span>level content, real<span class="hljs-punctuation">-</span>world scenarios
+  └── Peer review <span class="hljs-title function_">exercises</span> (Phase <span class="hljs-number">2</span> feature)
+
+Phase <span class="hljs-number">4</span><span class="hljs-punctuation">:</span> Mastery
+  └── Capstone project or proctored assessment
+  └── Premium verifiable certificate issued
+  └── Mentor session <span class="hljs-title function_">eligibility</span> (Premium plan)
+</code></pre>
+<h3 id="onboarding-gamification-mechanics-5-learning-path-design-52-pre-assessment-adaptive-path-generation" class="docmd-heading"><a href="#onboarding-gamification-mechanics-5-learning-path-design-52-pre-assessment-adaptive-path-generation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Pre-Assessment &amp; Adaptive Path Generation</h3>
+<ul>
+<li><strong>Skill Gap Assessment:</strong> Optional 5-minute diagnostic quiz on enrollment</li>
+<li><strong>Result:</strong> AI calculates starting phase (skip beginner if advanced)</li>
+<li><strong>Path Generation:</strong> Week-by-week schedule generated based on daily goal, course length, and assessment result</li>
+<li><strong>Re-routing:</strong> If user consistently fails quizzes, AI suggests backing up one phase</li>
+</ul>
+<h3 id="onboarding-gamification-mechanics-5-learning-path-design-53-course-sequence-logic" class="docmd-heading"><a href="#onboarding-gamification-mechanics-5-learning-path-design-53-course-sequence-logic" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.3 Course Sequence Logic</h3>
+<ul>
+<li><strong>Prerequisites:</strong> Courses can mark other courses as prerequisites (hard or soft)</li>
+<li><strong>Recommended Next:</strong> Algorithm suggests most logical next course post-completion</li>
+<li><strong>Learning Track:</strong> Curated sequences of 5–8 courses form a “Track” (e.g., “Full-Stack Developer Track”) with a Track Certificate at the end</li>
+</ul>
+<hr>
+<h2 id="onboarding-gamification-mechanics-6-engagement-re-engagement-triggers" class="docmd-heading"><a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Engagement &amp; Re-engagement Triggers</h2>
+<h3 id="onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-61-smart-push-notification-triggers" class="docmd-heading"><a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-61-smart-push-notification-triggers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Smart Push Notification Triggers</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Timing</th>
+<th>Message Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Streak at risk</td>
+<td>2 hours before midnight (if no activity)</td>
+<td>“⚠️ Your 7-day streak ends tonight! Just 1 lesson away.”</td>
+</tr>
+<tr>
+<td>Daily quest not done</td>
+<td>6 PM local time (if not completed)</td>
+<td>“Your daily quests expire in 6 hours. Earn 150 XP!”</td>
+</tr>
+<tr>
+<td>New course in interests</td>
+<td>When published</td>
+<td>“New: [Course Name] just launched in [Interest]”</td>
+</tr>
+<tr>
+<td>Lesson 50% done</td>
+<td>24h after stopping mid-lesson</td>
+<td>“You were halfway through ‘[Lesson Name]’. Resume now?”</td>
+</tr>
+<tr>
+<td>Course completion close</td>
+<td>When 80% complete</td>
+<td>“You’re almost done with ‘[Course]’! Finish it today.”</td>
+</tr>
+<tr>
+<td>Leaderboard position change</td>
+<td>When overtaken in weekly leaderboard</td>
+<td>“[User X] just overtook you! Learn now to reclaim your spot.”</td>
+</tr>
+<tr>
+<td>Certificate ready</td>
+<td>Immediately on generation</td>
+<td>“🎉 Your certificate for ‘[Course]’ is ready! Download it.”</td>
+</tr>
+<tr>
+<td>Membership expiry</td>
+<td>7 days and 1 day before</td>
+<td>“Your Pro plan renews in 7 days. Keep learning!”</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-62-win-back-flow-churned-users-7-days-inactive" class="docmd-heading"><a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-62-win-back-flow-churned-users-7-days-inactive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 Win-Back Flow (Churned Users, 7+ days inactive)</h3>
+<p><strong>Day 7:</strong> “We miss you, [Name]! You were [X]% through [Course].”<br>
+<strong>Day 14:</strong> Streak recovery offer — “Your [N]-day streak is at risk. Use a streak freeze?”<br>
+<strong>Day 30:</strong> “You’ve been away for a while. Here’s what you missed: [X new courses].”<br>
+<strong>Day 60:</strong> Personalized discount offer — “Come back and get 30% off Pro for 3 months.”<br>
+<strong>Day 90:</strong> Final re-engagement — survey asking why they left (data for product improvement).</p>
+<h3 id="onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-63-smart-reminder-logic" class="docmd-heading"><a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-63-smart-reminder-logic" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Smart Reminder Logic</h3>
+<ul>
+<li>AI learns optimal notification time per user based on open-rate history</li>
+<li>Users in “Do Not Disturb” hours receive notifications queued for after that window</li>
+<li>Notification frequency caps: Free = 3/day, Pro = 5/day (user-configurable)</li>
+<li>All re-engagement messages are personalized with the user’s actual course name and progress %</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../01_business_and_prd/product_vision_and_business_goals/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Product Vision &amp; Business Goals
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../02_user_and_ux/user_roles_and_permissions/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            User Roles &amp; Permissions Matrix
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#onboarding-gamification-mechanics" class="toc-link">Onboarding &amp; Gamification Mechanics</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-1-onboarding-philosophy" class="toc-link">1. Onboarding Philosophy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-core-principle-value-in-under-3-minutes" class="toc-link">Core Principle: Value in Under 3 Minutes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-design-principles" class="toc-link">Design Principles</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-1-onboarding-philosophy-age-adaptive-modes" class="toc-link">Age-Adaptive Modes</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step" class="toc-link">2. Onboarding Flow — Step by Step</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-1-splash-welcome" class="toc-link">Step 1: Splash / Welcome</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-2-choose-your-path-role-selection" class="toc-link">Step 2: Choose Your Path (Role Selection)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-3-set-your-learning-goal" class="toc-link">Step 3: Set Your Learning Goal</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-4-interest-skill-category-selection" class="toc-link">Step 4: Interest / Skill Category Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-5-learning-schedule-preference" class="toc-link">Step 5: Learning Schedule Preference</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-6-profile-setup" class="toc-link">Step 6: Profile Setup</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-7-personalized-course-recommendations-preview" class="toc-link">Step 7: Personalized Course Recommendations Preview</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-2-onboarding-flow-step-by-step-step-8-first-course-selection-enroll-cta" class="toc-link">Step 8: First Course Selection + Enroll CTA</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design" class="toc-link">3. Gamification Engine Design</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system" class="toc-link">3.1 Experience Points (XP) System</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-earned-per-action" class="toc-link">XP Earned Per Action</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-31-experience-points-xp-system-xp-leveling-thresholds" class="toc-link">XP Leveling Thresholds</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system" class="toc-link">3.2 Badge System</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-32-badge-system-badge-categories-full-badge-list" class="toc-link">Badge Categories &amp; Full Badge List</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system" class="toc-link">3.3 Streak System</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-milestones-rewards" class="toc-link">Streak Milestones &amp; Rewards</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-33-streak-system-streak-freeze-mechanic" class="toc-link">Streak Freeze Mechanic</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges" class="toc-link">3.4 Daily Quests &amp; Challenges</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-daily-quest-pool-3-assigned-randomly-per-day" class="toc-link">Daily Quest Pool (3 assigned randomly per day)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-weekly-challenge" class="toc-link">Weekly Challenge</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-34-daily-quests-challenges-monthly-grand-challenge" class="toc-link">Monthly Grand Challenge</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards" class="toc-link">3.5 Leaderboards</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-leaderboard-types" class="toc-link">Leaderboard Types</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-35-leaderboards-fair-play-rules" class="toc-link">Fair Play Rules</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-36-level-system-rewards" class="toc-link">3.6 Level System &amp; Rewards</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-3-gamification-engine-design-37-reward-store-redemption" class="toc-link">3.7 Reward Store / Redemption</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-4-age-group-adaptation" class="toc-link">4. Age-Group Adaptation</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-5-learning-path-design" class="toc-link">5. Learning Path Design</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-5-learning-path-design-51-structured-learning-phases" class="toc-link">5.1 Structured Learning Phases</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-5-learning-path-design-52-pre-assessment-adaptive-path-generation" class="toc-link">5.2 Pre-Assessment &amp; Adaptive Path Generation</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-5-learning-path-design-53-course-sequence-logic" class="toc-link">5.3 Course Sequence Logic</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers" class="toc-link">6. Engagement &amp; Re-engagement Triggers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-61-smart-push-notification-triggers" class="toc-link">6.1 Smart Push Notification Triggers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-62-win-back-flow-churned-users-7-days-inactive" class="toc-link">6.2 Win-Back Flow (Churned Users, 7+ days inactive)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#onboarding-gamification-mechanics-6-engagement-re-engagement-triggers-63-smart-reminder-logic" class="toc-link">6.3 Smart Reminder Logic</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

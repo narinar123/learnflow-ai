@@ -1,0 +1,2346 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Backend Architecture &amp; API Specification : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/04_technical_architecture/backend_architecture_and_apis/">
+<meta property="og:title" content="Backend Architecture &amp; API Specification - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/04_technical_architecture/backend_architecture_and_apis/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Backend Architecture &amp; API Specification - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/04_technical_architecture/backend_architecture_and_apis.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Backend Architecture &amp; API Specification
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Backend%20Architecture%20%26%20API%20Specification%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Architecture%20Overview%0A%0AThe%20backend%20is%20a%20**modular%20monolith**%20(Phase%201%E2%80%932)%20with%20a%20clear%20separation%20of%20concerns%2C%20designed%20to%20be%20decomposed%20into%20microservices%20when%20scaling%20demands%20it%20(Phase%203%2B).%20It%20is%20built%20with%20**Node.js%20%2B%20Express.js**%20and%20communicates%20with%20a%20**PostgreSQL**%20database%20via%20**Prisma%20ORM**.%0A%0A%23%23%23%201.1%20High-Level%20System%20Architecture%0A%0A%60%60%60%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20CLIENT%20LAYER%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20Flutter%20(iOS%2FAndroid)%20%20%E2%94%82%20%20Next.js%20(Web)%20%20%E2%94%82%20%20Electron%20%20%20%20%20%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20HTTPS%20%2F%20WSS%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20API%20GATEWAY%20%2F%20LOAD%20BALANCER%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(Nginx%20%2F%20AWS%20ALB%20%2F%20Cloudflare)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LEARNFLOW%20API%20SERVER%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20Node.js%2020%20LTS%20%2B%20Express.js%20%2B%20TypeScript%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82%20%20%20Auth%20%20%20%20%E2%94%82%20%E2%94%82%20%20Courses%20%20%E2%94%82%20%E2%94%82%20%20%20Quiz%20%20%20%20%E2%94%82%20%E2%94%82%20%20%20%20AI%20%20%20%20%20%20%E2%94%82%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%20%E2%94%82%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82Membership%20%E2%94%82%20%E2%94%82%20Payments%20%20%E2%94%82%20%E2%94%82%20%20Notify%20%20%20%E2%94%82%20%E2%94%82%20%20Support%20%20%20%E2%94%82%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%20%E2%94%82%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82%20%20Admin%20%20%20%20%E2%94%82%20%E2%94%82Analytics%20%20%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%E2%94%82%20%20Module%20%20%20%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%20%20%20%20%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%20%20%20%20%20%20%20%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20PostgreSQL%20%20%E2%94%82%20%20%20%E2%94%82%20%20Redis%20Cache%20%20%20%20%20%20%20%E2%94%82%20%20%20%E2%94%82%20%20BullMQ%20Queue%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20(Primary)%20%20%E2%94%82%20%20%20%E2%94%82%20%20(Sessions%2FCache)%20%20%E2%94%82%20%20%20%E2%94%82%20%20(Background%20Jobs)%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20EXTERNAL%20SERVICES%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20AWS%20S3%20(Media)%20%E2%94%82%20Razorpay%2FStripe%20%E2%94%82%20FCM%2FAPNs%20%E2%94%82%20SendGrid%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20Gemini%20API%20(AI)%E2%94%82%20pgvector%20(RAG)%20%20%E2%94%82%20Twilio%20OTP%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%60%60%60%0A%0A%23%23%23%201.2%20Backend%20Stack%0A%7C%20Component%20%7C%20Technology%20%7C%0A%7C---%7C---%7C%0A%7C%20Runtime%20%7C%20Node.js%2020%20LTS%20%7C%0A%7C%20Framework%20%7C%20Express.js%204.x%20%2B%20TypeScript%205.x%20%7C%0A%7C%20ORM%20%7C%20Prisma%205.x%20%7C%0A%7C%20Database%20%7C%20PostgreSQL%2016%20%7C%0A%7C%20Cache%20%7C%20Redis%207%20(ioredis)%20%7C%0A%7C%20Job%20Queue%20%7C%20BullMQ%20(Redis-backed)%20%7C%0A%7C%20File%20Storage%20%7C%20AWS%20S3%20(or%20Wasabi%20S3-compatible)%20%7C%0A%7C%20Authentication%20%7C%20JWT%20(access%2015min%20%2B%20refresh%207d)%20%7C%0A%7C%20Real-time%20%7C%20Socket.io%20(notifications%2C%20live%20updates)%20%7C%0A%7C%20Email%20%7C%20SendGrid%20%7C%0A%7C%20SMS%2FOTP%20%7C%20Twilio%20%7C%0A%7C%20Push%20Notifications%20%7C%20Firebase%20Admin%20SDK%20(FCM%2FAPNs)%20%7C%0A%7C%20Payments%20%7C%20Razorpay%20(India)%20%2B%20Stripe%20(International)%20%7C%0A%7C%20AI%20%7C%20Google%20Gemini%20API%20%2B%20LangChain.js%20%7C%0A%7C%20Video%20Transcoding%20%7C%20AWS%20MediaConvert%20(or%20Mux.com)%20%7C%0A%7C%20Monitoring%20%7C%20Sentry%20%2B%20DataDog%20(or%20Grafana%20%2B%20Prometheus)%20%7C%0A%7C%20API%20Documentation%20%7C%20Swagger%2FOpenAPI%203.0%20%7C%0A%0A---%0A%0A%23%23%202.%20Project%20Structure%0A%0A%60%60%60%0Asrc%2F%0A%E2%94%9C%E2%94%80%E2%94%80%20api%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20API%20route%20definitions%0A%E2%94%82%20%20%20%E2%94%94%E2%94%80%E2%94%80%20v1%2F%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20auth.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20users.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20courses.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20lessons.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20quizzes.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20certificates.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20memberships.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20payments.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20ai.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20notifications.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20support.routes.ts%0A%E2%94%82%20%20%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20admin.routes.ts%0A%E2%94%82%0A%E2%94%9C%E2%94%80%E2%94%80%20controllers%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Request%20handlers%0A%E2%94%9C%E2%94%80%E2%94%80%20services%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Business%20logic%0A%E2%94%9C%E2%94%80%E2%94%80%20repositories%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Data%20access%20layer%20(Prisma%20queries)%0A%E2%94%9C%E2%94%80%E2%94%80%20middleware%2F%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20auth.middleware.ts%20%20%20%20%20%20%23%20JWT%20verification%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20rbac.middleware.ts%20%20%20%20%20%20%23%20Role-based%20access%20control%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20validate.middleware.ts%20%20%23%20Zod%20input%20validation%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20rateLimit.middleware.ts%20%23%20Rate%20limiting%20(express-rate-limit)%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20upload.middleware.ts%20%20%20%20%23%20Multer%20%2B%20S3%20file%20upload%0A%E2%94%82%20%20%20%E2%94%94%E2%94%80%E2%94%80%20error.middleware.ts%20%20%20%20%23%20Global%20error%20handler%0A%E2%94%82%0A%E2%94%9C%E2%94%80%E2%94%80%20jobs%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20BullMQ%20job%20definitions%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20email.job.ts%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20notification.job.ts%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20certificate.job.ts%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20video-transcode.job.ts%0A%E2%94%82%20%20%20%E2%94%94%E2%94%80%E2%94%80%20subscription-renewal.job.ts%0A%E2%94%82%0A%E2%94%9C%E2%94%80%E2%94%80%20workers%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20BullMQ%20worker%20processes%0A%E2%94%9C%E2%94%80%E2%94%80%20lib%2F%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20prisma.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Prisma%20client%20singleton%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20redis.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Redis%20client%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20queue.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20BullMQ%20queue%20instances%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20s3.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20AWS%20S3%20client%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20firebase.ts%20%20%20%20%20%20%20%20%20%20%20%20%23%20Firebase%20Admin%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20sendgrid.ts%20%20%20%20%20%20%20%20%20%20%20%20%23%20SendGrid%20client%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20gemini.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Google%20Gemini%20API%20client%0A%E2%94%82%20%20%20%E2%94%94%E2%94%80%E2%94%80%20stripe.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Stripe%20client%0A%E2%94%82%0A%E2%94%9C%E2%94%80%E2%94%80%20types%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20TypeScript%20type%20definitions%0A%E2%94%9C%E2%94%80%E2%94%80%20utils%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Helpers%2C%20validators%0A%E2%94%9C%E2%94%80%E2%94%80%20config%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Configuration%20management%0A%E2%94%9C%E2%94%80%E2%94%80%20prisma%2F%0A%E2%94%82%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20schema.prisma%20%20%20%20%20%20%20%20%20%20%23%20Database%20schema%0A%E2%94%82%20%20%20%E2%94%94%E2%94%80%E2%94%80%20migrations%2F%20%20%20%20%20%20%20%20%20%20%20%20%23%20Migration%20files%0A%E2%94%9C%E2%94%80%E2%94%80%20app.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Express%20app%20setup%0A%E2%94%94%E2%94%80%E2%94%80%20server.ts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Server%20entry%20point%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20API%20Specifications%0A%0A%23%23%23%20Base%20URL%0A-%20Development%3A%20%60http%3A%2F%2Flocalhost%3A4000%2Fapi%2Fv1%60%0A-%20Production%3A%20%60https%3A%2F%2Fapi.learnflow.ai%2Fapi%2Fv1%60%0A%0A%23%23%23%20Standard%20Response%20Format%0A%60%60%60json%0A%2F%2F%20Success%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%20...%20%7D%2C%0A%20%20%22meta%22%3A%20%7B%20%22page%22%3A%201%2C%20%22limit%22%3A%2020%2C%20%22total%22%3A%20150%2C%20%22totalPages%22%3A%208%20%7D%0A%7D%0A%0A%2F%2F%20Error%0A%7B%0A%20%20%22success%22%3A%20false%2C%0A%20%20%22error%22%3A%20%7B%0A%20%20%20%20%22code%22%3A%20%22AUTH_INVALID_TOKEN%22%2C%0A%20%20%20%20%22message%22%3A%20%22Invalid%20or%20expired%20authentication%20token%22%2C%0A%20%20%20%20%22details%22%3A%20%5B%5D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%20Authentication%20Headers%0A%60%60%60%0AAuthorization%3A%20Bearer%20%3Caccess_token%3E%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.1%20AUTH%20API%0A%0A%23%23%23%23%20POST%20%2Fauth%2Fregister%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22email%22%3A%20%22priya%40example.com%22%2C%0A%20%20%22password%22%3A%20%22SecurePass123!%22%2C%0A%20%20%22displayName%22%3A%20%22Priya%20Sharma%22%0A%7D%0A%0A%2F%2F%20Response%20201%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22message%22%3A%20%22OTP%20sent%20to%20priya%40example.com%22%2C%0A%20%20%20%20%22userId%22%3A%20%22usr_abc123%22%2C%0A%20%20%20%20%22otpExpiresAt%22%3A%20%222026-07-07T06%3A25%3A00Z%22%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Fverify-otp%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22userId%22%3A%20%22usr_abc123%22%2C%20%22otp%22%3A%20%22847291%22%20%7D%0A%0A%2F%2F%20Response%20200%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22accessToken%22%3A%20%22eyJhbGciOiJIUzI1NiIsInR...%22%2C%0A%20%20%20%20%22refreshToken%22%3A%20%22rt_...%22%2C%0A%20%20%20%20%22expiresIn%22%3A%20900%2C%0A%20%20%20%20%22user%22%3A%20%7B%0A%20%20%20%20%20%20%22id%22%3A%20%22usr_abc123%22%2C%0A%20%20%20%20%20%20%22email%22%3A%20%22priya%40example.com%22%2C%0A%20%20%20%20%20%20%22displayName%22%3A%20%22Priya%20Sharma%22%2C%0A%20%20%20%20%20%20%22role%22%3A%20%22STUDENT%22%2C%0A%20%20%20%20%20%20%22plan%22%3A%20%22FREE%22%2C%0A%20%20%20%20%20%20%22onboardingCompleted%22%3A%20false%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Flogin%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22email%22%3A%20%22priya%40example.com%22%2C%20%22password%22%3A%20%22SecurePass123!%22%20%7D%0A%2F%2F%20Response%3A%20same%20structure%20as%20verify-otp%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Frefresh-token%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22refreshToken%22%3A%20%22rt_...%22%20%7D%0A%2F%2F%20Response%3A%20%7B%20accessToken%2C%20expiresIn%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Flogout%0A%60%60%60json%0A%2F%2F%20Headers%3A%20Authorization%20required%0A%2F%2F%20Request%3A%20%7B%7D%0A%2F%2F%20Response%20200%3A%20%7B%20%22success%22%3A%20true%2C%20%22data%22%3A%20%7B%20%22message%22%3A%20%22Logged%20out%22%20%7D%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Fforgot-password%0A%60%60%60json%0A%2F%2F%20Request%3A%20%7B%20%22email%22%3A%20%22priya%40example.com%22%20%7D%0A%2F%2F%20Response%3A%20%7B%20%22success%22%3A%20true%2C%20%22data%22%3A%20%7B%20%22message%22%3A%20%22Reset%20email%20sent%22%20%7D%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fauth%2Freset-password%0A%60%60%60json%0A%2F%2F%20Request%3A%20%7B%20%22token%22%3A%20%22reset_token_from_email%22%2C%20%22newPassword%22%3A%20%22NewPass123!%22%20%7D%0A%2F%2F%20Response%3A%20%7B%20%22success%22%3A%20true%2C%20%22data%22%3A%20%7B%20%22message%22%3A%20%22Password%20updated%22%20%7D%20%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.2%20USERS%20API%0A%0A%23%23%23%23%20GET%20%2Fusers%2Fme%0A%60%60%60json%0A%2F%2F%20Response%20200%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22id%22%3A%20%22usr_abc123%22%2C%0A%20%20%20%20%22email%22%3A%20%22priya%40example.com%22%2C%0A%20%20%20%20%22displayName%22%3A%20%22Priya%20Sharma%22%2C%0A%20%20%20%20%22avatarUrl%22%3A%20%22https%3A%2F%2Fcdn.learnflow.ai%2Favatars%2Fusr_abc123.jpg%22%2C%0A%20%20%20%20%22role%22%3A%20%22STUDENT%22%2C%0A%20%20%20%20%22plan%22%3A%20%22PRO%22%2C%0A%20%20%20%20%22xp%22%3A%201250%2C%0A%20%20%20%20%22level%22%3A%205%2C%0A%20%20%20%20%22streak%22%3A%20%7B%20%22current%22%3A%2014%2C%20%22longest%22%3A%2021%2C%20%22freezes%22%3A%202%20%7D%2C%0A%20%20%20%20%22onboardingCompleted%22%3A%20true%2C%0A%20%20%20%20%22createdAt%22%3A%20%222026-07-01T10%3A00%3A00Z%22%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20PATCH%20%2Fusers%2Fme%0A%60%60%60json%0A%2F%2F%20Request%20(any%20subset)%0A%7B%20%22displayName%22%3A%20%22Priya%20S.%22%2C%20%22ageRange%22%3A%20%2218-25%22%2C%20%22interests%22%3A%20%5B%22technology%22%2C%20%22design%22%5D%20%7D%0A%2F%2F%20Response%3A%20updated%20user%20object%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fusers%2Fme%2Fprogress%0A%60%60%60json%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22coursesCompleted%22%3A%203%2C%0A%20%20%20%20%22lessonsCompleted%22%3A%2047%2C%0A%20%20%20%20%22hoursLearned%22%3A%2012.5%2C%0A%20%20%20%20%22certificatesEarned%22%3A%203%2C%0A%20%20%20%20%22quizzesTaken%22%3A%2012%2C%0A%20%20%20%20%22averageQuizScore%22%3A%2082%2C%0A%20%20%20%20%22weeklyActivity%22%3A%20%5B%0A%20%20%20%20%20%20%7B%20%22date%22%3A%20%222026-07-01%22%2C%20%22minutesLearned%22%3A%2025%20%7D%2C%0A%20%20%20%20%20%20%7B%20%22date%22%3A%20%222026-07-02%22%2C%20%22minutesLearned%22%3A%200%20%7D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.3%20COURSES%20API%0A%0A%23%23%23%23%20GET%20%2Fcourses%0A%60%60%60%0AQuery%20params%3A%20page%2C%20limit%2C%20category%2C%20level%2C%20minRating%2C%20maxPrice%2C%20search%2C%20sort%0A%60%60%60%0A%60%60%60json%0A%2F%2F%20Response%20200%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%5B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%22id%22%3A%20%22crs_xyz789%22%2C%0A%20%20%20%20%20%20%22title%22%3A%20%22Python%20for%20Beginners%22%2C%0A%20%20%20%20%20%20%22slug%22%3A%20%22python-for-beginners%22%2C%0A%20%20%20%20%20%20%22thumbnailUrl%22%3A%20%22https%3A%2F%2Fcdn.learnflow.ai%2Fthumbnails%2Fpython.jpg%22%2C%0A%20%20%20%20%20%20%22instructor%22%3A%20%7B%20%22id%22%3A%20%22usr_instr1%22%2C%20%22displayName%22%3A%20%22Dr.%20Rajan%22%2C%20%22avatarUrl%22%3A%20%22...%22%20%7D%2C%0A%20%20%20%20%20%20%22category%22%3A%20%7B%20%22id%22%3A%20%22cat_tech%22%2C%20%22name%22%3A%20%22Technology%22%20%7D%2C%0A%20%20%20%20%20%20%22level%22%3A%20%22BEGINNER%22%2C%0A%20%20%20%20%20%20%22durationHours%22%3A%208.5%2C%0A%20%20%20%20%20%20%22lessonsCount%22%3A%2024%2C%0A%20%20%20%20%20%20%22price%22%3A%20599%2C%0A%20%20%20%20%20%20%22currency%22%3A%20%22INR%22%2C%0A%20%20%20%20%20%20%22includedInPro%22%3A%20true%2C%0A%20%20%20%20%20%20%22rating%22%3A%204.8%2C%0A%20%20%20%20%20%20%22reviewsCount%22%3A%201234%2C%0A%20%20%20%20%20%20%22enrolledCount%22%3A%2012456%2C%0A%20%20%20%20%20%20%22isFree%22%3A%20false%2C%0A%20%20%20%20%20%20%22hasCertificate%22%3A%20true%2C%0A%20%20%20%20%20%20%22language%22%3A%20%22English%22%2C%0A%20%20%20%20%20%20%22lastUpdated%22%3A%20%222026-06-15%22%2C%0A%20%20%20%20%20%20%22tags%22%3A%20%5B%22python%22%2C%20%22programming%22%2C%20%22beginners%22%5D%0A%20%20%20%20%7D%0A%20%20%5D%2C%0A%20%20%22meta%22%3A%20%7B%20%22page%22%3A%201%2C%20%22limit%22%3A%2020%2C%20%22total%22%3A%2084%2C%20%22totalPages%22%3A%205%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fcourses%2F%3Aid%0AReturns%20full%20course%20with%20curriculum%2C%20instructor%20details%2C%20reviews%20sample%2C%20and%20user%20enrollment%20status.%0A%0A%23%23%23%23%20POST%20%2Fcourses%2F%3Aid%2Fenroll%0A%60%60%60json%0A%2F%2F%20Request%3A%20%7B%7D%0A%2F%2F%20Response%20201%3A%20%7B%20%22success%22%3A%20true%2C%20%22data%22%3A%20%7B%20%22enrollmentId%22%3A%20%22enr_...%22%2C%20%22enrolledAt%22%3A%20%22...%22%20%7D%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fcourses%20(Trainer%20only)%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22title%22%3A%20%22Advanced%20React%20Patterns%22%2C%0A%20%20%22description%22%3A%20%22Learn...%22%2C%0A%20%20%22categoryId%22%3A%20%22cat_tech%22%2C%0A%20%20%22level%22%3A%20%22ADVANCED%22%2C%0A%20%20%22price%22%3A%201299%2C%0A%20%20%22language%22%3A%20%22English%22%2C%0A%20%20%22tags%22%3A%20%5B%22react%22%2C%20%22javascript%22%5D%0A%7D%0A%2F%2F%20Response%20201%3A%20created%20draft%20course%20object%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.4%20LESSONS%20API%0A%0A%23%23%23%23%20GET%20%2Fcourses%2F%3AcourseId%2Flessons%0AReturns%20ordered%20list%20of%20all%20lessons%20in%20a%20course%20(with%20user&#039;s%20completion%20state%20per%20lesson%20if%20authenticated).%0A%0A%23%23%23%23%20GET%20%2Fcourses%2F%3AcourseId%2Flessons%2F%3AlessonId%0A%60%60%60json%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22id%22%3A%20%22lsn_123%22%2C%0A%20%20%20%20%22title%22%3A%20%22Functions%20and%20Scope%22%2C%0A%20%20%20%20%22type%22%3A%20%22VIDEO%22%2C%0A%20%20%20%20%22order%22%3A%205%2C%0A%20%20%20%20%22duration%22%3A%20847%2C%0A%20%20%20%20%22videoUrl%22%3A%20%22https%3A%2F%2Fcdn.learnflow.ai%2Fvideos%2Flsn_123%2Fhls%2Fmaster.m3u8%22%2C%0A%20%20%20%20%22videoCaptionUrl%22%3A%20%22https%3A%2F%2Fcdn.learnflow.ai%2Fcaptions%2Flsn_123.vtt%22%2C%0A%20%20%20%20%22resources%22%3A%20%5B%0A%20%20%20%20%20%20%7B%20%22name%22%3A%20%22Lecture%20Notes.pdf%22%2C%20%22url%22%3A%20%22https%3A%2F%2F...%22%20%7D%0A%20%20%20%20%5D%2C%0A%20%20%20%20%22userProgress%22%3A%20%7B%0A%20%20%20%20%20%20%22lastPosition%22%3A%20243%2C%0A%20%20%20%20%20%20%22completed%22%3A%20false%2C%0A%20%20%20%20%20%20%22notes%22%3A%20%22Lorem%20ipsum...%22%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fcourses%2F%3AcourseId%2Flessons%2F%3AlessonId%2Fprogress%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22lastPosition%22%3A%20423%2C%20%22completed%22%3A%20true%20%7D%0A%2F%2F%20Response%20200%3A%20updated%20progress%20%2B%20XP%20awarded%20if%20completed%0A%60%60%60%0A%0A%23%23%23%23%20PATCH%20%2Fcourses%2F%3AcourseId%2Flessons%2F%3AlessonId%2Fnotes%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22content%22%3A%20%22Key%20concept%3A%20closures%20mean...%22%20%7D%0A%2F%2F%20Response%20200%3A%20%7B%20%22noteId%22%3A%20%22nte_...%22%2C%20%22savedAt%22%3A%20%22...%22%20%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.5%20QUIZ%20API%0A%0A%23%23%23%23%20GET%20%2Fcourses%2F%3AcourseId%2Fquizzes%2F%3AquizId%0AReturns%20quiz%20metadata%20and%20questions%20(scrambled%20order%2C%20no%20correct%20answers%20exposed).%0A%0A%23%23%23%23%20POST%20%2Fcourses%2F%3AcourseId%2Fquizzes%2F%3AquizId%2Fsubmit%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22answers%22%3A%20%5B%0A%20%20%20%20%7B%20%22questionId%22%3A%20%22q_001%22%2C%20%22selectedOptionIds%22%3A%20%5B%22opt_a%22%5D%20%7D%2C%0A%20%20%20%20%7B%20%22questionId%22%3A%20%22q_002%22%2C%20%22selectedOptionIds%22%3A%20%5B%22opt_c%22%2C%20%22opt_d%22%5D%20%7D%2C%0A%20%20%20%20%7B%20%22questionId%22%3A%20%22q_003%22%2C%20%22textAnswer%22%3A%20%22Python%22%20%7D%0A%20%20%5D%2C%0A%20%20%22timeTakenSeconds%22%3A%20312%0A%7D%0A%0A%2F%2F%20Response%20200%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22attemptId%22%3A%20%22att_...%22%2C%0A%20%20%20%20%22score%22%3A%2080%2C%0A%20%20%20%20%22correctCount%22%3A%208%2C%0A%20%20%20%20%22totalCount%22%3A%2010%2C%0A%20%20%20%20%22passed%22%3A%20true%2C%0A%20%20%20%20%22xpAwarded%22%3A%2075%2C%0A%20%20%20%20%22badgeAwarded%22%3A%20%7B%20%22id%22%3A%20%22bdg_quiz_ace%22%2C%20%22name%22%3A%20%22Quiz%20Ace%22%20%7D%2C%0A%20%20%20%20%22reviewItems%22%3A%20%5B%0A%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%22questionId%22%3A%20%22q_001%22%2C%0A%20%20%20%20%20%20%20%20%22questionText%22%3A%20%22What%20is%20a%20Python%20list%3F%22%2C%0A%20%20%20%20%20%20%20%20%22userAnswerIds%22%3A%20%5B%22opt_a%22%5D%2C%0A%20%20%20%20%20%20%20%20%22correctAnswerIds%22%3A%20%5B%22opt_a%22%5D%2C%0A%20%20%20%20%20%20%20%20%22isCorrect%22%3A%20true%2C%0A%20%20%20%20%20%20%20%20%22explanation%22%3A%20%22A%20Python%20list%20is...%22%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.6%20CERTIFICATES%20API%0A%0A%23%23%23%23%20GET%20%2Fusers%2Fme%2Fcertificates%0AReturns%20array%20of%20earned%20certificates.%0A%0A%23%23%23%23%20GET%20%2Fcertificates%2F%3Aid%0APublic%20endpoint%20%E2%80%94%20no%20auth%20required.%20Returns%20certificate%20verification%20data.%0A%60%60%60json%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22certificateId%22%3A%20%22cert_abc%22%2C%0A%20%20%20%20%22valid%22%3A%20true%2C%0A%20%20%20%20%22recipientName%22%3A%20%22Priya%20Sharma%22%2C%0A%20%20%20%20%22courseName%22%3A%20%22Python%20for%20Beginners%22%2C%0A%20%20%20%20%22completedAt%22%3A%20%222026-07-05%22%2C%0A%20%20%20%20%22instructorName%22%3A%20%22Dr.%20Rajan%20Mehta%22%2C%0A%20%20%20%20%22issuerName%22%3A%20%22LearnFlow%20AI%22%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fcertificates%2F%3Aid%2Fpdf%0AStreams%20PDF%20download%20(requires%20auth%2C%20validates%20ownership).%0A%0A---%0A%0A%23%23%23%203.7%20MEMBERSHIP%20API%0A%0A%23%23%23%23%20GET%20%2Fmemberships%2Fplans%0AReturns%20all%20active%20membership%20plan%20definitions.%0A%0A%23%23%23%23%20GET%20%2Fusers%2Fme%2Fmembership%0AReturns%20the%20authenticated%20user&#039;s%20current%20membership%20details.%0A%0A%23%23%23%23%20POST%20%2Fmemberships%2Fsubscribe%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22planId%22%3A%20%22plan_pro_monthly%22%2C%20%22paymentMethodId%22%3A%20%22pm_razorpay_...%22%20%7D%0A%2F%2F%20Response%20201%3A%20membership%20object%20%2B%20payment%20confirmation%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fmemberships%2Fcancel%0ACancels%20at%20period%20end.%0A%0A---%0A%0A%23%23%23%203.8%20PAYMENTS%20API%0A%0A%23%23%23%23%20POST%20%2Fpayments%2Fcreate-order%20(Razorpay)%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22amount%22%3A%2059900%2C%20%22currency%22%3A%20%22INR%22%2C%20%22type%22%3A%20%22course%22%2C%20%22referenceId%22%3A%20%22crs_xyz789%22%20%7D%0A%0A%2F%2F%20Response%20201%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22orderId%22%3A%20%22order_razorpay_...%22%2C%0A%20%20%20%20%22amount%22%3A%2059900%2C%0A%20%20%20%20%22currency%22%3A%20%22INR%22%2C%0A%20%20%20%20%22key%22%3A%20%22rzp_live_...%22%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fpayments%2Fverify%20(Razorpay%20webhook%20signature%20verification)%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22razorpay_order_id%22%3A%20%22order_...%22%2C%0A%20%20%22razorpay_payment_id%22%3A%20%22pay_...%22%2C%0A%20%20%22razorpay_signature%22%3A%20%22sha256_hash%22%0A%7D%0A%2F%2F%20Response%20200%3A%20payment%20confirmed%2C%20enrollment%2Fsubscription%20activated%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fpayments%2Fhistory%0AReturns%20paginated%20transaction%20history%20for%20authenticated%20user.%0A%0A---%0A%0A%23%23%23%203.9%20AI%20API%0A%0A%23%23%23%23%20POST%20%2Fai%2Fchat%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22message%22%3A%20%22Explain%20closures%20in%20Python%20with%20an%20example%22%2C%0A%20%20%22conversationId%22%3A%20%22conv_abc123%22%2C%0A%20%20%22context%22%3A%20%7B%20%22courseId%22%3A%20%22crs_xyz789%22%2C%20%22lessonId%22%3A%20%22lsn_123%22%20%7D%0A%7D%0A%0A%2F%2F%20Response%20200%20(streaming%20SSE%20supported)%0A%7B%0A%20%20%22success%22%3A%20true%2C%0A%20%20%22data%22%3A%20%7B%0A%20%20%20%20%22messageId%22%3A%20%22msg_...%22%2C%0A%20%20%20%20%22role%22%3A%20%22assistant%22%2C%0A%20%20%20%20%22content%22%3A%20%22A%20closure%20in%20Python%20is...%22%2C%0A%20%20%20%20%22sources%22%3A%20%5B%7B%20%22lessonId%22%3A%20%22lsn_123%22%2C%20%22title%22%3A%20%22Functions%20and%20Scope%22%2C%20%22timestamp%22%3A%20245%20%7D%5D%2C%0A%20%20%20%20%22queriesRemaining%22%3A%2042%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fai%2Fstudy-plan%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22goalId%22%3A%20%22get_job%22%2C%20%22weeklyHours%22%3A%2010%2C%20%22startDate%22%3A%20%222026-07-10%22%20%7D%0A%2F%2F%20Response%3A%20%7B%20weeklyPlan%3A%20%5B...%5D%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20POST%20%2Fai%2Fgenerate-quiz%20(Trainer%20only)%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%20%22lessonId%22%3A%20%22lsn_123%22%2C%20%22questionCount%22%3A%205%2C%20%22difficulty%22%3A%20%22medium%22%20%7D%0A%2F%2F%20Response%3A%20%7B%20questions%3A%20%5B...%5D%20%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.10%20NOTIFICATIONS%20API%0A%0A%23%23%23%23%20GET%20%2Fnotifications%0AReturns%20user&#039;s%20notifications%20(paginated%2C%20with%20unread%20count).%0A%0A%23%23%23%23%20PATCH%20%2Fnotifications%2F%3Aid%2Fread%0AMarks%20a%20notification%20as%20read.%0A%0A%23%23%23%23%20PATCH%20%2Fnotifications%2Fread-all%0A%0A%23%23%23%23%20GET%20%2Fnotifications%2Fpreferences%0AReturns%20user&#039;s%20notification%20preference%20settings.%0A%0A%23%23%23%23%20PATCH%20%2Fnotifications%2Fpreferences%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22learningReminders%22%3A%20true%2C%0A%20%20%22streakAlerts%22%3A%20true%2C%0A%20%20%22achievements%22%3A%20true%2C%0A%20%20%22newCourses%22%3A%20false%2C%0A%20%20%22offersAndPromotions%22%3A%20false%2C%0A%20%20%22quietHoursStart%22%3A%20%2222%3A00%22%2C%0A%20%20%22quietHoursEnd%22%3A%20%2207%3A00%22%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.11%20SUPPORT%20API%0A%0A%23%23%23%23%20GET%20%2Fsupport%2Farticles%0AFAQ%20search%3A%20%60%3Fquery%3Dpayment%2Bfailed%60%0A%0A%23%23%23%23%20POST%20%2Fsupport%2Ftickets%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22category%22%3A%20%22PAYMENT%22%2C%0A%20%20%22subject%22%3A%20%22My%20payment%20went%20through%20but%20course%20not%20unlocked%22%2C%0A%20%20%22description%22%3A%20%22I%20paid%20%E2%82%B9599%20on%20July%205...%22%2C%0A%20%20%22attachmentUrls%22%3A%20%5B%22https%3A%2F%2Fs3...%2Fscreenshot.png%22%5D%2C%0A%20%20%22priority%22%3A%20%22HIGH%22%0A%7D%0A%2F%2F%20Response%20201%3A%20%7B%20ticketId%2C%20status%3A%20%22OPEN%22%2C%20estimatedResponseTime%3A%20%228h%22%20%7D%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fsupport%2Ftickets%0AReturns%20user&#039;s%20ticket%20list.%0A%0A%23%23%23%23%20GET%20%2Fsupport%2Ftickets%2F%3Aid%0AReturns%20ticket%20with%20full%20message%20thread.%0A%0A%23%23%23%23%20POST%20%2Fsupport%2Ftickets%2F%3Aid%2Freply%0A%60%60%60json%0A%2F%2F%20Request%3A%20%7B%20%22message%22%3A%20%22Thank%20you%20for%20the%20quick%20response...%22%20%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%23%203.12%20ADMIN%20API%0A%0A%23%23%23%23%20GET%20%2Fadmin%2Fdashboard%0AReturns%20platform-wide%20KPIs.%0A%0A%23%23%23%23%20GET%20%2Fadmin%2Fusers%0AFull%20user%20table%20with%20all%20filters.%0A%0A%23%23%23%23%20PATCH%20%2Fadmin%2Fusers%2F%3Aid%0AUpdate%20any%20user%3A%20role%2C%20plan%2C%20status.%0A%0A%23%23%23%23%20POST%20%2Fadmin%2Fnotifications%2Fbroadcast%0A%60%60%60json%0A%2F%2F%20Request%0A%7B%0A%20%20%22segment%22%3A%20%7B%20%22plan%22%3A%20%5B%22FREE%22%5D%2C%20%22lastActiveDaysAgo%22%3A%207%20%7D%2C%0A%20%20%22notification%22%3A%20%7B%0A%20%20%20%20%22title%22%3A%20%22We%20miss%20you!%22%2C%0A%20%20%20%20%22body%22%3A%20%22Come%20back%20and%20continue%20learning.%22%2C%0A%20%20%20%20%22ctaUrl%22%3A%20%22%2Fcourses%22%0A%20%20%7D%2C%0A%20%20%22channels%22%3A%20%5B%22push%22%2C%20%22email%22%5D%2C%0A%20%20%22scheduledAt%22%3A%20null%0A%7D%0A%60%60%60%0A%0A%23%23%23%23%20GET%20%2Fadmin%2Frevenue%0ARevenue%20analytics%20with%20breakdown%20by%20plan%2C%20course%2C%20country.%0A%0A---%0A%0A%23%23%204.%20Middleware%20Stack%0A%0A%60%60%60typescript%0A%2F%2F%20app.ts%20%E2%80%94%20middleware%20execution%20order%0Aapp.use(helmet())%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Security%20headers%0Aapp.use(cors(corsConfig))%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20CORS%20configuration%0Aapp.use(express.json(%7B%20limit%3A%20&#039;10mb&#039;%20%7D))%3B%0Aapp.use(express.urlencoded(%7B%20extended%3A%20true%20%7D))%3B%0Aapp.use(morgan(&#039;combined&#039;))%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20HTTP%20request%20logging%0Aapp.use(rateLimiter)%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Global%20rate%20limiter%0Aapp.use(&#039;%2Fapi&#039;%2C%20apiRouter)%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20API%20routes%0Aapp.use(notFoundHandler)%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20404%20handler%0Aapp.use(globalErrorHandler)%3B%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Global%20error%20handler%0A%60%60%60%0A%0A%60%60%60typescript%0A%2F%2F%20RBAC%20middleware%0Aexport%20const%20requireRole%20%3D%20(...roles%3A%20Role%5B%5D)%20%3D%3E%20%7B%0A%20%20return%20(req%3A%20AuthRequest%2C%20res%3A%20Response%2C%20next%3A%20NextFunction)%20%3D%3E%20%7B%0A%20%20%20%20if%20(!req.user)%20return%20res.status(401).json(%7B%20error%3A%20&#039;Unauthorized&#039;%20%7D)%3B%0A%20%20%20%20if%20(!roles.includes(req.user.role))%20%7B%0A%20%20%20%20%20%20return%20res.status(403).json(%7B%20error%3A%20&#039;Insufficient%20permissions&#039;%20%7D)%3B%0A%20%20%20%20%7D%0A%20%20%20%20next()%3B%0A%20%20%7D%3B%0A%7D%3B%0A%0A%2F%2F%20Usage%3A%20requireRole(&#039;ADMIN&#039;%2C%20&#039;CONTENT_MANAGER&#039;)%0A%60%60%60%0A%0A---%0A%0A%23%23%205.%20Background%20Jobs%20(BullMQ)%0A%0A%7C%20Queue%20%7C%20Job%20%7C%20Trigger%20%7C%20Priority%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20email-queue%20%7C%20welcome-email%20%7C%20User%20registration%20%7C%20High%20%7C%0A%7C%20email-queue%20%7C%20payment-receipt%20%7C%20Payment%20confirmed%20%7C%20High%20%7C%0A%7C%20email-queue%20%7C%20certificate-ready%20%7C%20Certificate%20generated%20%7C%20Medium%20%7C%0A%7C%20email-queue%20%7C%20streak-risk%20%7C%203%20days%20inactive%20%7C%20Low%20%7C%0A%7C%20notification-queue%20%7C%20push-notification%20%7C%20Various%20triggers%20%7C%20Variable%20%7C%0A%7C%20certificate-queue%20%7C%20generate-pdf%20%7C%20Course%20completed%20%7C%20Medium%20%7C%0A%7C%20video-queue%20%7C%20transcode-video%20%7C%20Trainer%20upload%20%7C%20Low%20%7C%0A%7C%20analytics-queue%20%7C%20process-event%20%7C%20User%20action%20%7C%20Low%20%7C%0A%7C%20billing-queue%20%7C%20check-renewals%20%7C%20Daily%20cron%20(midnight)%20%7C%20High%20%7C%0A%7C%20billing-queue%20%7C%20retry-failed-payment%20%7C%20Payment%20failed%20%7C%20High%20%7C%0A%0A---%0A%0A%23%23%206.%20Rate%20Limiting%20Configuration%0A%0A%7C%20Endpoint%20Group%20%7C%20Window%20%7C%20Max%20Requests%20%7C%20Behavior%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20%60POST%20%2Fauth%2Flogin%60%20%7C%2015%20min%20%7C%2010%20%7C%20Block%20%2B%20429%2C%20email%20alert%20on%205%2B%20%7C%0A%7C%20%60POST%20%2Fauth%2Fregister%60%20%7C%201%20hour%20%7C%205%20%7C%20Block%20%2B%20429%20%7C%0A%7C%20%60POST%20%2Fauth%2Fverify-otp%60%20%7C%2010%20min%20%7C%203%20%7C%20Block%20%2B%20429%20%7C%0A%7C%20%60POST%20%2Fai%2Fchat%60%20%7C%201%20min%20%7C%205%20(Free)%2C%2020%20(Pro)%20%7C%20429%20with%20upgrade%20CTA%20%7C%0A%7C%20%60GET%20%2Fcourses%60%20%7C%201%20min%20%7C%2060%20%7C%20429%20%7C%0A%7C%20%60POST%20%2Fpayments%2F*%60%20%7C%205%20min%20%7C%205%20%7C%20Block%20%2B%20log%20%7C%0A%7C%20All%20other%20endpoints%20%7C%201%20min%20%7C%20100%20%7C%20429%20%7C%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>04 Technical Architecture</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Backend Architecture &amp; API Specification</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="backend-architecture-api-specification" class="docmd-heading"><a href="#backend-architecture-api-specification" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Backend Architecture &amp; API Specification</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="backend-architecture-api-specification-1-architecture-overview" class="docmd-heading"><a href="#backend-architecture-api-specification-1-architecture-overview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Architecture Overview</h2>
+<p>The backend is a <strong>modular monolith</strong> (Phase 1–2) with a clear separation of concerns, designed to be decomposed into microservices when scaling demands it (Phase 3+). It is built with <strong>Node.js + Express.js</strong> and communicates with a <strong>PostgreSQL</strong> database via <strong>Prisma ORM</strong>.</p>
+<h3 id="backend-architecture-api-specification-1-architecture-overview-11-high-level-system-architecture" class="docmd-heading"><a href="#backend-architecture-api-specification-1-architecture-overview-11-high-level-system-architecture" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.1 High-Level System Architecture</h3>
+<pre class="hljs"><code>┌─────────────────────────────────────────────────────────────┐
+│                      CLIENT LAYER                           │
+│   <span class="hljs-title function_">Flutter</span> (iOS<span class="hljs-punctuation">/</span>Android)  │  Next.<span class="hljs-title function_">js</span> (Web)  │  Electron     │
+└──────────────────┬────────────────────┬─────────────────────┘
+                   │ HTTPS <span class="hljs-punctuation">/</span> WSS        │
+┌──────────────────▼────────────────────▼─────────────────────┐
+│                   API GATEWAY <span class="hljs-punctuation">/</span> LOAD BALANCER                │
+│                (Nginx <span class="hljs-punctuation">/</span> AWS ALB <span class="hljs-punctuation">/</span> Cloudflare)               │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+┌──────────────────────────────▼──────────────────────────────┐
+│                   LEARNFLOW API SERVER                       │
+│   Node.<span class="hljs-attr">js</span> <span class="hljs-number">20</span> LTS <span class="hljs-punctuation">+</span> Express.<span class="hljs-attr">js</span> <span class="hljs-punctuation">+</span> TypeScript                  │
+│                                                             │
+│  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌────────────┐  │
+│  │   Auth    │ │  Courses  │ │   Quiz    │ │    AI      │  │
+│  │  Module   │ │  Module   │ │  Module   │ │  Module    │  │
+│  └───────────┘ └───────────┘ └───────────┘ └────────────┘  │
+│  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌────────────┐  │
+│  │Membership │ │ Payments  │ │  Notify   │ │  Support   │  │
+│  │  Module   │ │  Module   │ │  Module   │ │  Module    │  │
+│  └───────────┘ └───────────┘ └───────────┘ └────────────┘  │
+│  ┌───────────┐ ┌───────────┐                               │
+│  │  Admin    │ │Analytics  │                               │
+│  │  Module   │ │  Module   │                               │
+│  └───────────┘ └───────────┘                               │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+       ┌───────────────────────┼─────────────────────────┐
+       │                       │                         │
+┌──────▼──────┐   ┌────────────▼──────┐   ┌─────────────▼────┐
+│ PostgreSQL  │   │  Redis Cache       │   │  BullMQ Queue     │
+│  (Primary)  │   │  (Sessions<span class="hljs-punctuation">/</span>Cache)  │   │  (Background Jobs)│
+└─────────────┘   └───────────────────┘   └──────────────────┘
+       │
+┌──────▼──────────────────────────────────────────────────────┐
+│                    EXTERNAL SERVICES                         │
+│  AWS <span class="hljs-title function_">S3</span> (Media) │ Razorpay<span class="hljs-punctuation">/</span>Stripe │ FCM<span class="hljs-punctuation">/</span>APNs │ SendGrid     │
+│  Gemini <span class="hljs-title function_">API</span> (AI)│ <span class="hljs-title function_">pgvector</span> (RAG)  │ Twilio OTP               │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="backend-architecture-api-specification-1-architecture-overview-12-backend-stack" class="docmd-heading"><a href="#backend-architecture-api-specification-1-architecture-overview-12-backend-stack" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.2 Backend Stack</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime</td>
+<td>Node.js 20 LTS</td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Express.js 4.x + TypeScript 5.x</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>Prisma 5.x</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>PostgreSQL 16</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>Redis 7 (ioredis)</td>
+</tr>
+<tr>
+<td>Job Queue</td>
+<td>BullMQ (Redis-backed)</td>
+</tr>
+<tr>
+<td>File Storage</td>
+<td>AWS S3 (or Wasabi S3-compatible)</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>JWT (access 15min + refresh 7d)</td>
+</tr>
+<tr>
+<td>Real-time</td>
+<td><a href="http://Socket.io">Socket.io</a> (notifications, live updates)</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>SendGrid</td>
+</tr>
+<tr>
+<td>SMS/OTP</td>
+<td>Twilio</td>
+</tr>
+<tr>
+<td>Push Notifications</td>
+<td>Firebase Admin SDK (FCM/APNs)</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>Razorpay (India) + Stripe (International)</td>
+</tr>
+<tr>
+<td>AI</td>
+<td>Google Gemini API + LangChain.js</td>
+</tr>
+<tr>
+<td>Video Transcoding</td>
+<td>AWS MediaConvert (or <a href="http://Mux.com">Mux.com</a>)</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Sentry + DataDog (or Grafana + Prometheus)</td>
+</tr>
+<tr>
+<td>API Documentation</td>
+<td>Swagger/OpenAPI 3.0</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="backend-architecture-api-specification-2-project-structure" class="docmd-heading"><a href="#backend-architecture-api-specification-2-project-structure" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Project Structure</h2>
+<pre class="hljs"><code>src<span class="hljs-punctuation">/</span>
+├── api<span class="hljs-punctuation">/</span>                        <span class="hljs-comment"># API route definitions</span>
+│   └── v1<span class="hljs-punctuation">/</span>
+│       ├── auth.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── users.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── courses.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── lessons.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── quizzes.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── certificates.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── memberships.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── payments.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── ai.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── notifications.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       ├── support.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│       └── admin.<span class="hljs-attr">routes</span>.<span class="hljs-attr">ts</span>
+│
+├── controllers<span class="hljs-punctuation">/</span>               <span class="hljs-comment"># Request handlers</span>
+├── services<span class="hljs-punctuation">/</span>                  <span class="hljs-comment"># Business logic</span>
+├── repositories<span class="hljs-punctuation">/</span>              <span class="hljs-comment"># Data access layer (Prisma queries)</span>
+├── middleware<span class="hljs-punctuation">/</span>
+│   ├── auth.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span>      <span class="hljs-comment"># JWT verification</span>
+│   ├── rbac.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span>      <span class="hljs-comment"># Role-based access control</span>
+│   ├── validate.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span>  <span class="hljs-comment"># Zod input validation</span>
+│   ├── rateLimit.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span> <span class="hljs-comment"># Rate limiting (express-rate-limit)</span>
+│   ├── upload.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span>    <span class="hljs-comment"># Multer + S3 file upload</span>
+│   └── error.<span class="hljs-attr">middleware</span>.<span class="hljs-attr">ts</span>    <span class="hljs-comment"># Global error handler</span>
+│
+├── jobs<span class="hljs-punctuation">/</span>                      <span class="hljs-comment"># BullMQ job definitions</span>
+│   ├── email.<span class="hljs-attr">job</span>.<span class="hljs-attr">ts</span>
+│   ├── notification.<span class="hljs-attr">job</span>.<span class="hljs-attr">ts</span>
+│   ├── certificate.<span class="hljs-attr">job</span>.<span class="hljs-attr">ts</span>
+│   ├── video<span class="hljs-punctuation">-</span>transcode.<span class="hljs-attr">job</span>.<span class="hljs-attr">ts</span>
+│   └── subscription<span class="hljs-punctuation">-</span>renewal.<span class="hljs-attr">job</span>.<span class="hljs-attr">ts</span>
+│
+├── workers<span class="hljs-punctuation">/</span>                   <span class="hljs-comment"># BullMQ worker processes</span>
+├── lib<span class="hljs-punctuation">/</span>
+│   ├── prisma.<span class="hljs-attr">ts</span>              <span class="hljs-comment"># Prisma client singleton</span>
+│   ├── redis.<span class="hljs-attr">ts</span>               <span class="hljs-comment"># Redis client</span>
+│   ├── queue.<span class="hljs-attr">ts</span>               <span class="hljs-comment"># BullMQ queue instances</span>
+│   ├── s3.<span class="hljs-attr">ts</span>                  <span class="hljs-comment"># AWS S3 client</span>
+│   ├── firebase.<span class="hljs-attr">ts</span>            <span class="hljs-comment"># Firebase Admin</span>
+│   ├── sendgrid.<span class="hljs-attr">ts</span>            <span class="hljs-comment"># SendGrid client</span>
+│   ├── gemini.<span class="hljs-attr">ts</span>              <span class="hljs-comment"># Google Gemini API client</span>
+│   └── stripe.<span class="hljs-attr">ts</span>              <span class="hljs-comment"># Stripe client</span>
+│
+├── types<span class="hljs-punctuation">/</span>                     <span class="hljs-comment"># TypeScript type definitions</span>
+├── utils<span class="hljs-punctuation">/</span>                     <span class="hljs-comment"># Helpers, validators</span>
+├── config<span class="hljs-punctuation">/</span>                    <span class="hljs-comment"># Configuration management</span>
+├── prisma<span class="hljs-punctuation">/</span>
+│   ├── schema.<span class="hljs-attr">prisma</span>          <span class="hljs-comment"># Database schema</span>
+│   └── migrations<span class="hljs-punctuation">/</span>            <span class="hljs-comment"># Migration files</span>
+├── app.<span class="hljs-attr">ts</span>                     <span class="hljs-comment"># Express app setup</span>
+└── server.<span class="hljs-attr">ts</span>                  <span class="hljs-comment"># Server entry point</span>
+</code></pre>
+<hr>
+<h2 id="backend-architecture-api-specification-3-api-specifications" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. API Specifications</h2>
+<h3 id="backend-architecture-api-specification-3-api-specifications-base-url" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-base-url" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Base URL</h3>
+<ul>
+<li>Development: <code>http://localhost:4000/api/v1</code></li>
+<li>Production: <code>https://api.learnflow.ai/api/v1</code></li>
+</ul>
+<h3 id="backend-architecture-api-specification-3-api-specifications-standard-response-format" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-standard-response-format" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Standard Response Format</h3>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Success</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> { ... },
+  <span class="hljs-string">&quot;meta&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;page&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, <span class="hljs-string">&quot;limit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">20</span>, <span class="hljs-string">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">150</span>, <span class="hljs-string">&quot;totalPages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">8</span> }
+}
+
+<span class="hljs-comment">// Error</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+  <span class="hljs-string">&quot;error&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;AUTH_INVALID_TOKEN&quot;</span>,
+    <span class="hljs-string">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Invalid or expired authentication token&quot;</span>,
+    <span class="hljs-string">&quot;details&quot;</span><span class="hljs-punctuation">:</span> []
+  }
+}
+</code></pre>
+<h3 id="backend-architecture-api-specification-3-api-specifications-authentication-headers" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-authentication-headers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Authentication Headers</h3>
+<pre class="hljs"><code>Authorization<span class="hljs-punctuation">:</span> Bearer <span class="hljs-punctuation">&lt;</span>access_token<span class="hljs-punctuation">&gt;</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-31-auth-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 AUTH API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authregister" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authregister" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/register</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;priya@example.com&quot;</span>,
+  <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SecurePass123!&quot;</span>,
+  <span class="hljs-string">&quot;displayName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Priya Sharma&quot;</span>
+}
+
+<span class="hljs-comment">// Response 201</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;OTP sent to priya@example.com&quot;</span>,
+    <span class="hljs-string">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usr_abc123&quot;</span>,
+    <span class="hljs-string">&quot;otpExpiresAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-07T06:25:00Z&quot;</span>
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authverify-otp" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authverify-otp" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/verify-otp</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usr_abc123&quot;</span>, <span class="hljs-string">&quot;otp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;847291&quot;</span> }
+
+<span class="hljs-comment">// Response 200</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;accessToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIsInR...&quot;</span>,
+    <span class="hljs-string">&quot;refreshToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;rt_...&quot;</span>,
+    <span class="hljs-string">&quot;expiresIn&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">900</span>,
+    <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">:</span> {
+      <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usr_abc123&quot;</span>,
+      <span class="hljs-string">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;priya@example.com&quot;</span>,
+      <span class="hljs-string">&quot;displayName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Priya Sharma&quot;</span>,
+      <span class="hljs-string">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;STUDENT&quot;</span>,
+      <span class="hljs-string">&quot;plan&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;FREE&quot;</span>,
+      <span class="hljs-string">&quot;onboardingCompleted&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+    }
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogin" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogin" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/login</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;priya@example.com&quot;</span>, <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SecurePass123!&quot;</span> }
+<span class="hljs-comment">// Response: same structure as verify-otp</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authrefresh-token" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authrefresh-token" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/refresh-token</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;refreshToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;rt_...&quot;</span> }
+<span class="hljs-comment">// Response: { accessToken, expiresIn }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogout" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogout" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/logout</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Headers: Authorization required</span>
+<span class="hljs-comment">// Request: {}</span>
+<span class="hljs-comment">// Response 200: { &quot;success&quot;: true, &quot;data&quot;: { &quot;message&quot;: &quot;Logged out&quot; } }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authforgot-password" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authforgot-password" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/forgot-password</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request: { &quot;email&quot;: &quot;priya@example.com&quot; }</span>
+<span class="hljs-comment">// Response: { &quot;success&quot;: true, &quot;data&quot;: { &quot;message&quot;: &quot;Reset email sent&quot; } }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authreset-password" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authreset-password" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /auth/reset-password</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request: { &quot;token&quot;: &quot;reset_token_from_email&quot;, &quot;newPassword&quot;: &quot;NewPass123!&quot; }</span>
+<span class="hljs-comment">// Response: { &quot;success&quot;: true, &quot;data&quot;: { &quot;message&quot;: &quot;Password updated&quot; } }</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-32-users-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-32-users-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 USERS API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersme" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersme" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /users/me</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Response 200</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usr_abc123&quot;</span>,
+    <span class="hljs-string">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;priya@example.com&quot;</span>,
+    <span class="hljs-string">&quot;displayName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Priya Sharma&quot;</span>,
+    <span class="hljs-string">&quot;avatarUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://cdn.learnflow.ai/avatars/usr_abc123.jpg&quot;</span>,
+    <span class="hljs-string">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;STUDENT&quot;</span>,
+    <span class="hljs-string">&quot;plan&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PRO&quot;</span>,
+    <span class="hljs-string">&quot;xp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1250</span>,
+    <span class="hljs-string">&quot;level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>,
+    <span class="hljs-string">&quot;streak&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;current&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">14</span>, <span class="hljs-string">&quot;longest&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">21</span>, <span class="hljs-string">&quot;freezes&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span> },
+    <span class="hljs-string">&quot;onboardingCompleted&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-01T10:00:00Z&quot;</span>
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-32-users-api-patch-usersme" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-patch-usersme" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /users/me</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request (any subset)</span>
+{ <span class="hljs-string">&quot;displayName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Priya S.&quot;</span>, <span class="hljs-string">&quot;ageRange&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;18-25&quot;</span>, <span class="hljs-string">&quot;interests&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;technology&quot;</span>, <span class="hljs-string">&quot;design&quot;</span>] }
+<span class="hljs-comment">// Response: updated user object</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersmeprogress" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersmeprogress" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /users/me/progress</h4>
+<pre class="hljs"><code class="language-json">{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;coursesCompleted&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>,
+    <span class="hljs-string">&quot;lessonsCompleted&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">47</span>,
+    <span class="hljs-string">&quot;hoursLearned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12.5</span>,
+    <span class="hljs-string">&quot;certificatesEarned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>,
+    <span class="hljs-string">&quot;quizzesTaken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12</span>,
+    <span class="hljs-string">&quot;averageQuizScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">82</span>,
+    <span class="hljs-string">&quot;weeklyActivity&quot;</span><span class="hljs-punctuation">:</span> [
+      { <span class="hljs-string">&quot;date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-01&quot;</span>, <span class="hljs-string">&quot;minutesLearned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">25</span> },
+      { <span class="hljs-string">&quot;date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-02&quot;</span>, <span class="hljs-string">&quot;minutesLearned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> }
+    ]
+  }
+}
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-33-courses-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 COURSES API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-33-courses-api-get-courses" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-get-courses" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /courses</h4>
+<pre class="hljs"><code>Query params<span class="hljs-punctuation">:</span> page, limit, category, level, minRating, maxPrice, search, sort
+</code></pre>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Response 200</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> [
+    {
+      <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;crs_xyz789&quot;</span>,
+      <span class="hljs-string">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Python for Beginners&quot;</span>,
+      <span class="hljs-string">&quot;slug&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;python-for-beginners&quot;</span>,
+      <span class="hljs-string">&quot;thumbnailUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://cdn.learnflow.ai/thumbnails/python.jpg&quot;</span>,
+      <span class="hljs-string">&quot;instructor&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usr_instr1&quot;</span>, <span class="hljs-string">&quot;displayName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Dr. Rajan&quot;</span>, <span class="hljs-string">&quot;avatarUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span> },
+      <span class="hljs-string">&quot;category&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cat_tech&quot;</span>, <span class="hljs-string">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Technology&quot;</span> },
+      <span class="hljs-string">&quot;level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BEGINNER&quot;</span>,
+      <span class="hljs-string">&quot;durationHours&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">8.5</span>,
+      <span class="hljs-string">&quot;lessonsCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">24</span>,
+      <span class="hljs-string">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">599</span>,
+      <span class="hljs-string">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;INR&quot;</span>,
+      <span class="hljs-string">&quot;includedInPro&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+      <span class="hljs-string">&quot;rating&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4.8</span>,
+      <span class="hljs-string">&quot;reviewsCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1234</span>,
+      <span class="hljs-string">&quot;enrolledCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12456</span>,
+      <span class="hljs-string">&quot;isFree&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+      <span class="hljs-string">&quot;hasCertificate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+      <span class="hljs-string">&quot;language&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;English&quot;</span>,
+      <span class="hljs-string">&quot;lastUpdated&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-15&quot;</span>,
+      <span class="hljs-string">&quot;tags&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;python&quot;</span>, <span class="hljs-string">&quot;programming&quot;</span>, <span class="hljs-string">&quot;beginners&quot;</span>]
+    }
+  ],
+  <span class="hljs-string">&quot;meta&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;page&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, <span class="hljs-string">&quot;limit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">20</span>, <span class="hljs-string">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">84</span>, <span class="hljs-string">&quot;totalPages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span> }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-33-courses-api-get-coursesid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-get-coursesid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /courses/:id</h4>
+<p>Returns full course with curriculum, instructor details, reviews sample, and user enrollment status.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-33-courses-api-post-coursesidenroll" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-post-coursesidenroll" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /courses/:id/enroll</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request: {}</span>
+<span class="hljs-comment">// Response 201: { &quot;success&quot;: true, &quot;data&quot;: { &quot;enrollmentId&quot;: &quot;enr_...&quot;, &quot;enrolledAt&quot;: &quot;...&quot; } }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-33-courses-api-post-courses-trainer-only" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-post-courses-trainer-only" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /courses (Trainer only)</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Advanced React Patterns&quot;</span>,
+  <span class="hljs-string">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Learn...&quot;</span>,
+  <span class="hljs-string">&quot;categoryId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cat_tech&quot;</span>,
+  <span class="hljs-string">&quot;level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADVANCED&quot;</span>,
+  <span class="hljs-string">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1299</span>,
+  <span class="hljs-string">&quot;language&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;English&quot;</span>,
+  <span class="hljs-string">&quot;tags&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;react&quot;</span>, <span class="hljs-string">&quot;javascript&quot;</span>]
+}
+<span class="hljs-comment">// Response 201: created draft course object</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-34-lessons-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.4 LESSONS API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessons" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessons" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /courses/:courseId/lessons</h4>
+<p>Returns ordered list of all lessons in a course (with user’s completion state per lesson if authenticated).</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessonslessonid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessonslessonid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /courses/:courseId/lessons/:lessonId</h4>
+<pre class="hljs"><code class="language-json">{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lsn_123&quot;</span>,
+    <span class="hljs-string">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Functions and Scope&quot;</span>,
+    <span class="hljs-string">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;VIDEO&quot;</span>,
+    <span class="hljs-string">&quot;order&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>,
+    <span class="hljs-string">&quot;duration&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">847</span>,
+    <span class="hljs-string">&quot;videoUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://cdn.learnflow.ai/videos/lsn_123/hls/master.m3u8&quot;</span>,
+    <span class="hljs-string">&quot;videoCaptionUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://cdn.learnflow.ai/captions/lsn_123.vtt&quot;</span>,
+    <span class="hljs-string">&quot;resources&quot;</span><span class="hljs-punctuation">:</span> [
+      { <span class="hljs-string">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Lecture Notes.pdf&quot;</span>, <span class="hljs-string">&quot;url&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://...&quot;</span> }
+    ],
+    <span class="hljs-string">&quot;userProgress&quot;</span><span class="hljs-punctuation">:</span> {
+      <span class="hljs-string">&quot;lastPosition&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">243</span>,
+      <span class="hljs-string">&quot;completed&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+      <span class="hljs-string">&quot;notes&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Lorem ipsum...&quot;</span>
+    }
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-34-lessons-api-post-coursescourseidlessonslessonidprogress" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-post-coursescourseidlessonslessonidprogress" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /courses/:courseId/lessons/:lessonId/progress</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;lastPosition&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">423</span>, <span class="hljs-string">&quot;completed&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> }
+<span class="hljs-comment">// Response 200: updated progress + XP awarded if completed</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-34-lessons-api-patch-coursescourseidlessonslessonidnotes" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-patch-coursescourseidlessonslessonidnotes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /courses/:courseId/lessons/:lessonId/notes</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Key concept: closures mean...&quot;</span> }
+<span class="hljs-comment">// Response 200: { &quot;noteId&quot;: &quot;nte_...&quot;, &quot;savedAt&quot;: &quot;...&quot; }</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-35-quiz-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.5 QUIZ API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-35-quiz-api-get-coursescourseidquizzesquizid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api-get-coursescourseidquizzesquizid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /courses/:courseId/quizzes/:quizId</h4>
+<p>Returns quiz metadata and questions (scrambled order, no correct answers exposed).</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-35-quiz-api-post-coursescourseidquizzesquizidsubmit" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api-post-coursescourseidquizzesquizidsubmit" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /courses/:courseId/quizzes/:quizId/submit</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;answers&quot;</span><span class="hljs-punctuation">:</span> [
+    { <span class="hljs-string">&quot;questionId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;q_001&quot;</span>, <span class="hljs-string">&quot;selectedOptionIds&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;opt_a&quot;</span>] },
+    { <span class="hljs-string">&quot;questionId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;q_002&quot;</span>, <span class="hljs-string">&quot;selectedOptionIds&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;opt_c&quot;</span>, <span class="hljs-string">&quot;opt_d&quot;</span>] },
+    { <span class="hljs-string">&quot;questionId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;q_003&quot;</span>, <span class="hljs-string">&quot;textAnswer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Python&quot;</span> }
+  ],
+  <span class="hljs-string">&quot;timeTakenSeconds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">312</span>
+}
+
+<span class="hljs-comment">// Response 200</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;attemptId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;att_...&quot;</span>,
+    <span class="hljs-string">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">80</span>,
+    <span class="hljs-string">&quot;correctCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">8</span>,
+    <span class="hljs-string">&quot;totalCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>,
+    <span class="hljs-string">&quot;passed&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">&quot;xpAwarded&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">75</span>,
+    <span class="hljs-string">&quot;badgeAwarded&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bdg_quiz_ace&quot;</span>, <span class="hljs-string">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Quiz Ace&quot;</span> },
+    <span class="hljs-string">&quot;reviewItems&quot;</span><span class="hljs-punctuation">:</span> [
+      {
+        <span class="hljs-string">&quot;questionId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;q_001&quot;</span>,
+        <span class="hljs-string">&quot;questionText&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What is a Python list?&quot;</span>,
+        <span class="hljs-string">&quot;userAnswerIds&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;opt_a&quot;</span>],
+        <span class="hljs-string">&quot;correctAnswerIds&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;opt_a&quot;</span>],
+        <span class="hljs-string">&quot;isCorrect&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+        <span class="hljs-string">&quot;explanation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;A Python list is...&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-36-certificates-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.6 CERTIFICATES API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-usersmecertificates" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-usersmecertificates" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /users/me/certificates</h4>
+<p>Returns array of earned certificates.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /certificates/:id</h4>
+<p>Public endpoint — no auth required. Returns certificate verification data.</p>
+<pre class="hljs"><code class="language-json">{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;certificateId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cert_abc&quot;</span>,
+    <span class="hljs-string">&quot;valid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+    <span class="hljs-string">&quot;recipientName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Priya Sharma&quot;</span>,
+    <span class="hljs-string">&quot;courseName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Python for Beginners&quot;</span>,
+    <span class="hljs-string">&quot;completedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-05&quot;</span>,
+    <span class="hljs-string">&quot;instructorName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Dr. Rajan Mehta&quot;</span>,
+    <span class="hljs-string">&quot;issuerName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LearnFlow AI&quot;</span>
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesidpdf" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesidpdf" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /certificates/:id/pdf</h4>
+<p>Streams PDF download (requires auth, validates ownership).</p>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-37-membership-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.7 MEMBERSHIP API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-37-membership-api-get-membershipsplans" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-get-membershipsplans" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /memberships/plans</h4>
+<p>Returns all active membership plan definitions.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-37-membership-api-get-usersmemembership" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-get-usersmemembership" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /users/me/membership</h4>
+<p>Returns the authenticated user’s current membership details.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipssubscribe" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipssubscribe" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /memberships/subscribe</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;planId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;plan_pro_monthly&quot;</span>, <span class="hljs-string">&quot;paymentMethodId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pm_razorpay_...&quot;</span> }
+<span class="hljs-comment">// Response 201: membership object + payment confirmation</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipscancel" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipscancel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /memberships/cancel</h4>
+<p>Cancels at period end.</p>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-38-payments-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.8 PAYMENTS API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentscreate-order-razorpay" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentscreate-order-razorpay" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /payments/create-order (Razorpay)</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;amount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">59900</span>, <span class="hljs-string">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;INR&quot;</span>, <span class="hljs-string">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;course&quot;</span>, <span class="hljs-string">&quot;referenceId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;crs_xyz789&quot;</span> }
+
+<span class="hljs-comment">// Response 201</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;orderId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;order_razorpay_...&quot;</span>,
+    <span class="hljs-string">&quot;amount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">59900</span>,
+    <span class="hljs-string">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;INR&quot;</span>,
+    <span class="hljs-string">&quot;key&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;rzp_live_...&quot;</span>
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentsverify-razorpay-webhook-signature-verification" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentsverify-razorpay-webhook-signature-verification" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /payments/verify (Razorpay webhook signature verification)</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;razorpay_order_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;order_...&quot;</span>,
+  <span class="hljs-string">&quot;razorpay_payment_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pay_...&quot;</span>,
+  <span class="hljs-string">&quot;razorpay_signature&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sha256_hash&quot;</span>
+}
+<span class="hljs-comment">// Response 200: payment confirmed, enrollment/subscription activated</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-38-payments-api-get-paymentshistory" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-get-paymentshistory" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /payments/history</h4>
+<p>Returns paginated transaction history for authenticated user.</p>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-39-ai-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.9 AI API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aichat" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aichat" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /ai/chat</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Explain closures in Python with an example&quot;</span>,
+  <span class="hljs-string">&quot;conversationId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;conv_abc123&quot;</span>,
+  <span class="hljs-string">&quot;context&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;courseId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;crs_xyz789&quot;</span>, <span class="hljs-string">&quot;lessonId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lsn_123&quot;</span> }
+}
+
+<span class="hljs-comment">// Response 200 (streaming SSE supported)</span>
+{
+  <span class="hljs-string">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;data&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;messageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;msg_...&quot;</span>,
+    <span class="hljs-string">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;assistant&quot;</span>,
+    <span class="hljs-string">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;A closure in Python is...&quot;</span>,
+    <span class="hljs-string">&quot;sources&quot;</span><span class="hljs-punctuation">:</span> [{ <span class="hljs-string">&quot;lessonId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lsn_123&quot;</span>, <span class="hljs-string">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Functions and Scope&quot;</span>, <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">245</span> }],
+    <span class="hljs-string">&quot;queriesRemaining&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">42</span>
+  }
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aistudy-plan" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aistudy-plan" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /ai/study-plan</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;goalId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;get_job&quot;</span>, <span class="hljs-string">&quot;weeklyHours&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>, <span class="hljs-string">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-07-10&quot;</span> }
+<span class="hljs-comment">// Response: { weeklyPlan: [...] }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aigenerate-quiz-trainer-only" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aigenerate-quiz-trainer-only" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /ai/generate-quiz (Trainer only)</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{ <span class="hljs-string">&quot;lessonId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;lsn_123&quot;</span>, <span class="hljs-string">&quot;questionCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>, <span class="hljs-string">&quot;difficulty&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;medium&quot;</span> }
+<span class="hljs-comment">// Response: { questions: [...] }</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.10 NOTIFICATIONS API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notifications" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /notifications</h4>
+<p>Returns user’s notifications (paginated, with unread count).</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsidread" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsidread" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /notifications/:id/read</h4>
+<p>Marks a notification as read.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsread-all" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsread-all" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /notifications/read-all</h4>
+<h4 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notificationspreferences" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notificationspreferences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /notifications/preferences</h4>
+<p>Returns user’s notification preference settings.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationspreferences" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationspreferences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /notifications/preferences</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;learningReminders&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;streakAlerts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;achievements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  <span class="hljs-string">&quot;newCourses&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+  <span class="hljs-string">&quot;offersAndPromotions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+  <span class="hljs-string">&quot;quietHoursStart&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;22:00&quot;</span>,
+  <span class="hljs-string">&quot;quietHoursEnd&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;07:00&quot;</span>
+}
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-311-support-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.11 SUPPORT API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportarticles" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportarticles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /support/articles</h4>
+<p>FAQ search: <code>?query=payment+failed</code></p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-311-support-api-post-supporttickets" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-post-supporttickets" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /support/tickets</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;category&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PAYMENT&quot;</span>,
+  <span class="hljs-string">&quot;subject&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;My payment went through but course not unlocked&quot;</span>,
+  <span class="hljs-string">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;I paid ₹599 on July 5...&quot;</span>,
+  <span class="hljs-string">&quot;attachmentUrls&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;https://s3.../screenshot.png&quot;</span>],
+  <span class="hljs-string">&quot;priority&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;HIGH&quot;</span>
+}
+<span class="hljs-comment">// Response 201: { ticketId, status: &quot;OPEN&quot;, estimatedResponseTime: &quot;8h&quot; }</span>
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-311-support-api-get-supporttickets" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supporttickets" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /support/tickets</h4>
+<p>Returns user’s ticket list.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportticketsid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportticketsid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /support/tickets/:id</h4>
+<p>Returns ticket with full message thread.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-311-support-api-post-supportticketsidreply" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-post-supportticketsidreply" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /support/tickets/:id/reply</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request: { &quot;message&quot;: &quot;Thank you for the quick response...&quot; }</span>
+</code></pre>
+<hr>
+<h3 id="backend-architecture-api-specification-3-api-specifications-312-admin-api" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.12 ADMIN API</h3>
+<h4 id="backend-architecture-api-specification-3-api-specifications-312-admin-api-get-admindashboard" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-admindashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /admin/dashboard</h4>
+<p>Returns platform-wide KPIs.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminusers" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminusers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /admin/users</h4>
+<p>Full user table with all filters.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-312-admin-api-patch-adminusersid" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-patch-adminusersid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PATCH /admin/users/:id</h4>
+<p>Update any user: role, plan, status.</p>
+<h4 id="backend-architecture-api-specification-3-api-specifications-312-admin-api-post-adminnotificationsbroadcast" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-post-adminnotificationsbroadcast" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>POST /admin/notifications/broadcast</h4>
+<pre class="hljs"><code class="language-json"><span class="hljs-comment">// Request</span>
+{
+  <span class="hljs-string">&quot;segment&quot;</span><span class="hljs-punctuation">:</span> { <span class="hljs-string">&quot;plan&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;FREE&quot;</span>], <span class="hljs-string">&quot;lastActiveDaysAgo&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">7</span> },
+  <span class="hljs-string">&quot;notification&quot;</span><span class="hljs-punctuation">:</span> {
+    <span class="hljs-string">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;We miss you!&quot;</span>,
+    <span class="hljs-string">&quot;body&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Come back and continue learning.&quot;</span>,
+    <span class="hljs-string">&quot;ctaUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/courses&quot;</span>
+  },
+  <span class="hljs-string">&quot;channels&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;push&quot;</span>, <span class="hljs-string">&quot;email&quot;</span>],
+  <span class="hljs-string">&quot;scheduledAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>
+}
+</code></pre>
+<h4 id="backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminrevenue" class="docmd-heading"><a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminrevenue" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>GET /admin/revenue</h4>
+<p>Revenue analytics with breakdown by plan, course, country.</p>
+<hr>
+<h2 id="backend-architecture-api-specification-4-middleware-stack" class="docmd-heading"><a href="#backend-architecture-api-specification-4-middleware-stack" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Middleware Stack</h2>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// app.ts — middleware execution order</span>
+app.<span class="hljs-keyword">use</span>(<span class="hljs-title function_">helmet</span>());                      <span class="hljs-comment">// Security headers</span>
+app.<span class="hljs-keyword">use</span>(<span class="hljs-title function_">cors</span>(corsConfig));              <span class="hljs-comment">// CORS configuration</span>
+app.<span class="hljs-keyword">use</span>(express.<span class="hljs-title function_">json</span>({ limit<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;10mb&#039;</span> }));
+app.<span class="hljs-keyword">use</span>(express.<span class="hljs-title function_">urlencoded</span>({ extended<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> }));
+app.<span class="hljs-keyword">use</span>(<span class="hljs-title function_">morgan</span>(<span class="hljs-string">&#039;combined&#039;</span>));             <span class="hljs-comment">// HTTP request logging</span>
+app.<span class="hljs-keyword">use</span>(rateLimiter);                   <span class="hljs-comment">// Global rate limiter</span>
+app.<span class="hljs-keyword">use</span>(<span class="hljs-string">&#039;/api&#039;</span>, apiRouter);             <span class="hljs-comment">// API routes</span>
+app.<span class="hljs-keyword">use</span>(notFoundHandler);               <span class="hljs-comment">// 404 handler</span>
+app.<span class="hljs-keyword">use</span>(globalErrorHandler);            <span class="hljs-comment">// Global error handler</span>
+</code></pre>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// RBAC middleware</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> requireRole <span class="hljs-punctuation">=</span> (...<span class="hljs-attr">roles</span><span class="hljs-punctuation">:</span> Role[]) <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">return</span> (req<span class="hljs-punctuation">:</span> AuthRequest, res<span class="hljs-punctuation">:</span> Response, next<span class="hljs-punctuation">:</span> NextFunction) <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">if</span> (<span class="hljs-punctuation">!</span>req.<span class="hljs-attr">user</span>) <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">status</span>(<span class="hljs-number">401</span>).<span class="hljs-title function_">json</span>({ error<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Unauthorized&#039;</span> });
+    <span class="hljs-keyword">if</span> (<span class="hljs-punctuation">!</span>roles.<span class="hljs-title function_">includes</span>(req.<span class="hljs-attr">user</span>.<span class="hljs-attr">role</span>)) {
+      <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">status</span>(<span class="hljs-number">403</span>).<span class="hljs-title function_">json</span>({ error<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Insufficient permissions&#039;</span> });
+    }
+    <span class="hljs-title function_">next</span>();
+  };
+};
+
+<span class="hljs-comment">// Usage: requireRole(&#039;ADMIN&#039;, &#039;CONTENT_MANAGER&#039;)</span>
+</code></pre>
+<hr>
+<h2 id="backend-architecture-api-specification-5-background-jobs-bullmq" class="docmd-heading"><a href="#backend-architecture-api-specification-5-background-jobs-bullmq" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Background Jobs (BullMQ)</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Queue</th>
+<th>Job</th>
+<th>Trigger</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email-queue</td>
+<td>welcome-email</td>
+<td>User registration</td>
+<td>High</td>
+</tr>
+<tr>
+<td>email-queue</td>
+<td>payment-receipt</td>
+<td>Payment confirmed</td>
+<td>High</td>
+</tr>
+<tr>
+<td>email-queue</td>
+<td>certificate-ready</td>
+<td>Certificate generated</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>email-queue</td>
+<td>streak-risk</td>
+<td>3 days inactive</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>notification-queue</td>
+<td>push-notification</td>
+<td>Various triggers</td>
+<td>Variable</td>
+</tr>
+<tr>
+<td>certificate-queue</td>
+<td>generate-pdf</td>
+<td>Course completed</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>video-queue</td>
+<td>transcode-video</td>
+<td>Trainer upload</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>analytics-queue</td>
+<td>process-event</td>
+<td>User action</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>billing-queue</td>
+<td>check-renewals</td>
+<td>Daily cron (midnight)</td>
+<td>High</td>
+</tr>
+<tr>
+<td>billing-queue</td>
+<td>retry-failed-payment</td>
+<td>Payment failed</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="backend-architecture-api-specification-6-rate-limiting-configuration" class="docmd-heading"><a href="#backend-architecture-api-specification-6-rate-limiting-configuration" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Rate Limiting Configuration</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Endpoint Group</th>
+<th>Window</th>
+<th>Max Requests</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /auth/login</code></td>
+<td>15 min</td>
+<td>10</td>
+<td>Block + 429, email alert on 5+</td>
+</tr>
+<tr>
+<td><code>POST /auth/register</code></td>
+<td>1 hour</td>
+<td>5</td>
+<td>Block + 429</td>
+</tr>
+<tr>
+<td><code>POST /auth/verify-otp</code></td>
+<td>10 min</td>
+<td>3</td>
+<td>Block + 429</td>
+</tr>
+<tr>
+<td><code>POST /ai/chat</code></td>
+<td>1 min</td>
+<td>5 (Free), 20 (Pro)</td>
+<td>429 with upgrade CTA</td>
+</tr>
+<tr>
+<td><code>GET /courses</code></td>
+<td>1 min</td>
+<td>60</td>
+<td>429</td>
+</tr>
+<tr>
+<td><code>POST /payments/*</code></td>
+<td>5 min</td>
+<td>5</td>
+<td>Block + log</td>
+</tr>
+<tr>
+<td>All other endpoints</td>
+<td>1 min</td>
+<td>100</td>
+<td>429</td>
+</tr>
+</tbody>
+</table>
+</div>
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../03_design_system_and_ui/ux_latest_design_system/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            UX Latest Design System
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../04_technical_architecture/database_schema_and_orm/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Database Schema &amp; ORM Design
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#backend-architecture-api-specification" class="toc-link">Backend Architecture &amp; API Specification</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-1-architecture-overview" class="toc-link">1. Architecture Overview</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-1-architecture-overview-11-high-level-system-architecture" class="toc-link">1.1 High-Level System Architecture</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-1-architecture-overview-12-backend-stack" class="toc-link">1.2 Backend Stack</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-2-project-structure" class="toc-link">2. Project Structure</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-3-api-specifications" class="toc-link">3. API Specifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-base-url" class="toc-link">Base URL</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-standard-response-format" class="toc-link">Standard Response Format</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-authentication-headers" class="toc-link">Authentication Headers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api" class="toc-link">3.1 AUTH API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authregister" class="toc-link">POST /auth/register</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authverify-otp" class="toc-link">POST /auth/verify-otp</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogin" class="toc-link">POST /auth/login</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authrefresh-token" class="toc-link">POST /auth/refresh-token</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authlogout" class="toc-link">POST /auth/logout</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authforgot-password" class="toc-link">POST /auth/forgot-password</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-31-auth-api-post-authreset-password" class="toc-link">POST /auth/reset-password</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-32-users-api" class="toc-link">3.2 USERS API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersme" class="toc-link">GET /users/me</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-patch-usersme" class="toc-link">PATCH /users/me</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-32-users-api-get-usersmeprogress" class="toc-link">GET /users/me/progress</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api" class="toc-link">3.3 COURSES API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-get-courses" class="toc-link">GET /courses</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-get-coursesid" class="toc-link">GET /courses/:id</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-post-coursesidenroll" class="toc-link">POST /courses/:id/enroll</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-33-courses-api-post-courses-trainer-only" class="toc-link">POST /courses (Trainer only)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api" class="toc-link">3.4 LESSONS API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessons" class="toc-link">GET /courses/:courseId/lessons</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-get-coursescourseidlessonslessonid" class="toc-link">GET /courses/:courseId/lessons/:lessonId</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-post-coursescourseidlessonslessonidprogress" class="toc-link">POST /courses/:courseId/lessons/:lessonId/progress</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-34-lessons-api-patch-coursescourseidlessonslessonidnotes" class="toc-link">PATCH /courses/:courseId/lessons/:lessonId/notes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api" class="toc-link">3.5 QUIZ API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api-get-coursescourseidquizzesquizid" class="toc-link">GET /courses/:courseId/quizzes/:quizId</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-35-quiz-api-post-coursescourseidquizzesquizidsubmit" class="toc-link">POST /courses/:courseId/quizzes/:quizId/submit</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api" class="toc-link">3.6 CERTIFICATES API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-usersmecertificates" class="toc-link">GET /users/me/certificates</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesid" class="toc-link">GET /certificates/:id</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-36-certificates-api-get-certificatesidpdf" class="toc-link">GET /certificates/:id/pdf</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api" class="toc-link">3.7 MEMBERSHIP API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-get-membershipsplans" class="toc-link">GET /memberships/plans</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-get-usersmemembership" class="toc-link">GET /users/me/membership</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipssubscribe" class="toc-link">POST /memberships/subscribe</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-37-membership-api-post-membershipscancel" class="toc-link">POST /memberships/cancel</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api" class="toc-link">3.8 PAYMENTS API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentscreate-order-razorpay" class="toc-link">POST /payments/create-order (Razorpay)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-post-paymentsverify-razorpay-webhook-signature-verification" class="toc-link">POST /payments/verify (Razorpay webhook signature verification)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-38-payments-api-get-paymentshistory" class="toc-link">GET /payments/history</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api" class="toc-link">3.9 AI API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aichat" class="toc-link">POST /ai/chat</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aistudy-plan" class="toc-link">POST /ai/study-plan</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-39-ai-api-post-aigenerate-quiz-trainer-only" class="toc-link">POST /ai/generate-quiz (Trainer only)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api" class="toc-link">3.10 NOTIFICATIONS API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notifications" class="toc-link">GET /notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsidread" class="toc-link">PATCH /notifications/:id/read</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationsread-all" class="toc-link">PATCH /notifications/read-all</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-get-notificationspreferences" class="toc-link">GET /notifications/preferences</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-310-notifications-api-patch-notificationspreferences" class="toc-link">PATCH /notifications/preferences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api" class="toc-link">3.11 SUPPORT API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportarticles" class="toc-link">GET /support/articles</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-post-supporttickets" class="toc-link">POST /support/tickets</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supporttickets" class="toc-link">GET /support/tickets</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-get-supportticketsid" class="toc-link">GET /support/tickets/:id</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-311-support-api-post-supportticketsidreply" class="toc-link">POST /support/tickets/:id/reply</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api" class="toc-link">3.12 ADMIN API</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-admindashboard" class="toc-link">GET /admin/dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminusers" class="toc-link">GET /admin/users</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-patch-adminusersid" class="toc-link">PATCH /admin/users/:id</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-post-adminnotificationsbroadcast" class="toc-link">POST /admin/notifications/broadcast</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#backend-architecture-api-specification-3-api-specifications-312-admin-api-get-adminrevenue" class="toc-link">GET /admin/revenue</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-4-middleware-stack" class="toc-link">4. Middleware Stack</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-5-background-jobs-bullmq" class="toc-link">5. Background Jobs (BullMQ)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#backend-architecture-api-specification-6-rate-limiting-configuration" class="toc-link">6. Rate Limiting Configuration</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

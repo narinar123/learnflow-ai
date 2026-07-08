@@ -1,0 +1,2478 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      UX Latest Design System : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/03_design_system_and_ui/ux_latest_design_system/">
+<meta property="og:title" content="UX Latest Design System - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/03_design_system_and_ui/ux_latest_design_system/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UX Latest Design System - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/03_design_system_and_ui/ux_latest_design_system.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  UX Latest Design System
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20UX%20Latest%20Design%20System%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Design%20System%20Philosophy%0A%0ALearnFlow%20AI&#039;s%20design%20system%20is%20built%20on%20four%20principles%3A%0A1.%20**Clarity%20First%3A**%20Every%20element%20must%20communicate%20a%20clear%20purpose.%20No%20decoration%20without%20function.%0A2.%20**Premium%20Feel%3A**%20Glassmorphism%2C%20smooth%20gradients%2C%20and%20refined%20spacing%20make%20the%20platform%20feel%20like%20a%20top-tier%20consumer%20app.%0A3.%20**Universal%20Accessibility%3A**%20WCAG%202.2%20AA%20compliance%20built%20into%20every%20token%20and%20component.%0A4.%20**Scalable%20Consistency%3A**%20A%20single%20source%20of%20truth%20for%20Flutter%20(mobile)%20and%20React%2FNext.js%20(web%2Fdesktop).%0A%0A---%0A%0A%23%23%202.%20Color%20System%0A%0A%23%23%23%202.1%20Primary%20Palette%20(Dark%20Mode%20%E2%80%94%20Default)%0A%7C%20Token%20%7C%20Color%20Name%20%7C%20Hex%20%7C%20HSL%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20%60color.primary.500%60%20%7C%20Indigo%20%7C%20%60%236366F1%60%20%7C%20hsl(239%2C%2084%25%2C%2067%25)%20%7C%20Primary%20CTA%20buttons%2C%20links%2C%20active%20states%20%7C%0A%7C%20%60color.primary.400%60%20%7C%20Indigo%20Light%20%7C%20%60%23818CF8%60%20%7C%20hsl(234%2C%2089%25%2C%2074%25)%20%7C%20Hover%20states%2C%20secondary%20actions%20%7C%0A%7C%20%60color.primary.600%60%20%7C%20Indigo%20Dark%20%7C%20%60%234F46E5%60%20%7C%20hsl(243%2C%2075%25%2C%2059%25)%20%7C%20Pressed%20state%2C%20important%20accents%20%7C%0A%7C%20%60color.primary.100%60%20%7C%20Indigo%20Tint%20%7C%20%60%23EEF2FF%60%20%7C%20hsl(230%2C%20100%25%2C%2097%25)%20%7C%20Light%20mode%20backgrounds%2C%20badges%20%7C%0A%0A%23%23%23%202.2%20Secondary%20Palette%0A%7C%20Token%20%7C%20Color%20Name%20%7C%20Hex%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20%60color.secondary.500%60%20%7C%20Purple%20%7C%20%60%23A855F7%60%20%7C%20Premium%20features%2C%20membership%20highlights%20%7C%0A%7C%20%60color.secondary.400%60%20%7C%20Purple%20Light%20%7C%20%60%23C084FC%60%20%7C%20Hover%20states%20%7C%0A%7C%20%60color.accent.500%60%20%7C%20Emerald%20%7C%20%60%2310B981%60%20%7C%20Success%20states%2C%20completion%2C%20certificates%20%7C%0A%7C%20%60color.accent.amber%60%20%7C%20Amber%20%7C%20%60%23F59E0B%60%20%7C%20Streaks%2C%20warnings%2C%20XP%20rewards%20%7C%0A%7C%20%60color.accent.rose%60%20%7C%20Rose%20%7C%20%60%23F43F5E%60%20%7C%20Errors%2C%20destructive%20actions%2C%20urgency%20%7C%0A%0A%23%23%23%202.3%20Neutral%20Scale%0A%7C%20Token%20%7C%20Hex%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60color.neutral.0%60%20%7C%20%60%23FFFFFF%60%20%7C%20Light%20mode%20surface%20%7C%0A%7C%20%60color.neutral.50%60%20%7C%20%60%23F8FAFC%60%20%7C%20Light%20mode%20background%20%7C%0A%7C%20%60color.neutral.100%60%20%7C%20%60%23F1F5F9%60%20%7C%20Light%20mode%20card%20surface%20%7C%0A%7C%20%60color.neutral.200%60%20%7C%20%60%23E2E8F0%60%20%7C%20Borders%2C%20dividers%20(light%20mode)%20%7C%0A%7C%20%60color.neutral.400%60%20%7C%20%60%2394A3B8%60%20%7C%20Placeholder%20text%2C%20disabled%20%7C%0A%7C%20%60color.neutral.600%60%20%7C%20%60%23475569%60%20%7C%20Secondary%20body%20text%20%7C%0A%7C%20%60color.neutral.800%60%20%7C%20%60%231E293B%60%20%7C%20Primary%20body%20text%20(light%20mode)%20%7C%0A%7C%20%60color.neutral.900%60%20%7C%20%60%230F172A%60%20%7C%20Dark%20mode%20primary%20background%20%7C%0A%7C%20%60color.neutral.850%60%20%7C%20%60%231E1E2E%60%20%7C%20Dark%20mode%20card%20surface%20%7C%0A%7C%20%60color.neutral.800d%60%20%7C%20%60%232A2A3E%60%20%7C%20Dark%20mode%20secondary%20surface%20%7C%0A%0A%23%23%23%202.4%20Semantic%20Colors%0A%7C%20Token%20%7C%20Hex%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60color.success%60%20%7C%20%60%2310B981%60%20%7C%20Completion%2C%20positive%20feedback%20%7C%0A%7C%20%60color.warning%60%20%7C%20%60%23F59E0B%60%20%7C%20Alerts%2C%20streak%20warnings%20%7C%0A%7C%20%60color.error%60%20%7C%20%60%23F43F5E%60%20%7C%20Form%20errors%2C%20destructive%20states%20%7C%0A%7C%20%60color.info%60%20%7C%20%60%233B82F6%60%20%7C%20Informational%20messages%20%7C%0A%0A%23%23%23%202.5%20Glassmorphism%20Tokens%0A%7C%20Token%20%7C%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60glass.background%60%20%7C%20%60rgba(255%2C255%2C255%2C0.08)%60%20%7C%20Glass%20card%20backgrounds%20(dark%20mode)%20%7C%0A%7C%20%60glass.background.light%60%20%7C%20%60rgba(255%2C255%2C255%2C0.6)%60%20%7C%20Glass%20card%20backgrounds%20(light%20mode)%20%7C%0A%7C%20%60glass.border%60%20%7C%20%60rgba(255%2C255%2C255%2C0.12)%60%20%7C%20Glass%20card%20borders%20(dark%20mode)%20%7C%0A%7C%20%60glass.backdrop%60%20%7C%20%60blur(12px)%60%20%7C%20Backdrop%20filter%20for%20glass%20surfaces%20%7C%0A%7C%20%60glass.shadow%60%20%7C%20%600%208px%2032px%20rgba(0%2C0%2C0%2C0.37)%60%20%7C%20Shadow%20for%20glass%20elements%20%7C%0A%0A---%0A%0A%23%23%203.%20Typography%20System%0A%0A%23%23%23%203.1%20Font%20Families%0A%7C%20Token%20%7C%20Font%20%7C%20Fallback%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20%60font.display%60%20%7C%20Outfit%20%7C%20system-ui%2C%20sans-serif%20%7C%20Headings%2C%20hero%20text%2C%20display%20text%20%7C%0A%7C%20%60font.body%60%20%7C%20Inter%20%7C%20system-ui%2C%20sans-serif%20%7C%20Body%20text%2C%20labels%2C%20descriptions%20%7C%0A%7C%20%60font.mono%60%20%7C%20JetBrains%20Mono%20%7C%20Courier%20New%2C%20monospace%20%7C%20Code%20blocks%2C%20technical%20content%20%7C%0A%0A*Google%20Fonts%20CDN%3A%20%60https%3A%2F%2Ffonts.googleapis.com%2Fcss2%3Ffamily%3DOutfit%3Awght%40400%3B500%3B600%3B700%3B800%26family%3DInter%3Awght%40300%3B400%3B500%3B600%3B700%26family%3DJetBrains%2BMono%26display%3Dswap%60*%0A%0A%23%23%23%203.2%20Type%20Scale%0A%7C%20Token%20%7C%20Size%20%7C%20Line%20Height%20%7C%20Weight%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20%60text.display.xl%60%20%7C%2056px%20%2F%203.5rem%20%7C%201.1%20%7C%20800%20%7C%20Hero%20headlines%20(marketing)%20%7C%0A%7C%20%60text.display.lg%60%20%7C%2040px%20%2F%202.5rem%20%7C%201.15%20%7C%20700%20%7C%20Page%20heroes%20(app)%20%7C%0A%7C%20%60text.h1%60%20%7C%2032px%20%2F%202rem%20%7C%201.2%20%7C%20700%20%7C%20Page%20titles%20%7C%0A%7C%20%60text.h2%60%20%7C%2024px%20%2F%201.5rem%20%7C%201.3%20%7C%20600%20%7C%20Section%20headings%20%7C%0A%7C%20%60text.h3%60%20%7C%2020px%20%2F%201.25rem%20%7C%201.35%20%7C%20600%20%7C%20Card%20titles%2C%20subsections%20%7C%0A%7C%20%60text.h4%60%20%7C%2018px%20%2F%201.125rem%20%7C%201.4%20%7C%20500%20%7C%20Minor%20headings%20%7C%0A%7C%20%60text.body.lg%60%20%7C%2016px%20%2F%201rem%20%7C%201.6%20%7C%20400%20%7C%20Primary%20body%20text%20%7C%0A%7C%20%60text.body.md%60%20%7C%2015px%20%2F%200.9375rem%20%7C%201.6%20%7C%20400%20%7C%20Secondary%20body%20text%20%7C%0A%7C%20%60text.body.sm%60%20%7C%2014px%20%2F%200.875rem%20%7C%201.5%20%7C%20400%20%7C%20Captions%2C%20labels%20%7C%0A%7C%20%60text.body.xs%60%20%7C%2012px%20%2F%200.75rem%20%7C%201.4%20%7C%20400%20%7C%20Tags%2C%20metadata%20%7C%0A%7C%20%60text.label%60%20%7C%2013px%20%2F%200.8125rem%20%7C%201%20%7C%20500%20%7C%20Form%20labels%2C%20badge%20text%20%7C%0A%7C%20%60text.overline%60%20%7C%2011px%20%2F%200.6875rem%20%7C%201%20%7C%20600%20%7C%20Overline%20text%2C%20uppercase%20category%20labels%20%7C%0A%0A*Senior%20Mode%20override%3A%20all%20sizes%20%C3%971.25%20when%20%60user.age_range%20%3D%20%2255%2B%22%60*%0A%0A---%0A%0A%23%23%204.%20Spacing%20System%20(8pt%20Grid)%0A%0A%7C%20Token%20%7C%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60space.1%60%20%7C%204px%20%7C%20Micro%20spacing%20(icon%20gap%2C%20inline%20padding)%20%7C%0A%7C%20%60space.2%60%20%7C%208px%20%7C%20Compact%20spacing%20(badge%20padding%2C%20tight%20elements)%20%7C%0A%7C%20%60space.3%60%20%7C%2012px%20%7C%20Small%20spacing%20(button%20padding%20Y%2C%20form%20field%20gap)%20%7C%0A%7C%20%60space.4%60%20%7C%2016px%20%7C%20Base%20unit%20(card%20inner%20padding%2C%20section%20gap%20small)%20%7C%0A%7C%20%60space.5%60%20%7C%2020px%20%7C%20Medium%20spacing%20%7C%0A%7C%20%60space.6%60%20%7C%2024px%20%7C%20Large%20spacing%20(section%20inner%20padding)%20%7C%0A%7C%20%60space.8%60%20%7C%2032px%20%7C%20Extra%20large%20(between%20sections)%20%7C%0A%7C%20%60space.10%60%20%7C%2040px%20%7C%202XL%20%7C%0A%7C%20%60space.12%60%20%7C%2048px%20%7C%203XL%20%7C%0A%7C%20%60space.16%60%20%7C%2064px%20%7C%204XL%20(page%20margins%2C%20hero%20padding)%20%7C%0A%7C%20%60space.20%60%20%7C%2080px%20%7C%205XL%20%7C%0A%7C%20%60space.24%60%20%7C%2096px%20%7C%206XL%20(landing%20section%20padding)%20%7C%0A%0A---%0A%0A%23%23%205.%20Border%20Radius%20System%0A%0A%7C%20Token%20%7C%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60radius.sm%60%20%7C%206px%20%7C%20Small%20chips%2C%20badges%2C%20input%20fields%20%7C%0A%7C%20%60radius.md%60%20%7C%2010px%20%7C%20Buttons%2C%20small%20cards%20%7C%0A%7C%20%60radius.lg%60%20%7C%2016px%20%7C%20Primary%20cards%2C%20modals%20%7C%0A%7C%20%60radius.xl%60%20%7C%2024px%20%7C%20Large%20cards%2C%20drawer%20handles%2C%20image%20thumbnails%20%7C%0A%7C%20%60radius.2xl%60%20%7C%2032px%20%7C%20Feature%20cards%2C%20hero%20sections%20%7C%0A%7C%20%60radius.full%60%20%7C%209999px%20%7C%20Pills%2C%20avatar%20circles%2C%20toggle%20switches%20%7C%0A%0A---%0A%0A%23%23%206.%20Elevation%20%26%20Shadow%20System%0A%0A%7C%20Token%20%7C%20Shadow%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60shadow.xs%60%20%7C%20%600%201px%203px%20rgba(0%2C0%2C0%2C0.12)%60%20%7C%20Subtle%20hover%20lift%20(light%20mode)%20%7C%0A%7C%20%60shadow.sm%60%20%7C%20%600%202px%208px%20rgba(0%2C0%2C0%2C0.16)%60%20%7C%20Standard%20card%20shadow%20%7C%0A%7C%20%60shadow.md%60%20%7C%20%600%204px%2016px%20rgba(0%2C0%2C0%2C0.2)%60%20%7C%20Modals%2C%20dropdowns%20%7C%0A%7C%20%60shadow.lg%60%20%7C%20%600%208px%2032px%20rgba(0%2C0%2C0%2C0.25)%60%20%7C%20Hero%20elements%2C%20prominent%20cards%20%7C%0A%7C%20%60shadow.xl%60%20%7C%20%600%2016px%2048px%20rgba(0%2C0%2C0%2C0.3)%60%20%7C%20Full-page%20modals%2C%20drawers%20%7C%0A%7C%20%60shadow.glow.primary%60%20%7C%20%600%200%2020px%20rgba(99%2C102%2C241%2C0.4)%60%20%7C%20Indigo%20glow%20(CTA%20buttons%2C%20active%20states)%20%7C%0A%7C%20%60shadow.glow.success%60%20%7C%20%600%200%2020px%20rgba(16%2C185%2C129%2C0.4)%60%20%7C%20Green%20glow%20(completion%2C%20certificates)%20%7C%0A%7C%20%60shadow.glow.amber%60%20%7C%20%600%200%2020px%20rgba(245%2C158%2C11%2C0.4)%60%20%7C%20Amber%20glow%20(streaks%2C%20XP%20rewards)%20%7C%0A%0A---%0A%0A%23%23%207.%20Motion%20%26%20Animation%20System%20(Framer%20Motion)%0A%0A%23%23%23%207.1%20Duration%20Tokens%0A%7C%20Token%20%7C%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60motion.duration.instant%60%20%7C%20100ms%20%7C%20State%20toggles%2C%20checkbox%2C%20radio%20%7C%0A%7C%20%60motion.duration.fast%60%20%7C%20150ms%20%7C%20Button%20press%2C%20hover%20state%20%7C%0A%7C%20%60motion.duration.normal%60%20%7C%20250ms%20%7C%20Card%20hover%2C%20dropdown%20open%20%7C%0A%7C%20%60motion.duration.moderate%60%20%7C%20350ms%20%7C%20Modal%20entry%2C%20drawer%20slide%20%7C%0A%7C%20%60motion.duration.slow%60%20%7C%20500ms%20%7C%20Page%20transitions%2C%20hero%20animations%20%7C%0A%7C%20%60motion.duration.celebration%60%20%7C%20800ms%20%7C%20Level-up%2C%20badge%20award%2C%20confetti%20%7C%0A%0A%23%23%23%207.2%20Easing%20Tokens%0A%7C%20Token%20%7C%20Value%20%7C%20Usage%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20%60motion.ease.default%60%20%7C%20%60%5B0.25%2C%200.46%2C%200.45%2C%200.94%5D%60%20%7C%20Standard%20transitions%20%7C%0A%7C%20%60motion.ease.spring%60%20%7C%20%60spring(%7B%20stiffness%3A%20300%2C%20damping%3A%2030%20%7D)%60%20%7C%20Bouncy%20effects%2C%20badge%20pop%20%7C%0A%7C%20%60motion.ease.enter%60%20%7C%20%60%5B0%2C%200%2C%200.2%2C%201%5D%60%20%7C%20Elements%20entering%20the%20screen%20%7C%0A%7C%20%60motion.ease.exit%60%20%7C%20%60%5B0.4%2C%200%2C%201%2C%201%5D%60%20%7C%20Elements%20leaving%20the%20screen%20%7C%0A%0A%23%23%23%207.3%20Standard%20Animation%20Variants%20(Framer%20Motion)%0A%60%60%60javascript%0A%2F%2F%20Fade%20Up%20%E2%80%94%20for%20cards%2C%20sections%20entering%20viewport%0Aconst%20fadeUp%20%3D%20%7B%0A%20%20hidden%3A%20%7B%20opacity%3A%200%2C%20y%3A%2024%20%7D%2C%0A%20%20visible%3A%20%7B%20opacity%3A%201%2C%20y%3A%200%2C%20transition%3A%20%7B%20duration%3A%200.35%2C%20ease%3A%20%5B0.25%2C%200.46%2C%200.45%2C%200.94%5D%20%7D%20%7D%0A%7D%3B%0A%0A%2F%2F%20Scale%20Pop%20%E2%80%94%20for%20badges%2C%20XP%20toasts%0Aconst%20scalePop%20%3D%20%7B%0A%20%20hidden%3A%20%7B%20opacity%3A%200%2C%20scale%3A%200.8%20%7D%2C%0A%20%20visible%3A%20%7B%20opacity%3A%201%2C%20scale%3A%201%2C%20transition%3A%20%7B%20type%3A%20&#039;spring&#039;%2C%20stiffness%3A%20300%2C%20damping%3A%2020%20%7D%20%7D%0A%7D%3B%0A%0A%2F%2F%20Slide%20In%20Right%20%E2%80%94%20for%20drawer%20panels%0Aconst%20slideInRight%20%3D%20%7B%0A%20%20hidden%3A%20%7B%20x%3A%20&#039;100%25&#039;%2C%20opacity%3A%200%20%7D%2C%0A%20%20visible%3A%20%7B%20x%3A%200%2C%20opacity%3A%201%2C%20transition%3A%20%7B%20duration%3A%200.35%2C%20ease%3A%20%5B0%2C%200%2C%200.2%2C%201%5D%20%7D%20%7D%0A%7D%3B%0A%0A%2F%2F%20Stagger%20Children%20%E2%80%94%20for%20list%20items%0Aconst%20staggerContainer%20%3D%20%7B%0A%20%20hidden%3A%20%7B%7D%2C%0A%20%20visible%3A%20%7B%20transition%3A%20%7B%20staggerChildren%3A%200.07%20%7D%20%7D%0A%7D%3B%0A%0A%2F%2F%20Celebration%20%E2%80%94%20for%20level-up%20and%20certificate%20screens%0Aconst%20celebration%20%3D%20%7B%0A%20%20hidden%3A%20%7B%20scale%3A%200%2C%20rotate%3A%20-10%2C%20opacity%3A%200%20%7D%2C%0A%20%20visible%3A%20%7B%20scale%3A%201%2C%20rotate%3A%200%2C%20opacity%3A%201%2C%20transition%3A%20%7B%20type%3A%20&#039;spring&#039;%2C%20stiffness%3A%20200%2C%20damping%3A%2015%2C%20duration%3A%200.8%20%7D%20%7D%0A%7D%3B%0A%60%60%60%0A%0A%23%23%23%207.4%20Reduce%20Motion%20Support%0AAll%20animations%20must%20respect%20%60prefers-reduced-motion%60%3A%0A%60%60%60css%0A%40media%20(prefers-reduced-motion%3A%20reduce)%20%7B%0A%20%20*%20%7B%20animation-duration%3A%200.01ms%20!important%3B%20transition-duration%3A%200.01ms%20!important%3B%20%7D%0A%7D%0A%60%60%60%0AIn%20Framer%20Motion%2C%20use%20%60useReducedMotion()%60%20hook%20to%20disable%20complex%20animations.%0A%0A---%0A%0A%23%23%208.%20Grid%20%26%20Layout%20System%0A%0A%23%23%23%208.1%20Breakpoints%0A%7C%20Breakpoint%20%7C%20Name%20%7C%20Min%20Width%20%7C%20Columns%20%7C%20Gutter%20%7C%20Margin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20%60xs%60%20%7C%20Mobile%20S%20%7C%20320px%20%7C%204%20%7C%2012px%20%7C%2016px%20%7C%0A%7C%20%60sm%60%20%7C%20Mobile%20L%20%7C%20390px%20%7C%204%20%7C%2016px%20%7C%2016px%20%7C%0A%7C%20%60md%60%20%7C%20Tablet%20%7C%20768px%20%7C%208%20%7C%2024px%20%7C%2024px%20%7C%0A%7C%20%60lg%60%20%7C%20iPad%20%2F%20Desktop%20S%20%7C%201024px%20%7C%2012%20%7C%2024px%20%7C%2032px%20%7C%0A%7C%20%60xl%60%20%7C%20Desktop%20%7C%201280px%20%7C%2012%20%7C%2032px%20%7C%2048px%20%7C%0A%7C%20%602xl%60%20%7C%20Desktop%20L%20%2F%20Electron%20%7C%201536px%20%7C%2012%20%7C%2032px%20%7C%2064px%20%7C%0A%0A%23%23%23%208.2%20Container%20Max%20Widths%0A%7C%20Context%20%7C%20Max%20Width%20%7C%0A%7C---%7C---%7C%0A%7C%20App%20content%20%7C%201200px%20%7C%0A%7C%20Marketing%20page%20%7C%201280px%20%7C%0A%7C%20Article%2Fblog%20content%20%7C%20720px%20%7C%0A%7C%20Form%20screens%20%7C%20480px%20%7C%0A%7C%20Auth%20screens%20%7C%20400px%20%7C%0A%0A---%0A%0A%23%23%209.%20Component%20Specifications%0A%0A%23%23%23%209.1%20Button%20System%0A%0A%23%23%23%23%20Primary%20Button%0A%60%60%60%0ABackground%3A%20color.primary.500%20(%236366F1)%0AText%3A%20white%2C%20font.body.md%2C%20weight%20600%0ABorder-radius%3A%20radius.md%20(10px)%0APadding%3A%2012px%2024px%20(desktop)%2C%2014px%2024px%20(mobile%20for%20tap%20target)%0AHover%3A%20background%20darken%2010%25%2C%20shadow.glow.primary%0APressed%3A%20scale(0.97)%2C%20background%20color.primary.600%0ADisabled%3A%20opacity%200.4%2C%20cursor%20not-allowed%0ALoading%3A%20spinner%20replaces%20text%2C%20width%20maintained%0AFocus%3A%202px%20solid%20color.primary.300%2C%20offset%202px%0AMin%20height%3A%2044px%20(mobile)%2C%2040px%20(desktop)%0A%60%60%60%0A%0A%23%23%23%23%20Secondary%20Button%0A%60%60%60%0ABackground%3A%20transparent%0ABorder%3A%201px%20solid%20color.primary.500%0AText%3A%20color.primary.500%2C%20weight%20600%0AHover%3A%20glass.background%20%2B%20border%20brightness%20up%0A%60%60%60%0A%0A%23%23%23%23%20Destructive%20Button%0A%60%60%60%0ABackground%3A%20color.error%20(%23F43F5E)%0AText%3A%20white%0AHover%3A%20darken%2010%25%2C%20shadow.glow.rose%0A%60%60%60%0A%0A%23%23%23%23%20Ghost%20Button%20%2F%20Text%20Button%0A%60%60%60%0ABackground%3A%20transparent%0AText%3A%20color.neutral.600%20or%20color.primary.500%0AHover%3A%20background%20rgba(99%2C102%2C241%2C0.08)%0A%60%60%60%0A%0A%23%23%23%209.2%20Input%20Fields%0A%60%60%60%0ABackground%3A%20glass.background%20(dark)%20%2F%20color.neutral.100%20(light)%0ABorder%3A%201px%20solid%20color.neutral.200%0ABorder-radius%3A%20radius.sm%20(6px)%0APadding%3A%2012px%2016px%0APlaceholder%3A%20color.neutral.400%0AFocus%20border%3A%202px%20solid%20color.primary.500%0AError%20border%3A%202px%20solid%20color.error%0AError%20text%3A%20color.error%2C%2012px%2C%20below%20field%0ALabel%3A%2013px%2C%20weight%20500%2C%20above%20field%20by%206px%0AMin%20height%3A%2048px%20(mobile)%2C%2044px%20(desktop)%0A%60%60%60%0A%0A%23%23%23%209.3%20Cards%0A%0A%23%23%23%23%20Standard%20Card%0A%60%60%60%0ABackground%3A%20glass.background%20(dark)%20%2F%20color.neutral.0%20(light)%0ABorder%3A%201px%20solid%20glass.border%20%2F%20color.neutral.200%0ABorder-radius%3A%20radius.lg%20(16px)%0APadding%3A%20space.6%20(24px)%0AShadow%3A%20shadow.sm%0AHover%3A%20shadow.md%20%2B%20translateY(-2px)%2C%20250ms%20ease%0A%60%60%60%0A%0A%23%23%23%23%20Course%20Card%0A%60%60%60%0AExtends%3A%20Standard%20Card%0AThumbnail%3A%2016%3A9%20aspect%20ratio%2C%20radius.md%20top%20corners%0ATags%20row%3A%20Category%20chip%20%2B%20Level%20chip%0ATitle%3A%20text.h4%20(18px)%2C%20weight%20600%2C%202-line%20clamp%0AMeta%3A%20Instructor%20avatar%20%2B%20name%2C%20duration%2C%20star%20rating%0AProgress%20bar%3A%20shown%20when%20enrolled%2C%20emerald%20color%0APrice%2FEnroll%20CTA%3A%20bottom%20of%20card%0A%60%60%60%0A%0A%23%23%23%23%20Lesson%20Card%20(in%20Curriculum)%0A%60%60%60%0ALayout%3A%20Horizontal%2C%20icon%20left%20%2B%20text%20center%20%2B%20duration%20right%0AIcon%3A%20Play%20circle%20(video)%20%2F%20document%20(PDF)%20%2F%20quiz%20(check)%0ATitle%3A%20text.body.lg%2C%201-line%20clamp%0ACompleted%20state%3A%20checkmark%20icon%2C%20text%20muted%0ALocked%20state%3A%20lock%20icon%2C%20opacity%200.5%0A%60%60%60%0A%0A%23%23%23%209.4%20Navigation%0A%0A%23%23%23%23%20Mobile%20Bottom%20Tab%20Bar%0A%60%60%60%0AHeight%3A%2064px%20%2B%20safe%20area%20inset%0ABackground%3A%20glass.background%20with%20backdrop%20blur%0AItems%3A%205%20tabs%20(Home%2C%20Courses%2C%20AI%2C%20Progress%2C%20Profile)%0AActive%3A%20color.primary.500%20icon%20%2B%20label%2C%20indicator%20dot%0AInactive%3A%20color.neutral.400%20icon%20%2B%20label%0ATab%20items%3A%20min%2048%C3%9748dp%20touch%20target%0ATransition%3A%20icon%20scale%201%E2%86%921.15%20on%20active%2C%20200ms%20spring%0A%60%60%60%0A%0A%23%23%23%23%20Web%20Top%20Navigation%0A%60%60%60%0AHeight%3A%2064px%2C%20sticky%0ABackground%3A%20glass.background%20with%20backdrop%20blur%20(dark)%20%2F%20white%20with%20shadow%20(light)%0ALogo%3A%20left%2C%20140px%20wide%0APrimary%20links%3A%20Courses%2C%20AI%20Assistant%2C%20Progress%20(center%20or%20left%20of%20logo)%0ARight%3A%20Notification%20bell%2C%20Avatar%2FMenu%0AMobile%20collapsed%3A%20hamburger%20%E2%86%92%20slide-in%20drawer%0A%60%60%60%0A%0A%23%23%23%23%20Sidebar%20(Admin%20%2F%20Trainer%20Panel)%0A%60%60%60%0AWidth%3A%20240px%20(expanded)%2C%2072px%20(collapsed)%0ABackground%3A%20color.neutral.900%20(dark)%20or%20color.neutral.50%20(light)%0AItems%3A%20icon%20%2B%20label%2C%20active%20state%3A%20primary.500%20background%20tint%20%2B%20left%20border%20accent%0ACollapse%20toggle%3A%20arrow%20icon%20button%20at%20bottom%0AResponsive%3A%20collapses%20to%20bottom%20nav%20on%20tablet%0A%60%60%60%0A%0A%23%23%23%209.5%20Progress%20Indicators%0A%0A%23%23%23%23%20Linear%20Progress%20Bar%0A%60%60%60%0ATrack%3A%20color.neutral.200%20(light)%20%2F%20rgba(255%2C255%2C255%2C0.1)%20(dark)%0AFill%3A%20color.accent.500%20(emerald)%20for%20course%20progress%2C%20color.primary.500%20for%20XP%0ABorder-radius%3A%20radius.full%0AHeight%3A%206px%20(compact)%2C%2010px%20(prominent)%2C%2016px%20(large%20hero)%0AAnimation%3A%20width%20transition%20500ms%20ease-in-out%0A%60%60%60%0A%0A%23%23%23%23%20Circular%20Progress%20(XP%20%2F%20Level)%0A%60%60%60%0ASize%3A%2080px%20(dashboard%20widget)%2C%20120px%20(profile%20header)%0ATrack%20color%3A%20rgba(255%2C255%2C255%2C0.1)%0AFill%20color%3A%20primary.500%0AStroke%20width%3A%208px%0ACenter%20text%3A%20level%20number%2C%20text.h2%0AAnimation%3A%20stroke-dashoffset%20transition%20800ms%20ease%0A%60%60%60%0A%0A%23%23%23%23%20Streak%20Flame%20Widget%0A%60%60%60%0AIcon%3A%20animated%20flame%20SVG%20(loops%20when%20streak%20active)%0ACount%3A%20large%20bold%20number%2C%20amber%20color%0ASub-label%3A%20%22day%20streak%22%0AInactive%3A%20grey%20flame%2C%20%22No%20streak%20today%22%0A%60%60%60%0A%0A%23%23%23%209.6%20Modals%20%26%20Drawers%0A%60%60%60%0ABackdrop%3A%20rgba(0%2C0%2C0%2C0.6)%20%2B%20blur(4px)%0AContainer%3A%20glass.background%2C%20radius.xl%2C%20shadow.xl%0AMax%20width%3A%20480px%20(standard)%2C%20640px%20(wide)%2C%2090vw%20on%20mobile%0AAnimation%20in%3A%20scale%200.95%E2%86%921%20%2B%20opacity%200%E2%86%921%2C%20250ms%20ease%0AAnimation%20out%3A%20scale%201%E2%86%920.95%20%2B%20opacity%201%E2%86%920%2C%20200ms%20ease%0AClose%20button%3A%20top-right%2C%2044%C3%9744px%20touch%20target%0ADrawer%20(mobile)%3A%20slides%20from%20bottom%2C%20handle%20bar%20at%20top%2C%20max-height%2080vh%0A%60%60%60%0A%0A%23%23%23%209.7%20Toast%20Notifications%0A%60%60%60%0APosition%3A%20top-center%20(mobile)%2C%20bottom-right%20(desktop)%0AWidth%3A%20max%20400px%0AVariants%3A%20success%20(emerald)%2C%20error%20(rose)%2C%20warning%20(amber)%2C%20info%20(blue)%0ADuration%3A%203s%20auto-dismiss%20(info)%2C%205s%20(success)%2C%20persistent%20(error%20requiring%20action)%0AAnimation%3A%20slide%20in%20from%20top%20(mobile)%20%2F%20right%20(desktop)%2C%20200ms%20spring%0AIcon%3A%20variant-colored%20icon%20left%20of%20message%0ADismiss%3A%20swipe%20or%20X%20button%0A%60%60%60%0A%0A%23%23%23%209.8%20XP%20%26%20Badge%20Reward%20Toast%0A%60%60%60%0ASpecial%20full-width%20bottom%20toast%20with%3A%0A-%20XP%20icon%20(gold%20coin%20or%20star)%0A-%20%22%2B75%20XP%22%20large%20text%2C%20amber%20color%0A-%20%22Quiz%20Ace%22%20badge%20name%20if%20badge%20earned%0A-%20Level-up%20variant%3A%20full-screen%20celebration%20overlay%20with%20confetti%0AAnimation%3A%20celebration%20variant%20(scalePop%2C%20800ms)%0AAuto-dismiss%3A%204s%20for%20XP%2C%206s%20for%20badge%2C%208s%20for%20level-up%0A%60%60%60%0A%0A%23%23%23%209.9%20Certificate%20Component%0A%60%60%60%0ASize%3A%20A4%20ratio%20(1%3A1.414)%2C%2016%3A9%20preview%20thumbnail%0ABorder%3A%204px%20gradient%20border%20(primary%E2%86%92secondary)%0ABackground%3A%20branded%20design%20with%20platform%20logo%0AContent%3A%20User%20name%20(display%20text)%2C%20Course%20name%20(h2)%2C%20Date%2C%20Trainer%2C%20Verification%20QR%0AFooter%3A%20Platform%20branding%2C%20verification%20URL%2C%20unique%20ID%0APremium%20border%20variants%3A%20Gold%20foil%20effect%2C%20Holographic%20shimmer%20(Level%205%2B)%0A%60%60%60%0A%0A%23%23%23%209.10%20Quiz%20Components%0A%0A%23%23%23%23%20Question%20Card%0A%60%60%60%0ABackground%3A%20Standard%20Card%0AQuestion%20text%3A%20text.h3%2C%20weight%20600%0AOption%20items%3A%20large%20radio-button%20list%20items%2C%20min%2048dp%20height%0ASelected%20state%3A%20primary.500%20border%20%2B%20tint%20background%0ACorrect%20state%3A%20accent.500%20(emerald)%20border%20%2B%20tint%20%2B%20check%20icon%0AIncorrect%20state%3A%20error.500%20(rose)%20border%20%2B%20tint%20%2B%20X%20icon%0ATimer%20bar%3A%20top%20of%20card%2C%20red%20fill%20shrinking%20left-to-right%0A%60%60%60%0A%0A%23%23%23%23%20Result%20Screen%0A%60%60%60%0AScore%3A%20Large%20circular%20progress%20(correct%2Ftotal)%0AGrade%20text%3A%20%22Excellent!%22%2C%20%22Good%20Job%22%2C%20%22Keep%20Practicing%22%20based%20on%20score%0AXP%20earned%3A%20amber%20pill%20badge%0AReview%20button%3A%20shows%20incorrect%20answers%20with%20AI%20explanation%0ARetry%20button%3A%20disabled%20if%20in%20cooldown%2C%20timer%20shown%0A%60%60%60%0A%0A---%0A%0A%23%23%2010.%20Iconography%0A%0A-%20**Library%3A**%20Lucide%20Icons%20(React)%20%2F%20Flutter%20Icons%20package%20matching%20Lucide%0A-%20**Size%3A**%2020px%20(inline)%2C%2024px%20(standard)%2C%2028px%20(navigation%20tabs)%2C%2032px%20(feature%20icons)%0A-%20**Stroke%20width%3A**%201.5px%20(thin%2C%20modern%20aesthetic)%0A-%20**Color%3A**%20Inherits%20from%20parent%20context%3B%20never%20hardcode%20icon%20color%0A-%20**Custom%20icons%3A**%20Course%20category%20icons%2C%20badge%20icons%20%E2%80%94%20designed%20as%20SVG%2C%20exported%20at%2048%C3%9748px%0A%0A---%0A%0A%23%23%2011.%20Imagery%20%26%20Illustration%20Style%0A%0A-%20**Photos%3A**%20Real%2C%20diverse%2C%20professional%20photography.%20No%20stock-photo%20clich%C3%A9s.%0A-%20**Illustrations%3A**%20Line-style%20with%20primary%20brand%20colors.%20Used%20for%20empty%20states%2C%20onboarding%2C%20error%20screens.%0A-%20**Empty%20States%3A**%20Always%20have%20an%20illustration%20%2B%20headline%20%2B%20CTA%20button.%20Never%20just%20%22No%20data%20found.%22%0A-%20**Avatar%3A**%20User%20avatars%20as%20circle%20crops%2C%2032px%20(list)%2C%2048px%20(card)%2C%2080px%20(profile%20header)%2C%20120px%20(profile%20page)%0A-%20**Thumbnails%3A**%2016%3A9%20aspect%20ratio%20for%20course%20thumbnails%2C%20lazy-loaded%20with%20blur%20placeholder%0A%0A---%0A%0A%23%23%2012.%20Dark%20Mode%20%2F%20Light%20Mode%0A%0A%7C%20Element%20%7C%20Dark%20Mode%20%7C%20Light%20Mode%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Background%20%7C%20%60%230F172A%60%20%7C%20%60%23F8FAFC%60%20%7C%0A%7C%20Surface%20(Card)%20%7C%20%60%231E1E2E%60%20%7C%20%60%23FFFFFF%60%20%7C%0A%7C%20Surface%20(Secondary)%20%7C%20%60%232A2A3E%60%20%7C%20%60%23F1F5F9%60%20%7C%0A%7C%20Primary%20Text%20%7C%20%60%23F8FAFC%60%20%7C%20%60%230F172A%60%20%7C%0A%7C%20Secondary%20Text%20%7C%20%60%2394A3B8%60%20%7C%20%60%23475569%60%20%7C%0A%7C%20Border%20%7C%20%60rgba(255%2C255%2C255%2C0.08)%60%20%7C%20%60%23E2E8F0%60%20%7C%0A%7C%20Mode%20default%20%7C%20**Dark%20Mode**%20%7C%20Toggleable%20%7C%0A%7C%20Toggle%20%7C%20System%20preference%20respected%3B%20manual%20toggle%20in%20settings%20%7C%20%7C%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>03 Design System And Ui</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>UX Latest Design System</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="ux-latest-design-system" class="docmd-heading"><a href="#ux-latest-design-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>UX Latest Design System</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="ux-latest-design-system-1-design-system-philosophy" class="docmd-heading"><a href="#ux-latest-design-system-1-design-system-philosophy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Design System Philosophy</h2>
+<p>LearnFlow AI’s design system is built on four principles:</p>
+<ol>
+<li><strong>Clarity First:</strong> Every element must communicate a clear purpose. No decoration without function.</li>
+<li><strong>Premium Feel:</strong> Glassmorphism, smooth gradients, and refined spacing make the platform feel like a top-tier consumer app.</li>
+<li><strong>Universal Accessibility:</strong> WCAG 2.2 AA compliance built into every token and component.</li>
+<li><strong>Scalable Consistency:</strong> A single source of truth for Flutter (mobile) and React/Next.js (web/desktop).</li>
+</ol>
+<hr>
+<h2 id="ux-latest-design-system-2-color-system" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Color System</h2>
+<h3 id="ux-latest-design-system-2-color-system-21-primary-palette-dark-mode-default" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system-21-primary-palette-dark-mode-default" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.1 Primary Palette (Dark Mode — Default)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Color Name</th>
+<th>Hex</th>
+<th>HSL</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color.primary.500</code></td>
+<td>Indigo</td>
+<td><code>#6366F1</code></td>
+<td>hsl(239, 84%, 67%)</td>
+<td>Primary CTA buttons, links, active states</td>
+</tr>
+<tr>
+<td><code>color.primary.400</code></td>
+<td>Indigo Light</td>
+<td><code>#818CF8</code></td>
+<td>hsl(234, 89%, 74%)</td>
+<td>Hover states, secondary actions</td>
+</tr>
+<tr>
+<td><code>color.primary.600</code></td>
+<td>Indigo Dark</td>
+<td><code>#4F46E5</code></td>
+<td>hsl(243, 75%, 59%)</td>
+<td>Pressed state, important accents</td>
+</tr>
+<tr>
+<td><code>color.primary.100</code></td>
+<td>Indigo Tint</td>
+<td><code>#EEF2FF</code></td>
+<td>hsl(230, 100%, 97%)</td>
+<td>Light mode backgrounds, badges</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-2-color-system-22-secondary-palette" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system-22-secondary-palette" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.2 Secondary Palette</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Color Name</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color.secondary.500</code></td>
+<td>Purple</td>
+<td><code>#A855F7</code></td>
+<td>Premium features, membership highlights</td>
+</tr>
+<tr>
+<td><code>color.secondary.400</code></td>
+<td>Purple Light</td>
+<td><code>#C084FC</code></td>
+<td>Hover states</td>
+</tr>
+<tr>
+<td><code>color.accent.500</code></td>
+<td>Emerald</td>
+<td><code>#10B981</code></td>
+<td>Success states, completion, certificates</td>
+</tr>
+<tr>
+<td><code>color.accent.amber</code></td>
+<td>Amber</td>
+<td><code>#F59E0B</code></td>
+<td>Streaks, warnings, XP rewards</td>
+</tr>
+<tr>
+<td><code>color.accent.rose</code></td>
+<td>Rose</td>
+<td><code>#F43F5E</code></td>
+<td>Errors, destructive actions, urgency</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-2-color-system-23-neutral-scale" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system-23-neutral-scale" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.3 Neutral Scale</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color.neutral.0</code></td>
+<td><code>#FFFFFF</code></td>
+<td>Light mode surface</td>
+</tr>
+<tr>
+<td><code>color.neutral.50</code></td>
+<td><code>#F8FAFC</code></td>
+<td>Light mode background</td>
+</tr>
+<tr>
+<td><code>color.neutral.100</code></td>
+<td><code>#F1F5F9</code></td>
+<td>Light mode card surface</td>
+</tr>
+<tr>
+<td><code>color.neutral.200</code></td>
+<td><code>#E2E8F0</code></td>
+<td>Borders, dividers (light mode)</td>
+</tr>
+<tr>
+<td><code>color.neutral.400</code></td>
+<td><code>#94A3B8</code></td>
+<td>Placeholder text, disabled</td>
+</tr>
+<tr>
+<td><code>color.neutral.600</code></td>
+<td><code>#475569</code></td>
+<td>Secondary body text</td>
+</tr>
+<tr>
+<td><code>color.neutral.800</code></td>
+<td><code>#1E293B</code></td>
+<td>Primary body text (light mode)</td>
+</tr>
+<tr>
+<td><code>color.neutral.900</code></td>
+<td><code>#0F172A</code></td>
+<td>Dark mode primary background</td>
+</tr>
+<tr>
+<td><code>color.neutral.850</code></td>
+<td><code>#1E1E2E</code></td>
+<td>Dark mode card surface</td>
+</tr>
+<tr>
+<td><code>color.neutral.800d</code></td>
+<td><code>#2A2A3E</code></td>
+<td>Dark mode secondary surface</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-2-color-system-24-semantic-colors" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system-24-semantic-colors" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.4 Semantic Colors</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color.success</code></td>
+<td><code>#10B981</code></td>
+<td>Completion, positive feedback</td>
+</tr>
+<tr>
+<td><code>color.warning</code></td>
+<td><code>#F59E0B</code></td>
+<td>Alerts, streak warnings</td>
+</tr>
+<tr>
+<td><code>color.error</code></td>
+<td><code>#F43F5E</code></td>
+<td>Form errors, destructive states</td>
+</tr>
+<tr>
+<td><code>color.info</code></td>
+<td><code>#3B82F6</code></td>
+<td>Informational messages</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-2-color-system-25-glassmorphism-tokens" class="docmd-heading"><a href="#ux-latest-design-system-2-color-system-25-glassmorphism-tokens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.5 Glassmorphism Tokens</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>glass.background</code></td>
+<td><code>rgba(255,255,255,0.08)</code></td>
+<td>Glass card backgrounds (dark mode)</td>
+</tr>
+<tr>
+<td><code>glass.background.light</code></td>
+<td><code>rgba(255,255,255,0.6)</code></td>
+<td>Glass card backgrounds (light mode)</td>
+</tr>
+<tr>
+<td><code>glass.border</code></td>
+<td><code>rgba(255,255,255,0.12)</code></td>
+<td>Glass card borders (dark mode)</td>
+</tr>
+<tr>
+<td><code>glass.backdrop</code></td>
+<td><code>blur(12px)</code></td>
+<td>Backdrop filter for glass surfaces</td>
+</tr>
+<tr>
+<td><code>glass.shadow</code></td>
+<td><code>0 8px 32px rgba(0,0,0,0.37)</code></td>
+<td>Shadow for glass elements</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ux-latest-design-system-3-typography-system" class="docmd-heading"><a href="#ux-latest-design-system-3-typography-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Typography System</h2>
+<h3 id="ux-latest-design-system-3-typography-system-31-font-families" class="docmd-heading"><a href="#ux-latest-design-system-3-typography-system-31-font-families" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Font Families</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Font</th>
+<th>Fallback</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>font.display</code></td>
+<td>Outfit</td>
+<td>system-ui, sans-serif</td>
+<td>Headings, hero text, display text</td>
+</tr>
+<tr>
+<td><code>font.body</code></td>
+<td>Inter</td>
+<td>system-ui, sans-serif</td>
+<td>Body text, labels, descriptions</td>
+</tr>
+<tr>
+<td><code>font.mono</code></td>
+<td>JetBrains Mono</td>
+<td>Courier New, monospace</td>
+<td>Code blocks, technical content</td>
+</tr>
+</tbody>
+</table>
+</div><p><em>Google Fonts CDN: <code>https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono&amp;display=swap</code></em></p>
+<h3 id="ux-latest-design-system-3-typography-system-32-type-scale" class="docmd-heading"><a href="#ux-latest-design-system-3-typography-system-32-type-scale" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 Type Scale</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Size</th>
+<th>Line Height</th>
+<th>Weight</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text.display.xl</code></td>
+<td>56px / 3.5rem</td>
+<td>1.1</td>
+<td>800</td>
+<td>Hero headlines (marketing)</td>
+</tr>
+<tr>
+<td><code>text.display.lg</code></td>
+<td>40px / 2.5rem</td>
+<td>1.15</td>
+<td>700</td>
+<td>Page heroes (app)</td>
+</tr>
+<tr>
+<td><code>text.h1</code></td>
+<td>32px / 2rem</td>
+<td>1.2</td>
+<td>700</td>
+<td>Page titles</td>
+</tr>
+<tr>
+<td><code>text.h2</code></td>
+<td>24px / 1.5rem</td>
+<td>1.3</td>
+<td>600</td>
+<td>Section headings</td>
+</tr>
+<tr>
+<td><code>text.h3</code></td>
+<td>20px / 1.25rem</td>
+<td>1.35</td>
+<td>600</td>
+<td>Card titles, subsections</td>
+</tr>
+<tr>
+<td><code>text.h4</code></td>
+<td>18px / 1.125rem</td>
+<td>1.4</td>
+<td>500</td>
+<td>Minor headings</td>
+</tr>
+<tr>
+<td><code>text.body.lg</code></td>
+<td>16px / 1rem</td>
+<td>1.6</td>
+<td>400</td>
+<td>Primary body text</td>
+</tr>
+<tr>
+<td><code>text.body.md</code></td>
+<td>15px / 0.9375rem</td>
+<td>1.6</td>
+<td>400</td>
+<td>Secondary body text</td>
+</tr>
+<tr>
+<td><code>text.body.sm</code></td>
+<td>14px / 0.875rem</td>
+<td>1.5</td>
+<td>400</td>
+<td>Captions, labels</td>
+</tr>
+<tr>
+<td><code>text.body.xs</code></td>
+<td>12px / 0.75rem</td>
+<td>1.4</td>
+<td>400</td>
+<td>Tags, metadata</td>
+</tr>
+<tr>
+<td><code>text.label</code></td>
+<td>13px / 0.8125rem</td>
+<td>1</td>
+<td>500</td>
+<td>Form labels, badge text</td>
+</tr>
+<tr>
+<td><code>text.overline</code></td>
+<td>11px / 0.6875rem</td>
+<td>1</td>
+<td>600</td>
+<td>Overline text, uppercase category labels</td>
+</tr>
+</tbody>
+</table>
+</div><p><em>Senior Mode override: all sizes ×1.25 when <code>user.age_range = &quot;55+&quot;</code></em></p>
+<hr>
+<h2 id="ux-latest-design-system-4-spacing-system-8pt-grid" class="docmd-heading"><a href="#ux-latest-design-system-4-spacing-system-8pt-grid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Spacing System (8pt Grid)</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>space.1</code></td>
+<td>4px</td>
+<td>Micro spacing (icon gap, inline padding)</td>
+</tr>
+<tr>
+<td><code>space.2</code></td>
+<td>8px</td>
+<td>Compact spacing (badge padding, tight elements)</td>
+</tr>
+<tr>
+<td><code>space.3</code></td>
+<td>12px</td>
+<td>Small spacing (button padding Y, form field gap)</td>
+</tr>
+<tr>
+<td><code>space.4</code></td>
+<td>16px</td>
+<td>Base unit (card inner padding, section gap small)</td>
+</tr>
+<tr>
+<td><code>space.5</code></td>
+<td>20px</td>
+<td>Medium spacing</td>
+</tr>
+<tr>
+<td><code>space.6</code></td>
+<td>24px</td>
+<td>Large spacing (section inner padding)</td>
+</tr>
+<tr>
+<td><code>space.8</code></td>
+<td>32px</td>
+<td>Extra large (between sections)</td>
+</tr>
+<tr>
+<td><code>space.10</code></td>
+<td>40px</td>
+<td>2XL</td>
+</tr>
+<tr>
+<td><code>space.12</code></td>
+<td>48px</td>
+<td>3XL</td>
+</tr>
+<tr>
+<td><code>space.16</code></td>
+<td>64px</td>
+<td>4XL (page margins, hero padding)</td>
+</tr>
+<tr>
+<td><code>space.20</code></td>
+<td>80px</td>
+<td>5XL</td>
+</tr>
+<tr>
+<td><code>space.24</code></td>
+<td>96px</td>
+<td>6XL (landing section padding)</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ux-latest-design-system-5-border-radius-system" class="docmd-heading"><a href="#ux-latest-design-system-5-border-radius-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Border Radius System</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>radius.sm</code></td>
+<td>6px</td>
+<td>Small chips, badges, input fields</td>
+</tr>
+<tr>
+<td><code>radius.md</code></td>
+<td>10px</td>
+<td>Buttons, small cards</td>
+</tr>
+<tr>
+<td><code>radius.lg</code></td>
+<td>16px</td>
+<td>Primary cards, modals</td>
+</tr>
+<tr>
+<td><code>radius.xl</code></td>
+<td>24px</td>
+<td>Large cards, drawer handles, image thumbnails</td>
+</tr>
+<tr>
+<td><code>radius.2xl</code></td>
+<td>32px</td>
+<td>Feature cards, hero sections</td>
+</tr>
+<tr>
+<td><code>radius.full</code></td>
+<td>9999px</td>
+<td>Pills, avatar circles, toggle switches</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ux-latest-design-system-6-elevation-shadow-system" class="docmd-heading"><a href="#ux-latest-design-system-6-elevation-shadow-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Elevation &amp; Shadow System</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Shadow Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shadow.xs</code></td>
+<td><code>0 1px 3px rgba(0,0,0,0.12)</code></td>
+<td>Subtle hover lift (light mode)</td>
+</tr>
+<tr>
+<td><code>shadow.sm</code></td>
+<td><code>0 2px 8px rgba(0,0,0,0.16)</code></td>
+<td>Standard card shadow</td>
+</tr>
+<tr>
+<td><code>shadow.md</code></td>
+<td><code>0 4px 16px rgba(0,0,0,0.2)</code></td>
+<td>Modals, dropdowns</td>
+</tr>
+<tr>
+<td><code>shadow.lg</code></td>
+<td><code>0 8px 32px rgba(0,0,0,0.25)</code></td>
+<td>Hero elements, prominent cards</td>
+</tr>
+<tr>
+<td><code>shadow.xl</code></td>
+<td><code>0 16px 48px rgba(0,0,0,0.3)</code></td>
+<td>Full-page modals, drawers</td>
+</tr>
+<tr>
+<td><code>shadow.glow.primary</code></td>
+<td><code>0 0 20px rgba(99,102,241,0.4)</code></td>
+<td>Indigo glow (CTA buttons, active states)</td>
+</tr>
+<tr>
+<td><code>shadow.glow.success</code></td>
+<td><code>0 0 20px rgba(16,185,129,0.4)</code></td>
+<td>Green glow (completion, certificates)</td>
+</tr>
+<tr>
+<td><code>shadow.glow.amber</code></td>
+<td><code>0 0 20px rgba(245,158,11,0.4)</code></td>
+<td>Amber glow (streaks, XP rewards)</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ux-latest-design-system-7-motion-animation-system-framer-motion" class="docmd-heading"><a href="#ux-latest-design-system-7-motion-animation-system-framer-motion" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Motion &amp; Animation System (Framer Motion)</h2>
+<h3 id="ux-latest-design-system-7-motion-animation-system-framer-motion-71-duration-tokens" class="docmd-heading"><a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-71-duration-tokens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.1 Duration Tokens</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>motion.duration.instant</code></td>
+<td>100ms</td>
+<td>State toggles, checkbox, radio</td>
+</tr>
+<tr>
+<td><code>motion.duration.fast</code></td>
+<td>150ms</td>
+<td>Button press, hover state</td>
+</tr>
+<tr>
+<td><code>motion.duration.normal</code></td>
+<td>250ms</td>
+<td>Card hover, dropdown open</td>
+</tr>
+<tr>
+<td><code>motion.duration.moderate</code></td>
+<td>350ms</td>
+<td>Modal entry, drawer slide</td>
+</tr>
+<tr>
+<td><code>motion.duration.slow</code></td>
+<td>500ms</td>
+<td>Page transitions, hero animations</td>
+</tr>
+<tr>
+<td><code>motion.duration.celebration</code></td>
+<td>800ms</td>
+<td>Level-up, badge award, confetti</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-7-motion-animation-system-framer-motion-72-easing-tokens" class="docmd-heading"><a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-72-easing-tokens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.2 Easing Tokens</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Value</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>motion.ease.default</code></td>
+<td><code>[0.25, 0.46, 0.45, 0.94]</code></td>
+<td>Standard transitions</td>
+</tr>
+<tr>
+<td><code>motion.ease.spring</code></td>
+<td><code>spring({ stiffness: 300, damping: 30 })</code></td>
+<td>Bouncy effects, badge pop</td>
+</tr>
+<tr>
+<td><code>motion.ease.enter</code></td>
+<td><code>[0, 0, 0.2, 1]</code></td>
+<td>Elements entering the screen</td>
+</tr>
+<tr>
+<td><code>motion.ease.exit</code></td>
+<td><code>[0.4, 0, 1, 1]</code></td>
+<td>Elements leaving the screen</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-7-motion-animation-system-framer-motion-73-standard-animation-variants-framer-motion" class="docmd-heading"><a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-73-standard-animation-variants-framer-motion" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.3 Standard Animation Variants (Framer Motion)</h3>
+<pre class="hljs"><code class="language-javascript"><span class="hljs-comment">// Fade Up — for cards, sections entering viewport</span>
+<span class="hljs-keyword">const</span> fadeUp <span class="hljs-punctuation">=</span> {
+  hidden<span class="hljs-punctuation">:</span> { opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, y<span class="hljs-punctuation">:</span> <span class="hljs-number">24</span> },
+  visible<span class="hljs-punctuation">:</span> { opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, y<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, transition<span class="hljs-punctuation">:</span> { duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0.35</span>, ease<span class="hljs-punctuation">:</span> [<span class="hljs-number">0.25</span>, <span class="hljs-number">0.46</span>, <span class="hljs-number">0.45</span>, <span class="hljs-number">0.94</span>] } }
+};
+
+<span class="hljs-comment">// Scale Pop — for badges, XP toasts</span>
+<span class="hljs-keyword">const</span> scalePop <span class="hljs-punctuation">=</span> {
+  hidden<span class="hljs-punctuation">:</span> { opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, scale<span class="hljs-punctuation">:</span> <span class="hljs-number">0.8</span> },
+  visible<span class="hljs-punctuation">:</span> { opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, scale<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, transition<span class="hljs-punctuation">:</span> { <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;spring&#039;</span>, stiffness<span class="hljs-punctuation">:</span> <span class="hljs-number">300</span>, damping<span class="hljs-punctuation">:</span> <span class="hljs-number">20</span> } }
+};
+
+<span class="hljs-comment">// Slide In Right — for drawer panels</span>
+<span class="hljs-keyword">const</span> slideInRight <span class="hljs-punctuation">=</span> {
+  hidden<span class="hljs-punctuation">:</span> { x<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;100%&#039;</span>, opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> },
+  visible<span class="hljs-punctuation">:</span> { x<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, transition<span class="hljs-punctuation">:</span> { duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0.35</span>, ease<span class="hljs-punctuation">:</span> [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">1</span>] } }
+};
+
+<span class="hljs-comment">// Stagger Children — for list items</span>
+<span class="hljs-keyword">const</span> staggerContainer <span class="hljs-punctuation">=</span> {
+  hidden<span class="hljs-punctuation">:</span> {},
+  visible<span class="hljs-punctuation">:</span> { transition<span class="hljs-punctuation">:</span> { staggerChildren<span class="hljs-punctuation">:</span> <span class="hljs-number">0.07</span> } }
+};
+
+<span class="hljs-comment">// Celebration — for level-up and certificate screens</span>
+<span class="hljs-keyword">const</span> celebration <span class="hljs-punctuation">=</span> {
+  hidden<span class="hljs-punctuation">:</span> { scale<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, rotate<span class="hljs-punctuation">:</span> <span class="hljs-punctuation">-</span><span class="hljs-number">10</span>, opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> },
+  visible<span class="hljs-punctuation">:</span> { scale<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, rotate<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>, opacity<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>, transition<span class="hljs-punctuation">:</span> { <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;spring&#039;</span>, stiffness<span class="hljs-punctuation">:</span> <span class="hljs-number">200</span>, damping<span class="hljs-punctuation">:</span> <span class="hljs-number">15</span>, duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0.8</span> } }
+};
+</code></pre>
+<h3 id="ux-latest-design-system-7-motion-animation-system-framer-motion-74-reduce-motion-support" class="docmd-heading"><a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-74-reduce-motion-support" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.4 Reduce Motion Support</h3>
+<p>All animations must respect <code>prefers-reduced-motion</code>:</p>
+<pre class="hljs"><code class="language-css">@<span class="hljs-title function_">media</span> (prefers<span class="hljs-punctuation">-</span>reduced<span class="hljs-punctuation">-</span>motion<span class="hljs-punctuation">:</span> reduce) {
+  <span class="hljs-punctuation">*</span> { animation<span class="hljs-punctuation">-</span>duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>.01ms <span class="hljs-punctuation">!</span>important; transition<span class="hljs-punctuation">-</span>duration<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>.01ms <span class="hljs-punctuation">!</span>important; }
+}
+</code></pre>
+<p>In Framer Motion, use <code>useReducedMotion()</code> hook to disable complex animations.</p>
+<hr>
+<h2 id="ux-latest-design-system-8-grid-layout-system" class="docmd-heading"><a href="#ux-latest-design-system-8-grid-layout-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Grid &amp; Layout System</h2>
+<h3 id="ux-latest-design-system-8-grid-layout-system-81-breakpoints" class="docmd-heading"><a href="#ux-latest-design-system-8-grid-layout-system-81-breakpoints" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.1 Breakpoints</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Breakpoint</th>
+<th>Name</th>
+<th>Min Width</th>
+<th>Columns</th>
+<th>Gutter</th>
+<th>Margin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs</code></td>
+<td>Mobile S</td>
+<td>320px</td>
+<td>4</td>
+<td>12px</td>
+<td>16px</td>
+</tr>
+<tr>
+<td><code>sm</code></td>
+<td>Mobile L</td>
+<td>390px</td>
+<td>4</td>
+<td>16px</td>
+<td>16px</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td>Tablet</td>
+<td>768px</td>
+<td>8</td>
+<td>24px</td>
+<td>24px</td>
+</tr>
+<tr>
+<td><code>lg</code></td>
+<td>iPad / Desktop S</td>
+<td>1024px</td>
+<td>12</td>
+<td>24px</td>
+<td>32px</td>
+</tr>
+<tr>
+<td><code>xl</code></td>
+<td>Desktop</td>
+<td>1280px</td>
+<td>12</td>
+<td>32px</td>
+<td>48px</td>
+</tr>
+<tr>
+<td><code>2xl</code></td>
+<td>Desktop L / Electron</td>
+<td>1536px</td>
+<td>12</td>
+<td>32px</td>
+<td>64px</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ux-latest-design-system-8-grid-layout-system-82-container-max-widths" class="docmd-heading"><a href="#ux-latest-design-system-8-grid-layout-system-82-container-max-widths" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.2 Container Max Widths</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Max Width</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App content</td>
+<td>1200px</td>
+</tr>
+<tr>
+<td>Marketing page</td>
+<td>1280px</td>
+</tr>
+<tr>
+<td>Article/blog content</td>
+<td>720px</td>
+</tr>
+<tr>
+<td>Form screens</td>
+<td>480px</td>
+</tr>
+<tr>
+<td>Auth screens</td>
+<td>400px</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ux-latest-design-system-9-component-specifications" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Component Specifications</h2>
+<h3 id="ux-latest-design-system-9-component-specifications-91-button-system" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-91-button-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.1 Button System</h3>
+<h4 id="ux-latest-design-system-9-component-specifications-91-button-system-primary-button" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-91-button-system-primary-button" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Primary Button</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span> (<span class="hljs-comment">#6366F1)</span>
+Text<span class="hljs-punctuation">:</span> white, font.<span class="hljs-attr">body</span>.<span class="hljs-attr">md</span>, weight <span class="hljs-number">600</span>
+Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> radius.<span class="hljs-title function_">md</span> (10px)
+Padding<span class="hljs-punctuation">:</span> 12px 24<span class="hljs-title function_">px</span> (desktop), 14px 24<span class="hljs-title function_">px</span> (mobile <span class="hljs-keyword">for</span> tap target)
+Hover<span class="hljs-punctuation">:</span> background darken <span class="hljs-number">10</span><span class="hljs-punctuation">%</span>, shadow.<span class="hljs-attr">glow</span>.<span class="hljs-attr">primary</span>
+Pressed<span class="hljs-punctuation">:</span> <span class="hljs-title function_">scale</span>(<span class="hljs-number">0.97</span>), background color.<span class="hljs-attr">primary</span>.<span class="hljs-number">600</span>
+Disabled<span class="hljs-punctuation">:</span> opacity <span class="hljs-number">0.4</span>, cursor not<span class="hljs-punctuation">-</span>allowed
+Loading<span class="hljs-punctuation">:</span> spinner replaces text, width maintained
+Focus<span class="hljs-punctuation">:</span> 2px solid color.<span class="hljs-attr">primary</span>.<span class="hljs-number">300</span>, offset 2px
+Min height<span class="hljs-punctuation">:</span> 44<span class="hljs-title function_">px</span> (mobile), 40<span class="hljs-title function_">px</span> (desktop)
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-91-button-system-secondary-button" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-91-button-system-secondary-button" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Secondary Button</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> transparent
+Border<span class="hljs-punctuation">:</span> 1px solid color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span>
+Text<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span>, weight <span class="hljs-number">600</span>
+Hover<span class="hljs-punctuation">:</span> glass.<span class="hljs-attr">background</span> <span class="hljs-punctuation">+</span> border brightness up
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-91-button-system-destructive-button" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-91-button-system-destructive-button" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Destructive Button</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> color.<span class="hljs-title function_">error</span> (<span class="hljs-comment">#F43F5E)</span>
+Text<span class="hljs-punctuation">:</span> white
+Hover<span class="hljs-punctuation">:</span> darken <span class="hljs-number">10</span><span class="hljs-punctuation">%</span>, shadow.<span class="hljs-attr">glow</span>.<span class="hljs-attr">rose</span>
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-91-button-system-ghost-button-text-button" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-91-button-system-ghost-button-text-button" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Ghost Button / Text Button</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> transparent
+Text<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">600</span> or color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span>
+Hover<span class="hljs-punctuation">:</span> background <span class="hljs-title function_">rgba</span>(<span class="hljs-number">99</span>,<span class="hljs-number">102</span>,<span class="hljs-number">241</span>,<span class="hljs-number">0.08</span>)
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-92-input-fields" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-92-input-fields" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.2 Input Fields</h3>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> glass.<span class="hljs-title function_">background</span> (dark) <span class="hljs-punctuation">/</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">100</span> (light)
+Border<span class="hljs-punctuation">:</span> 1px solid color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">200</span>
+Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> radius.<span class="hljs-title function_">sm</span> (6px)
+Padding<span class="hljs-punctuation">:</span> 12px 16px
+Placeholder<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">400</span>
+Focus border<span class="hljs-punctuation">:</span> 2px solid color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span>
+Error border<span class="hljs-punctuation">:</span> 2px solid color.<span class="hljs-attr">error</span>
+Error text<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">error</span>, 12px, below field
+Label<span class="hljs-punctuation">:</span> 13px, weight <span class="hljs-number">500</span>, above field by 6px
+Min height<span class="hljs-punctuation">:</span> 48<span class="hljs-title function_">px</span> (mobile), 44<span class="hljs-title function_">px</span> (desktop)
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-93-cards" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-93-cards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.3 Cards</h3>
+<h4 id="ux-latest-design-system-9-component-specifications-93-cards-standard-card" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-93-cards-standard-card" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Standard Card</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> glass.<span class="hljs-title function_">background</span> (dark) <span class="hljs-punctuation">/</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">0</span> (light)
+Border<span class="hljs-punctuation">:</span> 1px solid glass.<span class="hljs-attr">border</span> <span class="hljs-punctuation">/</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">200</span>
+Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> radius.<span class="hljs-title function_">lg</span> (16px)
+Padding<span class="hljs-punctuation">:</span> space.<span class="hljs-number">6</span> (24px)
+Shadow<span class="hljs-punctuation">:</span> shadow.<span class="hljs-attr">sm</span>
+Hover<span class="hljs-punctuation">:</span> shadow.<span class="hljs-attr">md</span> <span class="hljs-punctuation">+</span> <span class="hljs-title function_">translateY</span>(<span class="hljs-punctuation">-</span>2px), 250ms ease
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-93-cards-course-card" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-93-cards-course-card" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Course Card</h4>
+<pre class="hljs"><code>Extends<span class="hljs-punctuation">:</span> Standard Card
+Thumbnail<span class="hljs-punctuation">:</span> <span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span> aspect ratio, radius.<span class="hljs-attr">md</span> <span class="hljs-keyword">top</span> corners
+Tags row<span class="hljs-punctuation">:</span> Category chip <span class="hljs-punctuation">+</span> Level chip
+Title<span class="hljs-punctuation">:</span> text.<span class="hljs-title function_">h4</span> (18px), weight <span class="hljs-number">600</span>, <span class="hljs-number">2</span><span class="hljs-punctuation">-</span>line clamp
+Meta<span class="hljs-punctuation">:</span> Instructor avatar <span class="hljs-punctuation">+</span> name, duration, star rating
+Progress bar<span class="hljs-punctuation">:</span> shown when enrolled, emerald color
+Price<span class="hljs-punctuation">/</span>Enroll CTA<span class="hljs-punctuation">:</span> bottom <span class="hljs-keyword">of</span> card
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-93-cards-lesson-card-in-curriculum" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-93-cards-lesson-card-in-curriculum" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Lesson Card (in Curriculum)</h4>
+<pre class="hljs"><code>Layout<span class="hljs-punctuation">:</span> Horizontal, icon left <span class="hljs-punctuation">+</span> text center <span class="hljs-punctuation">+</span> duration right
+Icon<span class="hljs-punctuation">:</span> Play <span class="hljs-title function_">circle</span> (video) <span class="hljs-punctuation">/</span> <span class="hljs-title function_">document</span> (PDF) <span class="hljs-punctuation">/</span> <span class="hljs-title function_">quiz</span> (check)
+Title<span class="hljs-punctuation">:</span> text.<span class="hljs-attr">body</span>.<span class="hljs-attr">lg</span>, <span class="hljs-number">1</span><span class="hljs-punctuation">-</span>line clamp
+Completed state<span class="hljs-punctuation">:</span> checkmark icon, text muted
+Locked state<span class="hljs-punctuation">:</span> lock icon, opacity <span class="hljs-number">0.5</span>
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-94-navigation" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-94-navigation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.4 Navigation</h3>
+<h4 id="ux-latest-design-system-9-component-specifications-94-navigation-mobile-bottom-tab-bar" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-94-navigation-mobile-bottom-tab-bar" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Mobile Bottom Tab Bar</h4>
+<pre class="hljs"><code>Height<span class="hljs-punctuation">:</span> 64px <span class="hljs-punctuation">+</span> safe area inset
+Background<span class="hljs-punctuation">:</span> glass.<span class="hljs-attr">background</span> <span class="hljs-keyword">with</span> backdrop blur
+Items<span class="hljs-punctuation">:</span> <span class="hljs-number">5</span> <span class="hljs-title function_">tabs</span> (Home, Courses, AI, Progress, Profile)
+Active<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span> icon <span class="hljs-punctuation">+</span> label, indicator dot
+Inactive<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">400</span> icon <span class="hljs-punctuation">+</span> label
+Tab items<span class="hljs-punctuation">:</span> min <span class="hljs-number">48</span>×48dp touch target
+Transition<span class="hljs-punctuation">:</span> icon scale <span class="hljs-number">1</span>→<span class="hljs-number">1.15</span> on active, 200ms spring
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-94-navigation-web-top-navigation" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-94-navigation-web-top-navigation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Web Top Navigation</h4>
+<pre class="hljs"><code>Height<span class="hljs-punctuation">:</span> 64px, sticky
+Background<span class="hljs-punctuation">:</span> glass.<span class="hljs-attr">background</span> <span class="hljs-keyword">with</span> backdrop <span class="hljs-title function_">blur</span> (dark) <span class="hljs-punctuation">/</span> white <span class="hljs-keyword">with</span> <span class="hljs-title function_">shadow</span> (light)
+Logo<span class="hljs-punctuation">:</span> left, 140px wide
+Primary links<span class="hljs-punctuation">:</span> Courses, AI Assistant, <span class="hljs-title function_">Progress</span> (center or left <span class="hljs-keyword">of</span> logo)
+Right<span class="hljs-punctuation">:</span> Notification bell, Avatar<span class="hljs-punctuation">/</span>Menu
+Mobile collapsed<span class="hljs-punctuation">:</span> hamburger → slide<span class="hljs-punctuation">-</span><span class="hljs-keyword">in</span> drawer
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-94-navigation-sidebar-admin-trainer-panel" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-94-navigation-sidebar-admin-trainer-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Sidebar (Admin / Trainer Panel)</h4>
+<pre class="hljs"><code>Width<span class="hljs-punctuation">:</span> 240<span class="hljs-title function_">px</span> (expanded), 72<span class="hljs-title function_">px</span> (collapsed)
+Background<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">900</span> (dark) or color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">50</span> (light)
+Items<span class="hljs-punctuation">:</span> icon <span class="hljs-punctuation">+</span> label, active state<span class="hljs-punctuation">:</span> primary.<span class="hljs-number">500</span> background tint <span class="hljs-punctuation">+</span> left border accent
+Collapse toggle<span class="hljs-punctuation">:</span> arrow icon button at bottom
+Responsive<span class="hljs-punctuation">:</span> collapses to bottom nav on tablet
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-95-progress-indicators" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.5 Progress Indicators</h3>
+<h4 id="ux-latest-design-system-9-component-specifications-95-progress-indicators-linear-progress-bar" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-linear-progress-bar" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Linear Progress Bar</h4>
+<pre class="hljs"><code>Track<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">neutral</span>.<span class="hljs-number">200</span> (light) <span class="hljs-punctuation">/</span> <span class="hljs-title function_">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">0.1</span>) (dark)
+Fill<span class="hljs-punctuation">:</span> color.<span class="hljs-attr">accent</span>.<span class="hljs-number">500</span> (emerald) <span class="hljs-keyword">for</span> course progress, color.<span class="hljs-attr">primary</span>.<span class="hljs-number">500</span> <span class="hljs-keyword">for</span> XP
+Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> radius.<span class="hljs-attr">full</span>
+Height<span class="hljs-punctuation">:</span> 6<span class="hljs-title function_">px</span> (compact), 10<span class="hljs-title function_">px</span> (prominent), 16<span class="hljs-title function_">px</span> (large hero)
+Animation<span class="hljs-punctuation">:</span> width transition 500ms ease<span class="hljs-punctuation">-</span><span class="hljs-keyword">in</span><span class="hljs-punctuation">-</span>out
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-95-progress-indicators-circular-progress-xp-level" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-circular-progress-xp-level" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Circular Progress (XP / Level)</h4>
+<pre class="hljs"><code>Size<span class="hljs-punctuation">:</span> 80<span class="hljs-title function_">px</span> (dashboard widget), 120<span class="hljs-title function_">px</span> (profile header)
+Track color<span class="hljs-punctuation">:</span> <span class="hljs-title function_">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">0.1</span>)
+Fill color<span class="hljs-punctuation">:</span> primary.<span class="hljs-number">500</span>
+Stroke width<span class="hljs-punctuation">:</span> 8px
+Center text<span class="hljs-punctuation">:</span> level number, text.<span class="hljs-attr">h2</span>
+Animation<span class="hljs-punctuation">:</span> stroke<span class="hljs-punctuation">-</span>dashoffset transition 800ms ease
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-95-progress-indicators-streak-flame-widget" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-streak-flame-widget" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Streak Flame Widget</h4>
+<pre class="hljs"><code>Icon<span class="hljs-punctuation">:</span> animated flame <span class="hljs-title function_">SVG</span> (loops when streak active)
+Count<span class="hljs-punctuation">:</span> large bold number, amber color
+Sub<span class="hljs-punctuation">-</span>label<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;day streak&quot;</span>
+Inactive<span class="hljs-punctuation">:</span> grey flame, <span class="hljs-string">&quot;No streak today&quot;</span>
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-96-modals-drawers" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-96-modals-drawers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.6 Modals &amp; Drawers</h3>
+<pre class="hljs"><code>Backdrop<span class="hljs-punctuation">:</span> <span class="hljs-title function_">rgba</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0.6</span>) <span class="hljs-punctuation">+</span> <span class="hljs-title function_">blur</span>(4px)
+Container<span class="hljs-punctuation">:</span> glass.<span class="hljs-attr">background</span>, radius.<span class="hljs-attr">xl</span>, shadow.<span class="hljs-attr">xl</span>
+Max width<span class="hljs-punctuation">:</span> 480<span class="hljs-title function_">px</span> (standard), 640<span class="hljs-title function_">px</span> (wide), 90vw on mobile
+Animation <span class="hljs-keyword">in</span><span class="hljs-punctuation">:</span> scale <span class="hljs-number">0.95</span>→<span class="hljs-number">1</span> <span class="hljs-punctuation">+</span> opacity <span class="hljs-number">0</span>→<span class="hljs-number">1</span>, 250ms ease
+Animation out<span class="hljs-punctuation">:</span> scale <span class="hljs-number">1</span>→<span class="hljs-number">0.95</span> <span class="hljs-punctuation">+</span> opacity <span class="hljs-number">1</span>→<span class="hljs-number">0</span>, 200ms ease
+Close button<span class="hljs-punctuation">:</span> <span class="hljs-keyword">top</span><span class="hljs-punctuation">-</span>right, <span class="hljs-number">44</span>×44px touch target
+<span class="hljs-title function_">Drawer</span> (mobile)<span class="hljs-punctuation">:</span> slides <span class="hljs-keyword">from</span> bottom, handle bar at <span class="hljs-keyword">top</span>, max<span class="hljs-punctuation">-</span>height 80vh
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-97-toast-notifications" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-97-toast-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.7 Toast Notifications</h3>
+<pre class="hljs"><code>Position<span class="hljs-punctuation">:</span> <span class="hljs-keyword">top</span><span class="hljs-punctuation">-</span><span class="hljs-title function_">center</span> (mobile), bottom<span class="hljs-punctuation">-</span><span class="hljs-title function_">right</span> (desktop)
+Width<span class="hljs-punctuation">:</span> max 400px
+Variants<span class="hljs-punctuation">:</span> <span class="hljs-title function_">success</span> (emerald), <span class="hljs-title function_">error</span> (rose), <span class="hljs-title function_">warning</span> (amber), <span class="hljs-title function_">info</span> (blue)
+Duration<span class="hljs-punctuation">:</span> 3s auto<span class="hljs-punctuation">-</span><span class="hljs-title function_">dismiss</span> (info), 5<span class="hljs-title function_">s</span> (success), <span class="hljs-title function_">persistent</span> (error requiring action)
+Animation<span class="hljs-punctuation">:</span> slide <span class="hljs-keyword">in</span> <span class="hljs-keyword">from</span> <span class="hljs-keyword">top</span> (mobile) <span class="hljs-punctuation">/</span> <span class="hljs-title function_">right</span> (desktop), 200ms spring
+Icon<span class="hljs-punctuation">:</span> variant<span class="hljs-punctuation">-</span>colored icon left <span class="hljs-keyword">of</span> message
+Dismiss<span class="hljs-punctuation">:</span> swipe or X button
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-98-xp-badge-reward-toast" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-98-xp-badge-reward-toast" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.8 XP &amp; Badge Reward Toast</h3>
+<pre class="hljs"><code>Special full<span class="hljs-punctuation">-</span>width bottom toast <span class="hljs-keyword">with</span><span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> XP <span class="hljs-title function_">icon</span> (gold coin or star)
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;+75 XP&quot;</span> large text, amber color
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Quiz Ace&quot;</span> badge name <span class="hljs-keyword">if</span> badge earned
+<span class="hljs-punctuation">-</span> Level<span class="hljs-punctuation">-</span>up variant<span class="hljs-punctuation">:</span> full<span class="hljs-punctuation">-</span>screen celebration overlay <span class="hljs-keyword">with</span> confetti
+Animation<span class="hljs-punctuation">:</span> celebration <span class="hljs-title function_">variant</span> (scalePop, 800ms)
+Auto<span class="hljs-punctuation">-</span>dismiss<span class="hljs-punctuation">:</span> 4s <span class="hljs-keyword">for</span> XP, 6s <span class="hljs-keyword">for</span> badge, 8s <span class="hljs-keyword">for</span> level<span class="hljs-punctuation">-</span>up
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-99-certificate-component" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-99-certificate-component" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.9 Certificate Component</h3>
+<pre class="hljs"><code>Size<span class="hljs-punctuation">:</span> A4 <span class="hljs-title function_">ratio</span> (<span class="hljs-number">1</span><span class="hljs-punctuation">:</span><span class="hljs-number">1.414</span>), <span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span> preview thumbnail
+Border<span class="hljs-punctuation">:</span> 4px gradient <span class="hljs-title function_">border</span> (primary→secondary)
+Background<span class="hljs-punctuation">:</span> branded design <span class="hljs-keyword">with</span> platform logo
+Content<span class="hljs-punctuation">:</span> User <span class="hljs-title function_">name</span> (display text), Course <span class="hljs-title function_">name</span> (h2), Date, Trainer, Verification QR
+Footer<span class="hljs-punctuation">:</span> Platform branding, verification URL, unique ID
+Premium border variants<span class="hljs-punctuation">:</span> Gold foil effect, Holographic <span class="hljs-title function_">shimmer</span> (Level <span class="hljs-number">5</span><span class="hljs-punctuation">+</span>)
+</code></pre>
+<h3 id="ux-latest-design-system-9-component-specifications-910-quiz-components" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-910-quiz-components" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.10 Quiz Components</h3>
+<h4 id="ux-latest-design-system-9-component-specifications-910-quiz-components-question-card" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-910-quiz-components-question-card" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Question Card</h4>
+<pre class="hljs"><code>Background<span class="hljs-punctuation">:</span> Standard Card
+Question text<span class="hljs-punctuation">:</span> text.<span class="hljs-attr">h3</span>, weight <span class="hljs-number">600</span>
+Option items<span class="hljs-punctuation">:</span> large radio<span class="hljs-punctuation">-</span>button list items, min 48dp height
+Selected state<span class="hljs-punctuation">:</span> primary.<span class="hljs-number">500</span> border <span class="hljs-punctuation">+</span> tint background
+Correct state<span class="hljs-punctuation">:</span> accent.<span class="hljs-number">500</span> (emerald) border <span class="hljs-punctuation">+</span> tint <span class="hljs-punctuation">+</span> check icon
+Incorrect state<span class="hljs-punctuation">:</span> error.<span class="hljs-number">500</span> (rose) border <span class="hljs-punctuation">+</span> tint <span class="hljs-punctuation">+</span> X icon
+Timer bar<span class="hljs-punctuation">:</span> <span class="hljs-keyword">top</span> <span class="hljs-keyword">of</span> card, red fill shrinking left<span class="hljs-punctuation">-</span>to<span class="hljs-punctuation">-</span>right
+</code></pre>
+<h4 id="ux-latest-design-system-9-component-specifications-910-quiz-components-result-screen" class="docmd-heading"><a href="#ux-latest-design-system-9-component-specifications-910-quiz-components-result-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Result Screen</h4>
+<pre class="hljs"><code>Score<span class="hljs-punctuation">:</span> Large circular <span class="hljs-title function_">progress</span> (correct<span class="hljs-punctuation">/</span>total)
+Grade text<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Excellent!&quot;</span>, <span class="hljs-string">&quot;Good Job&quot;</span>, <span class="hljs-string">&quot;Keep Practicing&quot;</span> based on score
+XP earned<span class="hljs-punctuation">:</span> amber pill badge
+Review button<span class="hljs-punctuation">:</span> shows incorrect answers <span class="hljs-keyword">with</span> AI explanation
+Retry button<span class="hljs-punctuation">:</span> disabled <span class="hljs-keyword">if</span> <span class="hljs-keyword">in</span> cooldown, timer shown
+</code></pre>
+<hr>
+<h2 id="ux-latest-design-system-10-iconography" class="docmd-heading"><a href="#ux-latest-design-system-10-iconography" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10. Iconography</h2>
+<ul>
+<li><strong>Library:</strong> Lucide Icons (React) / Flutter Icons package matching Lucide</li>
+<li><strong>Size:</strong> 20px (inline), 24px (standard), 28px (navigation tabs), 32px (feature icons)</li>
+<li><strong>Stroke width:</strong> 1.5px (thin, modern aesthetic)</li>
+<li><strong>Color:</strong> Inherits from parent context; never hardcode icon color</li>
+<li><strong>Custom icons:</strong> Course category icons, badge icons — designed as SVG, exported at 48×48px</li>
+</ul>
+<hr>
+<h2 id="ux-latest-design-system-11-imagery-illustration-style" class="docmd-heading"><a href="#ux-latest-design-system-11-imagery-illustration-style" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11. Imagery &amp; Illustration Style</h2>
+<ul>
+<li><strong>Photos:</strong> Real, diverse, professional photography. No stock-photo clichés.</li>
+<li><strong>Illustrations:</strong> Line-style with primary brand colors. Used for empty states, onboarding, error screens.</li>
+<li><strong>Empty States:</strong> Always have an illustration + headline + CTA button. Never just “No data found.”</li>
+<li><strong>Avatar:</strong> User avatars as circle crops, 32px (list), 48px (card), 80px (profile header), 120px (profile page)</li>
+<li><strong>Thumbnails:</strong> 16:9 aspect ratio for course thumbnails, lazy-loaded with blur placeholder</li>
+</ul>
+<hr>
+<h2 id="ux-latest-design-system-12-dark-mode-light-mode" class="docmd-heading"><a href="#ux-latest-design-system-12-dark-mode-light-mode" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12. Dark Mode / Light Mode</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Dark Mode</th>
+<th>Light Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Background</td>
+<td><code>#0F172A</code></td>
+<td><code>#F8FAFC</code></td>
+</tr>
+<tr>
+<td>Surface (Card)</td>
+<td><code>#1E1E2E</code></td>
+<td><code>#FFFFFF</code></td>
+</tr>
+<tr>
+<td>Surface (Secondary)</td>
+<td><code>#2A2A3E</code></td>
+<td><code>#F1F5F9</code></td>
+</tr>
+<tr>
+<td>Primary Text</td>
+<td><code>#F8FAFC</code></td>
+<td><code>#0F172A</code></td>
+</tr>
+<tr>
+<td>Secondary Text</td>
+<td><code>#94A3B8</code></td>
+<td><code>#475569</code></td>
+</tr>
+<tr>
+<td>Border</td>
+<td><code>rgba(255,255,255,0.08)</code></td>
+<td><code>#E2E8F0</code></td>
+</tr>
+<tr>
+<td>Mode default</td>
+<td><strong>Dark Mode</strong></td>
+<td>Toggleable</td>
+</tr>
+<tr>
+<td>Toggle</td>
+<td>System preference respected; manual toggle in settings</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Screen-by-Screen UI Specification
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../04_technical_architecture/backend_architecture_and_apis/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Backend Architecture &amp; API Specification
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#ux-latest-design-system" class="toc-link">UX Latest Design System</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-1-design-system-philosophy" class="toc-link">1. Design System Philosophy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-2-color-system" class="toc-link">2. Color System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-2-color-system-21-primary-palette-dark-mode-default" class="toc-link">2.1 Primary Palette (Dark Mode — Default)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-2-color-system-22-secondary-palette" class="toc-link">2.2 Secondary Palette</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-2-color-system-23-neutral-scale" class="toc-link">2.3 Neutral Scale</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-2-color-system-24-semantic-colors" class="toc-link">2.4 Semantic Colors</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-2-color-system-25-glassmorphism-tokens" class="toc-link">2.5 Glassmorphism Tokens</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-3-typography-system" class="toc-link">3. Typography System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-3-typography-system-31-font-families" class="toc-link">3.1 Font Families</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-3-typography-system-32-type-scale" class="toc-link">3.2 Type Scale</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-4-spacing-system-8pt-grid" class="toc-link">4. Spacing System (8pt Grid)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-5-border-radius-system" class="toc-link">5. Border Radius System</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-6-elevation-shadow-system" class="toc-link">6. Elevation &amp; Shadow System</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-7-motion-animation-system-framer-motion" class="toc-link">7. Motion &amp; Animation System (Framer Motion)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-71-duration-tokens" class="toc-link">7.1 Duration Tokens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-72-easing-tokens" class="toc-link">7.2 Easing Tokens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-73-standard-animation-variants-framer-motion" class="toc-link">7.3 Standard Animation Variants (Framer Motion)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-7-motion-animation-system-framer-motion-74-reduce-motion-support" class="toc-link">7.4 Reduce Motion Support</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-8-grid-layout-system" class="toc-link">8. Grid &amp; Layout System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-8-grid-layout-system-81-breakpoints" class="toc-link">8.1 Breakpoints</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-8-grid-layout-system-82-container-max-widths" class="toc-link">8.2 Container Max Widths</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-9-component-specifications" class="toc-link">9. Component Specifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-91-button-system" class="toc-link">9.1 Button System</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-91-button-system-primary-button" class="toc-link">Primary Button</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-91-button-system-secondary-button" class="toc-link">Secondary Button</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-91-button-system-destructive-button" class="toc-link">Destructive Button</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-91-button-system-ghost-button-text-button" class="toc-link">Ghost Button / Text Button</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-92-input-fields" class="toc-link">9.2 Input Fields</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-93-cards" class="toc-link">9.3 Cards</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-93-cards-standard-card" class="toc-link">Standard Card</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-93-cards-course-card" class="toc-link">Course Card</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-93-cards-lesson-card-in-curriculum" class="toc-link">Lesson Card (in Curriculum)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-94-navigation" class="toc-link">9.4 Navigation</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-94-navigation-mobile-bottom-tab-bar" class="toc-link">Mobile Bottom Tab Bar</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-94-navigation-web-top-navigation" class="toc-link">Web Top Navigation</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-94-navigation-sidebar-admin-trainer-panel" class="toc-link">Sidebar (Admin / Trainer Panel)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators" class="toc-link">9.5 Progress Indicators</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-linear-progress-bar" class="toc-link">Linear Progress Bar</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-circular-progress-xp-level" class="toc-link">Circular Progress (XP / Level)</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-95-progress-indicators-streak-flame-widget" class="toc-link">Streak Flame Widget</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-96-modals-drawers" class="toc-link">9.6 Modals &amp; Drawers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-97-toast-notifications" class="toc-link">9.7 Toast Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-98-xp-badge-reward-toast" class="toc-link">9.8 XP &amp; Badge Reward Toast</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-99-certificate-component" class="toc-link">9.9 Certificate Component</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ux-latest-design-system-9-component-specifications-910-quiz-components" class="toc-link">9.10 Quiz Components</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-910-quiz-components-question-card" class="toc-link">Question Card</a>
+        </li>
+      
+        <li class="toc-item toc-level-4">
+          <a href="#ux-latest-design-system-9-component-specifications-910-quiz-components-result-screen" class="toc-link">Result Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-10-iconography" class="toc-link">10. Iconography</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-11-imagery-illustration-style" class="toc-link">11. Imagery &amp; Illustration Style</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ux-latest-design-system-12-dark-mode-light-mode" class="toc-link">12. Dark Mode / Light Mode</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

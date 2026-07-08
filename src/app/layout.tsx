@@ -3,26 +3,26 @@ import '../styles/tailwind.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'LearnFlow AI — AI-Powered Learning & Member Management',
-    template: '%s | LearnFlow AI',
+    default: 'GUIDESOFT IT SOLUTIONS — AI-Powered Learning & Member Management',
+    template: '%s | GUIDESOFT IT SOLUTIONS',
   },
   description:
-    'Discover, enroll, and master skills with LearnFlow AI — an AI-powered eLearning platform with gamification, certificates, and an intelligent AI tutor.',
+    'Discover, enroll, and master skills with GUIDESOFT IT SOLUTIONS — an AI-powered eLearning platform with gamification, certificates, and an intelligent AI tutor.',
   keywords: ['elearning', 'online courses', 'AI tutor', 'skill development', 'certificates', 'gamification'],
-  authors: [{ name: 'LearnFlow AI Team' }],
-  creator: 'LearnFlow AI',
+  authors: [{ name: 'GUIDESOFT IT SOLUTIONS Team' }],
+  creator: 'GUIDESOFT IT SOLUTIONS',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://learnflow.ai',
-    siteName: 'LearnFlow AI',
-    title: 'LearnFlow AI — AI-Powered Learning Platform',
+    siteName: 'GUIDESOFT IT SOLUTIONS',
+    title: 'GUIDESOFT IT SOLUTIONS — AI-Powered Learning Platform',
     description: 'Master any skill with AI-powered courses, personalized learning paths, and gamification.',
-    images: [{ url: '/assets/images/og-image.png', width: 1200, height: 630, alt: 'LearnFlow AI' }],
+    images: [{ url: '/assets/images/og-image.png', width: 1200, height: 630, alt: 'GUIDESOFT IT SOLUTIONS' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LearnFlow AI',
+    title: 'GUIDESOFT IT SOLUTIONS',
     description: 'AI-powered learning, gamified progress, smart certifications.',
     creator: '@learnflowai',
   },
@@ -39,9 +39,11 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+import { ThemeProvider } from '@/components/ThemeProvider';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -51,12 +53,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-app font-body antialiased">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
-        <div id="main-content">{children}</div>
-        <div id="modal-root" />
-        <div id="toast-root" />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
+          <div id="main-content">{children}</div>
+          <div id="modal-root" />
+          <div id="toast-root" />
+        </ThemeProvider>
       </body>
     </html>
   );

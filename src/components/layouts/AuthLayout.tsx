@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
             </div>
-            <span className="text-xl font-bold text-white">LearnFlow AI</span>
+            <span className="text-xl font-bold text-white">GUIDESOFT IT SOLUTIONS</span>
           </Link>
         </div>
 
@@ -61,7 +61,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
               {[...Array(5)].map((_, i) => <span key={i} style={{ color: '#F59E0B' }} aria-hidden="true">★</span>)}
             </div>
             <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
-              &ldquo;LearnFlow AI&apos;s AI tutor helped me land my dream job in 6 months. The personalized learning path was a game-changer.&rdquo;
+              &ldquo;GUIDESOFT IT SOLUTIONS&apos;s AI tutor helped me land my dream job in 6 months. The personalized learning path was a game-changer.&rdquo;
             </p>
             <div className="flex items-center gap-3 mt-4">
               <div className="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">S</div>
@@ -75,7 +75,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Footer */}
         <div className="relative z-10 text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          © 2025 LearnFlow AI. All rights reserved.
+          © 2025 GUIDESOFT IT SOLUTIONS. All rights reserved.
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
             </div>
-            <span className="text-lg font-bold" style={{ color: 'var(--foreground)' }}>LearnFlow AI</span>
+            <span className="text-lg font-bold" style={{ color: 'var(--foreground)' }}>GUIDESOFT IT SOLUTIONS</span>
           </div>
           {children}
         </div>

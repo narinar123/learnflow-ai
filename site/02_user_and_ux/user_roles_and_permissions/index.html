@@ -1,0 +1,2301 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      User Roles &amp; Permissions Matrix : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/02_user_and_ux/user_roles_and_permissions/">
+<meta property="og:title" content="User Roles &amp; Permissions Matrix - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/02_user_and_ux/user_roles_and_permissions/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="User Roles &amp; Permissions Matrix - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/02_user_and_ux/user_roles_and_permissions.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  User Roles &amp; Permissions Matrix
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20User%20Roles%20%26%20Permissions%20Matrix%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Introduction%0A%0AThis%20document%20defines%20all%20user%20roles%20within%20LearnFlow%20AI%2C%20their%20access%20scope%2C%20permission%20levels%20across%20all%20platform%20entities%2C%20and%20the%20workflow%20for%20role%20assignment%2C%20promotion%2C%20and%20revocation.%20All%20role-based%20access%20control%20(RBAC)%20logic%20is%20enforced%20server-side%20via%20the%20API%20layer%20%E2%80%94%20the%20frontend%20merely%20reflects%20current%20permissions.%0A%0A---%0A%0A%23%23%202.%20Role%20Definitions%0A%0A%23%23%23%202.1%20Guest%0AA%20visitor%20who%20has%20not%20registered%20or%20logged%20in.%20Guests%20can%20browse%20the%20marketing%20pages%20and%20the%20public%20course%20catalog%20but%20cannot%20access%20any%20learning%20features.%0A-%20**Primary%20Goals%3A**%20Explore%20the%20platform%2C%20understand%20the%20value%20proposition%2C%20register%0A-%20**Key%20Actions%3A**%20Browse%20courses%2C%20view%20pricing%2C%20view%20marketing%20pages%2C%20click%20%22Register%22%0A-%20**Access%20Level%3A**%20Read-only%20on%20public%20endpoints%20only%0A%0A%23%23%23%202.2%20Student%20(Free%20Learner)%0AA%20registered%20user%20on%20the%20Free%20plan.%20Can%20access%20up%20to%203%20free%20courses%2C%20use%20the%20AI%20assistant%20with%20daily%20limits%2C%20and%20track%20basic%20progress.%0A-%20**Primary%20Goals%3A**%20Learn%20new%20skills%2C%20earn%20certificates%2C%20explore%20the%20platform%0A-%20**Key%20Actions%3A**%20Enroll%20in%20free%20courses%2C%20complete%20lessons%2C%20take%20quizzes%2C%20download%20basic%20certificate%0A-%20**Access%20Level%3A**%20Limited%20read%20%2B%20limited%20write%20on%20own%20learning%20data%0A%0A%23%23%23%202.3%20Professional%20(Basic%2FPro%2FPremium%20Subscriber)%0AA%20paying%20subscriber%20on%20any%20individual%20plan.%20Gets%20full%20platform%20access%20scaled%20to%20their%20subscription%20tier.%0A-%20**Primary%20Goals%3A**%20Upskill%20for%20career%20advancement%2C%20earn%20verifiable%20certificates%2C%20get%20AI%20guidance%0A-%20**Key%20Actions%3A**%20Enroll%20in%20any%20course%2C%20unlimited%20AI%20queries%20(Pro%2B)%2C%20download%20lessons%20offline%2C%20share%20certificates%0A-%20**Access%20Level%3A**%20Full%20learner%20access%20%2B%20premium%20features%20per%20plan%0A%0A%23%23%23%202.4%20Job%20Seeker%0AA%20registered%20user%20with%20the%20%22Job%20Seeker%22%20learning%20goal%20selected%20during%20onboarding.%20May%20receive%20subsidized%20or%20free%20access%20to%20specific%20job-readiness%20courses%20via%20partnerships.%0A-%20**Primary%20Goals%3A**%20Build%20job-ready%20skills%20fast%2C%20earn%20verifiable%20credentials%0A-%20**Key%20Actions%3A**%20Same%20as%20Student%3B%20may%20access%20curated%20Job%20Seeker%20course%20tracks%0A-%20**Access%20Level%3A**%20Same%20as%20Student%2C%20plus%20job-seeker-specific%20content%20feed%0A%0A%23%23%23%202.5%20Trainer%20%2F%20Instructor%0AA%20verified%20content%20creator%20who%20publishes%20and%20manages%20courses%20on%20the%20platform.%20Must%20pass%20a%20trainer%20application%20review%20process.%0A-%20**Primary%20Goals%3A**%20Create%20high-quality%20courses%2C%20monetize%20expertise%2C%20track%20student%20performance%0A-%20**Key%20Actions%3A**%20Create%20courses%2C%20upload%20lessons%2C%20publish%20quizzes%2C%20view%20analytics%2C%20manage%20earnings%0A-%20**Access%20Level%3A**%20Full%20learner%20access%20%2B%20trainer-specific%20CREATE%2FEDIT%2FDELETE%20on%20own%20courses%20and%20lessons%0A%0A%23%23%23%202.6%20Institution%20Admin%0AAn%20administrator%20of%20an%20institutional%20(corporate%2Fschool)%20account.%20Manages%20team%20members%2C%20licenses%2C%20and%20progress%20reports%20within%20their%20organization.%0A-%20**Primary%20Goals%3A**%20Manage%20team%20learning%2C%20track%20completion%2C%20report%20to%20leadership%0A-%20**Key%20Actions%3A**%20Add%2Fremove%20institution%20members%2C%20assign%20courses%20to%20groups%2C%20view%20progress%20reports%2C%20manage%20institutional%20billing%0A-%20**Access%20Level%3A**%20Full%20learner%20access%20%2B%20CRUD%20on%20institution%20members%20%2B%20view%20reports%20for%20their%20organization%20only%0A%0A%23%23%23%202.7%20Institution%20User%20(Team%20Member)%0AA%20learner%20who%20belongs%20to%20an%20institutional%20account.%20Access%20is%20determined%20by%20the%20Institution%20Admin&#039;s%20assignments.%0A-%20**Primary%20Goals%3A**%20Complete%20assigned%20courses%2C%20comply%20with%20L%26D%20requirements%0A-%20**Key%20Actions%3A**%20Learn%20assigned%20courses%2C%20take%20quizzes%2C%20earn%20certificates%2C%20report%20progress%0A-%20**Access%20Level%3A**%20Same%20as%20Professional%20(Pro%20plan)%20but%20access%20gated%20by%20Institution%20Admin%20assignments%0A%0A%23%23%23%202.8%20Support%20Agent%0AA%20platform%20employee%20handling%20customer%20support%20tickets.%20Can%20view%20any%20user%20account%20for%20troubleshooting%20but%20cannot%20modify%20sensitive%20data%20without%20admin%20approval.%0A-%20**Primary%20Goals%3A**%20Resolve%20user%20issues%20quickly%2C%20improve%20satisfaction%20scores%0A-%20**Key%20Actions%3A**%20View%20user%20accounts%2C%20view%2Fupdate%20tickets%2C%20send%20messages%2C%20escalate%20issues%0A-%20**Access%20Level%3A**%20Read%20on%20any%20user%20profile%20%2B%20CRUD%20on%20support%20tickets%20%2B%20limited%20write%20for%20issue%20resolution%0A%0A%23%23%23%202.9%20Content%20Manager%0AA%20platform%20employee%20responsible%20for%20curating%2C%20reviewing%2C%20and%20managing%20course%20content%20and%20trainer%20submissions.%0A-%20**Primary%20Goals%3A**%20Ensure%20content%20quality%2C%20approve%20trainer%20submissions%2C%20manage%20catalog%0A-%20**Key%20Actions%3A**%20Review%20submitted%20courses%2C%20approve%2Freject%2Ffeature%2C%20edit%20metadata%2C%20manage%20categories%0A-%20**Access%20Level%3A**%20Full%20read%20on%20all%20courses%20%2B%20PUBLISH%2FUNPUBLISH%2FFEATURE%20powers%20%2B%20limited%20user%20read%0A%0A%23%23%23%202.10%20Super%20Admin%0AThe%20highest-privilege%20system%20user.%20Full%20access%20to%20all%20platform%20entities%2C%20settings%2C%20user%20data%2C%20billing%2C%20analytics%2C%20and%20system%20configuration.%0A-%20**Primary%20Goals%3A**%20Operate%20and%20govern%20the%20platform%2C%20ensure%20business%20performance%0A-%20**Key%20Actions%3A**%20All%20admin%20operations%20%2B%20system%20settings%20%2B%20user%20impersonation%20%2B%20financial%20reconciliation%0A-%20**Access%20Level%3A**%20CRUD%20on%20all%20entities%2C%20system%20settings%2C%20all%20analytics%2C%20all%20payment%20records%0A%0A---%0A%0A%23%23%203.%20Role%20Hierarchy%20Diagram%0A%0A%60%60%60mermaid%0Agraph%20TD%0A%20%20%20%20SA%5BSuper%20Admin%5D%20--%3E%20CM%5BContent%20Manager%5D%0A%20%20%20%20SA%20--%3E%20SUP%5BSupport%20Agent%5D%0A%20%20%20%20SA%20--%3E%20IA%5BInstitution%20Admin%5D%0A%20%20%20%20SA%20--%3E%20TR%5BTrainer%5D%0A%20%20%20%20SA%20--%3E%20PRO%5BProfessional%20%2F%20Subscriber%5D%0A%20%20%20%20PRO%20--%3E%20STU%5BStudent%20-%20Free%5D%0A%20%20%20%20STU%20--%3E%20JS%5BJob%20Seeker%5D%0A%20%20%20%20IA%20--%3E%20IU%5BInstitution%20User%5D%0A%20%20%20%20STU%20--%3E%20G%5BGuest%5D%0A%60%60%60%0A%0A---%0A%0A%23%23%204.%20Permissions%20Matrix%0A%0A**Legend%3A**%20%60%E2%9C%93%60%20%3D%20Allowed%20%7C%20%60%E2%9C%97%60%20%3D%20Not%20allowed%20%7C%20%60Own%60%20%3D%20Own%20records%20only%20%7C%20%60Org%60%20%3D%20Within%20their%20institution%20only%20%7C%20%60Admin%60%20%3D%20Requires%20approval%0A%0A%23%23%23%204.1%20Course%20Permissions%0A%7C%20Action%20%7C%20Guest%20%7C%20Student%20%7C%20Professional%20%7C%20Job%20Seeker%20%7C%20Trainer%20%7C%20Inst.%20Admin%20%7C%20Inst.%20User%20%7C%20Support%20%7C%20Content%20Mgr%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Browse%2FSearch%20Courses%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Course%20Detail%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Enroll%20in%20Free%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(3%20max)%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Enroll%20in%20Paid%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20(assigned)%20%7C%20%E2%9C%93%20(assigned)%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Create%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Edit%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(metadata)%20%7C%20%E2%9C%93%20%7C%0A%7C%20Delete%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Publish%2FUnpublish%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20(submit)%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Feature%20Course%20on%20Homepage%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Rate%20%26%20Review%20Course%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%0A%23%23%23%204.2%20Lesson%20Permissions%0A%7C%20Action%20%7C%20Guest%20%7C%20Student%20%7C%20Professional%20%7C%20Trainer%20%7C%20Inst.%20User%20%7C%20Support%20%7C%20Content%20Mgr%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20View%20Lesson%20(enrolled)%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Download%20Lesson%20Offline%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(Pro%2B)%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Create%20Lesson%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Edit%20Lesson%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(metadata)%20%7C%20%E2%9C%93%20%7C%0A%7C%20Delete%20Lesson%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Reorder%20Lessons%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Take%20Lesson%20Notes%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%0A%23%23%23%204.3%20Certificate%20Permissions%0A%7C%20Action%20%7C%20Guest%20%7C%20Student%20%7C%20Professional%20%7C%20Trainer%20%7C%20Inst.%20Admin%20%7C%20Support%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Generate%20Certificate%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(on%20completion)%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Download%20Certificate%20PDF%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20Own%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Share%20to%20LinkedIn%20%7C%20%E2%9C%97%20%7C%20Own%20%7C%20Own%20%7C%20Own%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Certificate%20Verification%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Revoke%20Certificate%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20All%20Certificates%20(Admin)%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%0A%23%23%23%204.4%20User%20Account%20Permissions%0A%7C%20Action%20%7C%20Student%20%7C%20Trainer%20%7C%20Inst.%20Admin%20%7C%20Support%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20View%20Own%20Profile%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20Own%20%7C%20%E2%9C%93%20%7C%0A%7C%20Edit%20Own%20Profile%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Any%20User%20Profile%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20only%20%7C%20%E2%9C%93%20(read-only)%20%7C%20%E2%9C%93%20%7C%0A%7C%20Create%20User%20Account%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20only%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Edit%20Any%20User%20Account%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20only%20(limited)%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Suspend%20User%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20only%20%7C%20Admin%20approval%20%7C%20%E2%9C%93%20%7C%0A%7C%20Delete%20User%20Account%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Impersonate%20User%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20(logged)%20%7C%0A%0A%23%23%23%204.5%20Membership%20%26%20Payment%20Permissions%0A%7C%20Action%20%7C%20Student%20%7C%20Professional%20%7C%20Inst.%20Admin%20%7C%20Support%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20View%20Own%20Membership%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20(read)%20%7C%20%E2%9C%93%20%7C%0A%7C%20Subscribe%20to%20Plan%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Upgrade%2FDowngrade%20Plan%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Cancel%20Subscription%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20Admin%20approval%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Payment%20History%20%7C%20Own%20%7C%20Own%20%7C%20Org%20%7C%20Own%20%7C%20%E2%9C%93%20%7C%0A%7C%20Process%20Refund%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Admin%20approval%20%7C%20%E2%9C%93%20%7C%0A%7C%20Create%20Membership%20Plan%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Apply%20Coupon%2FDiscount%20%7C%20Self%20%7C%20Self%20%7C%20Org%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20All%20Payment%20Records%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Export%20Financial%20Data%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%0A%23%23%23%204.6%20Support%20Ticket%20Permissions%0A%7C%20Action%20%7C%20Learner%20%7C%20Trainer%20%7C%20Inst.%20Admin%20%7C%20Support%20Agent%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Create%20Support%20Ticket%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Own%20Tickets%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20All%20Tickets%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20only%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Respond%20to%20Ticket%20%7C%20Own%20(reply)%20%7C%20Own%20(reply)%20%7C%20Own%20(reply)%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Assign%20Ticket%20to%20Agent%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20Resolve%20%2F%20Close%20Ticket%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Ticket%20Analytics%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Org%20%7C%20%E2%9C%93%20(own%20queue)%20%7C%20%E2%9C%93%20%7C%0A%0A%23%23%23%204.7%20Analytics%20Permissions%0A%7C%20Action%20%7C%20Learner%20%7C%20Trainer%20%7C%20Inst.%20Admin%20%7C%20Content%20Mgr%20%7C%20Super%20Admin%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20View%20Own%20Progress%20Analytics%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Course%20Analytics%20%7C%20%E2%9C%97%20%7C%20Own%20courses%20%7C%20Org%20only%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Revenue%20Analytics%20%7C%20%E2%9C%97%20%7C%20Own%20earnings%20%7C%20Org%20billing%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20View%20Platform-wide%20Analytics%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%7C%20Export%20Analytics%20Data%20%7C%20Own%20data%20%7C%20Own%20course%20data%20%7C%20Org%20data%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%0A%0A---%0A%0A%23%23%205.%20Role%20Assignment%20Workflow%0A%0A%23%23%23%205.1%20Default%20Role%20on%20Registration%0AAll%20new%20users%20start%20as%20**Student%20(Free)**%20regardless%20of%20registration%20method.%0A%0A%23%23%23%205.2%20Role%20Promotion%20Paths%0A%7C%20Promotion%20%7C%20Trigger%20%7C%20Process%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Student%20%E2%86%92%20Professional%20%7C%20Purchase%20subscription%20%7C%20Automatic%20on%20payment%20confirmation%20%7C%0A%7C%20Student%20%E2%86%92%20Trainer%20%7C%20Submit%20trainer%20application%20%7C%20Manual%20review%20by%20Content%20Manager%20%E2%86%92%20Super%20Admin%20approves%20%7C%0A%7C%20User%20%E2%86%92%20Institution%20User%20%7C%20Institution%20Admin%20adds%20them%20%7C%20Invitation%20email%20sent%2C%20user%20accepts%20%7C%0A%7C%20User%20%E2%86%92%20Institution%20Admin%20%7C%20Super%20Admin%20designates%20%7C%20Manual%20assignment%20in%20Admin%20Panel%20%7C%0A%7C%20User%20%E2%86%92%20Support%20Agent%20%7C%20HR%20onboarding%20%7C%20Super%20Admin%20assigns%20role%20in%20system%20%7C%0A%7C%20User%20%E2%86%92%20Content%20Manager%20%7C%20HR%20onboarding%20%7C%20Super%20Admin%20assigns%20role%20in%20system%20%7C%0A%7C%20User%20%E2%86%92%20Super%20Admin%20%7C%20Founders%2Fengineering%20team%20%7C%20Database-level%20role%20grant%20only%20%7C%0A%0A%23%23%23%205.3%20Role%20Revocation%0A-%20**Subscription%20cancellation%3A**%20Professional%20%E2%86%92%20Student%20(at%20period%20end)%0A-%20**Trainer%20violation%3A**%20Content%20Manager%20or%20Super%20Admin%20demotes%20to%20Student%2C%20course%20content%20archived%0A-%20**Institution%20member%20removal%3A**%20Institution%20Admin%20removes%20user%3B%20role%20reverts%20to%20their%20personal%20plan%0A-%20**Support%2FContent%20Manager%20offboarding%3A**%20Super%20Admin%20revokes%20role%3B%20session%20invalidated%20immediately%0A%0A---%0A%0A%23%23%206.%20Role-Specific%20Onboarding%20Paths%0A%0A%7C%20Role%20%7C%20Onboarding%20Flow%20%7C%20Key%20Steps%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Guest%20%7C%20Marketing-only%20%7C%20None%20required%20%7C%0A%7C%20Student%20%7C%20Learner%20onboarding%20%7C%20Goal%20selection%20%E2%86%92%20Interest%20tags%20%E2%86%92%20First%20course%20recommendation%20%E2%86%92%20Profile%20setup%20%7C%0A%7C%20Professional%20%7C%20Same%20as%20Student%20%7C%20%2B%20LinkedIn%20connection%20prompt%20%2B%20Career%20path%20selection%20%7C%0A%7C%20Job%20Seeker%20%7C%20Same%20as%20Student%20%7C%20%2B%20Skill%20gap%20assessment%20%E2%86%92%20Job-ready%20track%20recommendation%20%7C%0A%7C%20Trainer%20%7C%20Trainer%20onboarding%20%7C%20Application%20form%20%E2%86%92%20Identity%20verification%20%E2%86%92%20Course%20builder%20tutorial%20%E2%86%92%20First%20course%20creation%20%7C%0A%7C%20Institution%20Admin%20%7C%20Enterprise%20onboarding%20%7C%20Org%20profile%20setup%20%E2%86%92%20Seat%20provisioning%20%E2%86%92%20Member%20invitations%20%E2%86%92%20Admin%20dashboard%20tour%20%7C%0A%7C%20Support%20Agent%20%7C%20Internal%20onboarding%20%7C%20Admin%20assigns%20role%20%E2%86%92%20Support%20panel%20tutorial%20%E2%86%92%20SLA%20briefing%20%7C%0A%0A---%0A%0A%23%23%207.%20Authentication%20Rules%20Per%20Role%0A%0A%7C%20Role%20%7C%20Session%20Duration%20%7C%20MFA%20Required%20%7C%20Concurrent%20Sessions%20%7C%20Biometric%20Login%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Guest%20%7C%20N%2FA%20%7C%20No%20%7C%20N%2FA%20%7C%20No%20%7C%0A%7C%20Student%20%7C%207%20days%20(refresh)%20%7C%20Optional%20%7C%20Max%203%20devices%20%7C%20Yes%20(mobile)%20%7C%0A%7C%20Professional%20%7C%207%20days%20(refresh)%20%7C%20Optional%20%7C%20Max%205%20devices%20%7C%20Yes%20(mobile)%20%7C%0A%7C%20Trainer%20%7C%207%20days%20(refresh)%20%7C%20Recommended%20%7C%20Max%203%20devices%20%7C%20Yes%20(mobile)%20%7C%0A%7C%20Institution%20Admin%20%7C%2024h%20(refresh)%20%7C%20**Required**%20%7C%20Max%202%20devices%20%7C%20No%20%7C%0A%7C%20Support%20Agent%20%7C%208h%20(work%20session)%20%7C%20**Required**%20%7C%20Max%201%20device%20%7C%20No%20%7C%0A%7C%20Content%20Manager%20%7C%208h%20(work%20session)%20%7C%20**Required**%20%7C%20Max%201%20device%20%7C%20No%20%7C%0A%7C%20Super%20Admin%20%7C%204h%20(short%20session)%20%7C%20**Required**%20%7C%20Max%201%20device%20%7C%20No%20%7C%0A%0A*All%20access%20and%20refresh%20token%20rotations%20are%20logged%20with%20IP%2C%20device%20fingerprint%2C%20and%20timestamp.*%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>02 User And Ux</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>User Roles &amp; Permissions Matrix</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="user-roles-permissions-matrix" class="docmd-heading"><a href="#user-roles-permissions-matrix" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>User Roles &amp; Permissions Matrix</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="user-roles-permissions-matrix-1-introduction" class="docmd-heading"><a href="#user-roles-permissions-matrix-1-introduction" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Introduction</h2>
+<p>This document defines all user roles within LearnFlow AI, their access scope, permission levels across all platform entities, and the workflow for role assignment, promotion, and revocation. All role-based access control (RBAC) logic is enforced server-side via the API layer — the frontend merely reflects current permissions.</p>
+<hr>
+<h2 id="user-roles-permissions-matrix-2-role-definitions" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Role Definitions</h2>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-21-guest" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-21-guest" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.1 Guest</h3>
+<p>A visitor who has not registered or logged in. Guests can browse the marketing pages and the public course catalog but cannot access any learning features.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Explore the platform, understand the value proposition, register</li>
+<li><strong>Key Actions:</strong> Browse courses, view pricing, view marketing pages, click “Register”</li>
+<li><strong>Access Level:</strong> Read-only on public endpoints only</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-22-student-free-learner" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-22-student-free-learner" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.2 Student (Free Learner)</h3>
+<p>A registered user on the Free plan. Can access up to 3 free courses, use the AI assistant with daily limits, and track basic progress.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Learn new skills, earn certificates, explore the platform</li>
+<li><strong>Key Actions:</strong> Enroll in free courses, complete lessons, take quizzes, download basic certificate</li>
+<li><strong>Access Level:</strong> Limited read + limited write on own learning data</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-23-professional-basicpropremium-subscriber" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-23-professional-basicpropremium-subscriber" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.3 Professional (Basic/Pro/Premium Subscriber)</h3>
+<p>A paying subscriber on any individual plan. Gets full platform access scaled to their subscription tier.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Upskill for career advancement, earn verifiable certificates, get AI guidance</li>
+<li><strong>Key Actions:</strong> Enroll in any course, unlimited AI queries (Pro+), download lessons offline, share certificates</li>
+<li><strong>Access Level:</strong> Full learner access + premium features per plan</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-24-job-seeker" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-24-job-seeker" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.4 Job Seeker</h3>
+<p>A registered user with the “Job Seeker” learning goal selected during onboarding. May receive subsidized or free access to specific job-readiness courses via partnerships.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Build job-ready skills fast, earn verifiable credentials</li>
+<li><strong>Key Actions:</strong> Same as Student; may access curated Job Seeker course tracks</li>
+<li><strong>Access Level:</strong> Same as Student, plus job-seeker-specific content feed</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-25-trainer-instructor" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-25-trainer-instructor" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.5 Trainer / Instructor</h3>
+<p>A verified content creator who publishes and manages courses on the platform. Must pass a trainer application review process.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Create high-quality courses, monetize expertise, track student performance</li>
+<li><strong>Key Actions:</strong> Create courses, upload lessons, publish quizzes, view analytics, manage earnings</li>
+<li><strong>Access Level:</strong> Full learner access + trainer-specific CREATE/EDIT/DELETE on own courses and lessons</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-26-institution-admin" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-26-institution-admin" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.6 Institution Admin</h3>
+<p>An administrator of an institutional (corporate/school) account. Manages team members, licenses, and progress reports within their organization.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Manage team learning, track completion, report to leadership</li>
+<li><strong>Key Actions:</strong> Add/remove institution members, assign courses to groups, view progress reports, manage institutional billing</li>
+<li><strong>Access Level:</strong> Full learner access + CRUD on institution members + view reports for their organization only</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-27-institution-user-team-member" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-27-institution-user-team-member" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.7 Institution User (Team Member)</h3>
+<p>A learner who belongs to an institutional account. Access is determined by the Institution Admin’s assignments.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Complete assigned courses, comply with L&amp;D requirements</li>
+<li><strong>Key Actions:</strong> Learn assigned courses, take quizzes, earn certificates, report progress</li>
+<li><strong>Access Level:</strong> Same as Professional (Pro plan) but access gated by Institution Admin assignments</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-28-support-agent" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-28-support-agent" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.8 Support Agent</h3>
+<p>A platform employee handling customer support tickets. Can view any user account for troubleshooting but cannot modify sensitive data without admin approval.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Resolve user issues quickly, improve satisfaction scores</li>
+<li><strong>Key Actions:</strong> View user accounts, view/update tickets, send messages, escalate issues</li>
+<li><strong>Access Level:</strong> Read on any user profile + CRUD on support tickets + limited write for issue resolution</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-29-content-manager" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-29-content-manager" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.9 Content Manager</h3>
+<p>A platform employee responsible for curating, reviewing, and managing course content and trainer submissions.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Ensure content quality, approve trainer submissions, manage catalog</li>
+<li><strong>Key Actions:</strong> Review submitted courses, approve/reject/feature, edit metadata, manage categories</li>
+<li><strong>Access Level:</strong> Full read on all courses + PUBLISH/UNPUBLISH/FEATURE powers + limited user read</li>
+</ul>
+<h3 id="user-roles-permissions-matrix-2-role-definitions-210-super-admin" class="docmd-heading"><a href="#user-roles-permissions-matrix-2-role-definitions-210-super-admin" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.10 Super Admin</h3>
+<p>The highest-privilege system user. Full access to all platform entities, settings, user data, billing, analytics, and system configuration.</p>
+<ul>
+<li><strong>Primary Goals:</strong> Operate and govern the platform, ensure business performance</li>
+<li><strong>Key Actions:</strong> All admin operations + system settings + user impersonation + financial reconciliation</li>
+<li><strong>Access Level:</strong> CRUD on all entities, system settings, all analytics, all payment records</li>
+</ul>
+<hr>
+<h2 id="user-roles-permissions-matrix-3-role-hierarchy-diagram" class="docmd-heading"><a href="#user-roles-permissions-matrix-3-role-hierarchy-diagram" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Role Hierarchy Diagram</h2>
+<div class="mermaid">graph TD
+    SA[Super Admin] --&gt; CM[Content Manager]
+    SA --&gt; SUP[Support Agent]
+    SA --&gt; IA[Institution Admin]
+    SA --&gt; TR[Trainer]
+    SA --&gt; PRO[Professional / Subscriber]
+    PRO --&gt; STU[Student - Free]
+    STU --&gt; JS[Job Seeker]
+    IA --&gt; IU[Institution User]
+    STU --&gt; G[Guest]
+</div>
+<hr>
+<h2 id="user-roles-permissions-matrix-4-permissions-matrix" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Permissions Matrix</h2>
+<p><strong>Legend:</strong> <code>✓</code> = Allowed | <code>✗</code> = Not allowed | <code>Own</code> = Own records only | <code>Org</code> = Within their institution only | <code>Admin</code> = Requires approval</p>
+<h3 id="user-roles-permissions-matrix-4-permissions-matrix-41-course-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-41-course-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 Course Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Guest</th>
+<th>Student</th>
+<th>Professional</th>
+<th>Job Seeker</th>
+<th>Trainer</th>
+<th>Inst. Admin</th>
+<th>Inst. User</th>
+<th>Support</th>
+<th>Content Mgr</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Browse/Search Courses</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Course Detail</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Enroll in Free Course</td>
+<td>✗</td>
+<td>✓ (3 max)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Enroll in Paid Course</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓ (assigned)</td>
+<td>✓ (assigned)</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Create Course</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Edit Course</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ (metadata)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Delete Course</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Publish/Unpublish Course</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own (submit)</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Feature Course on Homepage</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Rate &amp; Review Course</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-42-lesson-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-42-lesson-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Lesson Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Guest</th>
+<th>Student</th>
+<th>Professional</th>
+<th>Trainer</th>
+<th>Inst. User</th>
+<th>Support</th>
+<th>Content Mgr</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View Lesson (enrolled)</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Download Lesson Offline</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ (Pro+)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Create Lesson</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Edit Lesson</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ (metadata)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Delete Lesson</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Reorder Lessons</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Take Lesson Notes</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-43-certificate-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-43-certificate-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.3 Certificate Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Guest</th>
+<th>Student</th>
+<th>Professional</th>
+<th>Trainer</th>
+<th>Inst. Admin</th>
+<th>Support</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generate Certificate</td>
+<td>✗</td>
+<td>✓ (on completion)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Download Certificate PDF</td>
+<td>✗</td>
+<td>Own</td>
+<td>Own</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Share to LinkedIn</td>
+<td>✗</td>
+<td>Own</td>
+<td>Own</td>
+<td>Own</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Certificate Verification</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Revoke Certificate</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View All Certificates (Admin)</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-44-user-account-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-44-user-account-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.4 User Account Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Student</th>
+<th>Trainer</th>
+<th>Inst. Admin</th>
+<th>Support</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View Own Profile</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>Own</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Edit Own Profile</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Any User Profile</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org only</td>
+<td>✓ (read-only)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Create User Account</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org only</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Edit Any User Account</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org only (limited)</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Suspend User</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org only</td>
+<td>Admin approval</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Delete User Account</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Impersonate User</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ (logged)</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-45-membership-payment-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-45-membership-payment-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.5 Membership &amp; Payment Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Student</th>
+<th>Professional</th>
+<th>Inst. Admin</th>
+<th>Support</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View Own Membership</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓ (read)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Subscribe to Plan</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Upgrade/Downgrade Plan</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Cancel Subscription</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>Admin approval</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Payment History</td>
+<td>Own</td>
+<td>Own</td>
+<td>Org</td>
+<td>Own</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Process Refund</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>Admin approval</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Create Membership Plan</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Apply Coupon/Discount</td>
+<td>Self</td>
+<td>Self</td>
+<td>Org</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View All Payment Records</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Export Financial Data</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-46-support-ticket-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-46-support-ticket-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.6 Support Ticket Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Learner</th>
+<th>Trainer</th>
+<th>Inst. Admin</th>
+<th>Support Agent</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Support Ticket</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Own Tickets</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View All Tickets</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org only</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Respond to Ticket</td>
+<td>Own (reply)</td>
+<td>Own (reply)</td>
+<td>Own (reply)</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Assign Ticket to Agent</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Resolve / Close Ticket</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Ticket Analytics</td>
+<td>✗</td>
+<td>✗</td>
+<td>Org</td>
+<td>✓ (own queue)</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-4-permissions-matrix-47-analytics-permissions" class="docmd-heading"><a href="#user-roles-permissions-matrix-4-permissions-matrix-47-analytics-permissions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.7 Analytics Permissions</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Learner</th>
+<th>Trainer</th>
+<th>Inst. Admin</th>
+<th>Content Mgr</th>
+<th>Super Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>View Own Progress Analytics</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Course Analytics</td>
+<td>✗</td>
+<td>Own courses</td>
+<td>Org only</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Revenue Analytics</td>
+<td>✗</td>
+<td>Own earnings</td>
+<td>Org billing</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>View Platform-wide Analytics</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Export Analytics Data</td>
+<td>Own data</td>
+<td>Own course data</td>
+<td>Org data</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="user-roles-permissions-matrix-5-role-assignment-workflow" class="docmd-heading"><a href="#user-roles-permissions-matrix-5-role-assignment-workflow" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Role Assignment Workflow</h2>
+<h3 id="user-roles-permissions-matrix-5-role-assignment-workflow-51-default-role-on-registration" class="docmd-heading"><a href="#user-roles-permissions-matrix-5-role-assignment-workflow-51-default-role-on-registration" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 Default Role on Registration</h3>
+<p>All new users start as <strong>Student (Free)</strong> regardless of registration method.</p>
+<h3 id="user-roles-permissions-matrix-5-role-assignment-workflow-52-role-promotion-paths" class="docmd-heading"><a href="#user-roles-permissions-matrix-5-role-assignment-workflow-52-role-promotion-paths" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Role Promotion Paths</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Promotion</th>
+<th>Trigger</th>
+<th>Process</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Student → Professional</td>
+<td>Purchase subscription</td>
+<td>Automatic on payment confirmation</td>
+</tr>
+<tr>
+<td>Student → Trainer</td>
+<td>Submit trainer application</td>
+<td>Manual review by Content Manager → Super Admin approves</td>
+</tr>
+<tr>
+<td>User → Institution User</td>
+<td>Institution Admin adds them</td>
+<td>Invitation email sent, user accepts</td>
+</tr>
+<tr>
+<td>User → Institution Admin</td>
+<td>Super Admin designates</td>
+<td>Manual assignment in Admin Panel</td>
+</tr>
+<tr>
+<td>User → Support Agent</td>
+<td>HR onboarding</td>
+<td>Super Admin assigns role in system</td>
+</tr>
+<tr>
+<td>User → Content Manager</td>
+<td>HR onboarding</td>
+<td>Super Admin assigns role in system</td>
+</tr>
+<tr>
+<td>User → Super Admin</td>
+<td>Founders/engineering team</td>
+<td>Database-level role grant only</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="user-roles-permissions-matrix-5-role-assignment-workflow-53-role-revocation" class="docmd-heading"><a href="#user-roles-permissions-matrix-5-role-assignment-workflow-53-role-revocation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.3 Role Revocation</h3>
+<ul>
+<li><strong>Subscription cancellation:</strong> Professional → Student (at period end)</li>
+<li><strong>Trainer violation:</strong> Content Manager or Super Admin demotes to Student, course content archived</li>
+<li><strong>Institution member removal:</strong> Institution Admin removes user; role reverts to their personal plan</li>
+<li><strong>Support/Content Manager offboarding:</strong> Super Admin revokes role; session invalidated immediately</li>
+</ul>
+<hr>
+<h2 id="user-roles-permissions-matrix-6-role-specific-onboarding-paths" class="docmd-heading"><a href="#user-roles-permissions-matrix-6-role-specific-onboarding-paths" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Role-Specific Onboarding Paths</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Onboarding Flow</th>
+<th>Key Steps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guest</td>
+<td>Marketing-only</td>
+<td>None required</td>
+</tr>
+<tr>
+<td>Student</td>
+<td>Learner onboarding</td>
+<td>Goal selection → Interest tags → First course recommendation → Profile setup</td>
+</tr>
+<tr>
+<td>Professional</td>
+<td>Same as Student</td>
+<td>+ LinkedIn connection prompt + Career path selection</td>
+</tr>
+<tr>
+<td>Job Seeker</td>
+<td>Same as Student</td>
+<td>+ Skill gap assessment → Job-ready track recommendation</td>
+</tr>
+<tr>
+<td>Trainer</td>
+<td>Trainer onboarding</td>
+<td>Application form → Identity verification → Course builder tutorial → First course creation</td>
+</tr>
+<tr>
+<td>Institution Admin</td>
+<td>Enterprise onboarding</td>
+<td>Org profile setup → Seat provisioning → Member invitations → Admin dashboard tour</td>
+</tr>
+<tr>
+<td>Support Agent</td>
+<td>Internal onboarding</td>
+<td>Admin assigns role → Support panel tutorial → SLA briefing</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="user-roles-permissions-matrix-7-authentication-rules-per-role" class="docmd-heading"><a href="#user-roles-permissions-matrix-7-authentication-rules-per-role" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Authentication Rules Per Role</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Session Duration</th>
+<th>MFA Required</th>
+<th>Concurrent Sessions</th>
+<th>Biometric Login</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guest</td>
+<td>N/A</td>
+<td>No</td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Student</td>
+<td>7 days (refresh)</td>
+<td>Optional</td>
+<td>Max 3 devices</td>
+<td>Yes (mobile)</td>
+</tr>
+<tr>
+<td>Professional</td>
+<td>7 days (refresh)</td>
+<td>Optional</td>
+<td>Max 5 devices</td>
+<td>Yes (mobile)</td>
+</tr>
+<tr>
+<td>Trainer</td>
+<td>7 days (refresh)</td>
+<td>Recommended</td>
+<td>Max 3 devices</td>
+<td>Yes (mobile)</td>
+</tr>
+<tr>
+<td>Institution Admin</td>
+<td>24h (refresh)</td>
+<td><strong>Required</strong></td>
+<td>Max 2 devices</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Support Agent</td>
+<td>8h (work session)</td>
+<td><strong>Required</strong></td>
+<td>Max 1 device</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Content Manager</td>
+<td>8h (work session)</td>
+<td><strong>Required</strong></td>
+<td>Max 1 device</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Super Admin</td>
+<td>4h (short session)</td>
+<td><strong>Required</strong></td>
+<td>Max 1 device</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div><p><em>All access and refresh token rotations are logged with IP, device fingerprint, and timestamp.</em></p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Onboarding &amp; Gamification Mechanics
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            UX Research &amp; Journey Flows
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#user-roles-permissions-matrix" class="toc-link">User Roles &amp; Permissions Matrix</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-1-introduction" class="toc-link">1. Introduction</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-2-role-definitions" class="toc-link">2. Role Definitions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-21-guest" class="toc-link">2.1 Guest</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-22-student-free-learner" class="toc-link">2.2 Student (Free Learner)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-23-professional-basicpropremium-subscriber" class="toc-link">2.3 Professional (Basic/Pro/Premium Subscriber)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-24-job-seeker" class="toc-link">2.4 Job Seeker</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-25-trainer-instructor" class="toc-link">2.5 Trainer / Instructor</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-26-institution-admin" class="toc-link">2.6 Institution Admin</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-27-institution-user-team-member" class="toc-link">2.7 Institution User (Team Member)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-28-support-agent" class="toc-link">2.8 Support Agent</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-29-content-manager" class="toc-link">2.9 Content Manager</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-2-role-definitions-210-super-admin" class="toc-link">2.10 Super Admin</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-3-role-hierarchy-diagram" class="toc-link">3. Role Hierarchy Diagram</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix" class="toc-link">4. Permissions Matrix</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-41-course-permissions" class="toc-link">4.1 Course Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-42-lesson-permissions" class="toc-link">4.2 Lesson Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-43-certificate-permissions" class="toc-link">4.3 Certificate Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-44-user-account-permissions" class="toc-link">4.4 User Account Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-45-membership-payment-permissions" class="toc-link">4.5 Membership &amp; Payment Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-46-support-ticket-permissions" class="toc-link">4.6 Support Ticket Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-4-permissions-matrix-47-analytics-permissions" class="toc-link">4.7 Analytics Permissions</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-5-role-assignment-workflow" class="toc-link">5. Role Assignment Workflow</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-5-role-assignment-workflow-51-default-role-on-registration" class="toc-link">5.1 Default Role on Registration</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-5-role-assignment-workflow-52-role-promotion-paths" class="toc-link">5.2 Role Promotion Paths</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#user-roles-permissions-matrix-5-role-assignment-workflow-53-role-revocation" class="toc-link">5.3 Role Revocation</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-6-role-specific-onboarding-paths" class="toc-link">6. Role-Specific Onboarding Paths</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#user-roles-permissions-matrix-7-authentication-rules-per-role" class="toc-link">7. Authentication Rules Per Role</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/init-mermaid.js?v=mrau3vyn" type="module"></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

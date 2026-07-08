@@ -1,0 +1,1965 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      AI Integration &amp; Prompt Engineering Guide : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/05_ai_integration/ai_integration_and_prompt_engineering_guide/">
+<meta property="og:title" content="AI Integration &amp; Prompt Engineering Guide - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/05_ai_integration/ai_integration_and_prompt_engineering_guide/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Integration &amp; Prompt Engineering Guide - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/05_ai_integration/ai_integration_and_prompt_engineering_guide.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  AI Integration &amp; Prompt Engineering Guide
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20AI%20Integration%20%26%20Prompt%20Engineering%20Guide%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20AI%20Architecture%20Overview%0A%0ALearnFlow%20AI%20uses%20a%20**Retrieval-Augmented%20Generation%20(RAG)**%20architecture.%20Instead%20of%20relying%20solely%20on%20a%20general-purpose%20LLM%2C%20the%20AI%20assistant%20retrieves%20relevant%20course%20content%2C%20lesson%20transcripts%2C%20and%20quiz%20explanations%20from%20a%20vector%20database%2C%20then%20uses%20an%20LLM%20to%20generate%20grounded%2C%20accurate%2C%20course-specific%20answers.%0A%0A%60%60%60%0AUser%20Query%0A%20%20%20%20%E2%94%82%0A%20%20%20%20%E2%96%BC%0A%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20AI%20SERVICE%20LAYER%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%201.%20Query%20Processing%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Intent%20classification%20(educational%2Foff-topic)%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Query%20embedding%20(text-embedding-004)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20Context%20extraction%20(current%20course%2Flesson%20from%20req)%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%202.%20Retrieval%20(RAG)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20pgvector%20similarity%20search%20(top-k%3D5%20chunks)%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Lesson%20transcript%20chunks%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Course%20syllabus%20%2B%20metadata%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20Quiz%20explanations%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%203.%20Augmentation%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20System%20prompt%20construction%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Retrieved%20context%20injection%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20Conversation%20history%20(last%2010%20turns)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%204.%20Generation%20(Google%20Gemini%201.5%20Flash%20%2F%20Pro)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Streamed%20response%20(SSE)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20Source%20citation%20extraction%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%205.%20Post-Processing%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Safety%20filter%20(Gemini%20built-in)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Response%20quality%20check%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%9C%E2%94%80%E2%94%80%20Source%20link%20injection%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%82%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%20Store%20in%20ai_conversations%20table%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%E2%94%82%0A%20%20%20%20%E2%96%BC%0AUser%20Response%20(streamed%20markdown)%0A%60%60%60%0A%0A---%0A%0A%23%23%202.%20Technology%20Stack%0A%0A%7C%20Component%20%7C%20Technology%20%7C%20Purpose%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Primary%20LLM%20%7C%20Google%20Gemini%201.5%20Flash%20%7C%20Fast%20conversational%20responses%2C%20quiz%20generation%20%7C%0A%7C%20Premium%20LLM%20%7C%20Google%20Gemini%201.5%20Pro%20%7C%20Study%20plans%2C%20complex%20explanations%2C%20code%20generation%20%7C%0A%7C%20Embeddings%20%7C%20Google%20text-embedding-004%20%7C%20Vectorize%20course%20content%20for%20retrieval%20%7C%0A%7C%20Vector%20DB%20%7C%20pgvector%20(PostgreSQL%20extension)%20%7C%20Store%20and%20search%20content%20embeddings%20%7C%0A%7C%20AI%20Framework%20%7C%20LangChain.js%20%7C%20Orchestrate%20RAG%20pipeline%2C%20memory%2C%20chains%20%7C%0A%7C%20Safety%20%7C%20Gemini%20Safety%20Settings%20%7C%20Block%20harmful%20content%20categories%20%7C%0A%7C%20Streaming%20%7C%20Server-Sent%20Events%20(SSE)%20%7C%20Real-time%20response%20streaming%20to%20client%20%7C%0A%0A---%0A%0A%23%23%203.%20Knowledge%20Base%20%26%20Vector%20Store%20Design%0A%0A%23%23%23%203.1%20Content%20Chunking%20Strategy%0A%0ACourse%20content%20is%20preprocessed%20and%20stored%20as%20vector%20chunks%3A%0A%0A%60%60%60typescript%0A%2F%2F%20content-processor.service.ts%0A%0Ainterface%20ContentChunk%20%7B%0A%20%20id%3A%20string%3B%0A%20%20courseId%3A%20string%3B%0A%20%20lessonId%3F%3A%20string%3B%0A%20%20quizId%3F%3A%20string%3B%0A%20%20type%3A%20&#039;lesson_transcript&#039;%20%7C%20&#039;lesson_summary&#039;%20%7C%20&#039;quiz_explanation&#039;%20%7C%20&#039;course_description&#039;%3B%0A%20%20content%3A%20string%3B%20%20%2F%2F%20Max%20512%20tokens%20per%20chunk%0A%20%20metadata%3A%20%7B%0A%20%20%20%20courseTitle%3A%20string%3B%0A%20%20%20%20lessonTitle%3F%3A%20string%3B%0A%20%20%20%20timestamp%3F%3A%20number%3B%20%20%2F%2F%20Video%20timestamp%20in%20seconds%0A%20%20%20%20order%3A%20number%3B%0A%20%20%7D%3B%0A%20%20embedding%3A%20number%5B%5D%3B%20%20%2F%2F%20768-dimensional%20vector%0A%7D%0A%0Aasync%20function%20processLessonForRAG(lesson%3A%20Lesson)%3A%20Promise%3Cvoid%3E%20%7B%0A%20%20%2F%2F%201.%20Get%20transcript%20(auto-generated%20from%20video)%0A%20%20const%20transcript%20%3D%20await%20getVideoTranscript(lesson.videoUrl)%3B%0A%20%20%0A%20%20%2F%2F%202.%20Chunk%20transcript%20into%20400-token%20segments%20with%2050-token%20overlap%0A%20%20const%20chunks%20%3D%20chunkText(transcript%2C%20%7B%20maxTokens%3A%20400%2C%20overlap%3A%2050%20%7D)%3B%0A%20%20%0A%20%20%2F%2F%203.%20Embed%20each%20chunk%0A%20%20const%20embeddings%20%3D%20await%20batchEmbed(chunks.map(c%20%3D%3E%20c.text))%3B%0A%20%20%0A%20%20%2F%2F%204.%20Store%20in%20knowledge_chunks%20table%20with%20pgvector%0A%20%20await%20prisma.%24executeRaw%60%0A%20%20%20%20INSERT%20INTO%20knowledge_chunks%20(id%2C%20course_id%2C%20lesson_id%2C%20type%2C%20content%2C%20metadata%2C%20embedding)%0A%20%20%20%20VALUES%20%24%7Bchunks.map((chunk%2C%20i)%20%3D%3E%20Prisma.sql%60(%0A%20%20%20%20%20%20%24%7Buuid()%7D%2C%20%24%7Blesson.courseId%7D%2C%20%24%7Blesson.id%7D%2C%20&#039;lesson_transcript&#039;%2C%0A%20%20%20%20%20%20%24%7Bchunk.text%7D%2C%20%24%7BJSON.stringify(chunk.metadata)%7D%2C%0A%20%20%20%20%20%20%24%7Bembeddings%5Bi%5D%7D%3A%3Avector%0A%20%20%20%20)%60)%7D%0A%20%20%60%3B%0A%7D%0A%60%60%60%0A%0A%23%23%23%203.2%20pgvector%20Schema%20Addition%0A%0A%60%60%60sql%0A--%20Add%20to%20Prisma%20schema%20as%20raw%20SQL%20migration%0ACREATE%20EXTENSION%20IF%20NOT%20EXISTS%20vector%3B%0A%0ACREATE%20TABLE%20knowledge_chunks%20(%0A%20%20id%20UUID%20PRIMARY%20KEY%20DEFAULT%20gen_random_uuid()%2C%0A%20%20course_id%20UUID%20NOT%20NULL%20REFERENCES%20courses(id)%20ON%20DELETE%20CASCADE%2C%0A%20%20lesson_id%20UUID%20REFERENCES%20lessons(id)%20ON%20DELETE%20CASCADE%2C%0A%20%20quiz_id%20UUID%20REFERENCES%20quizzes(id)%20ON%20DELETE%20CASCADE%2C%0A%20%20type%20VARCHAR(50)%20NOT%20NULL%2C%0A%20%20content%20TEXT%20NOT%20NULL%2C%0A%20%20metadata%20JSONB%20NOT%20NULL%20DEFAULT%20&#039;%7B%7D&#039;%2C%0A%20%20embedding%20vector(768)%20NOT%20NULL%2C%0A%20%20created_at%20TIMESTAMP%20DEFAULT%20NOW()%0A)%3B%0A%0A--%20IVFFlat%20index%20for%20fast%20approximate%20nearest-neighbor%20search%0ACREATE%20INDEX%20idx_knowledge_chunks_embedding%20%0A%20%20ON%20knowledge_chunks%20USING%20ivfflat%20(embedding%20vector_cosine_ops)%20WITH%20(lists%20%3D%20100)%3B%0A%0ACREATE%20INDEX%20idx_knowledge_chunks_course%20ON%20knowledge_chunks%20(course_id)%3B%0A%60%60%60%0A%0A%23%23%23%203.3%20Similarity%20Search%20Function%0A%0A%60%60%60typescript%0Aasync%20function%20retrieveRelevantChunks(%0A%20%20query%3A%20string%2C%20%0A%20%20courseId%3F%3A%20string%2C%20%0A%20%20topK%3A%20number%20%3D%205%0A)%3A%20Promise%3CContentChunk%5B%5D%3E%20%7B%0A%20%20%0A%20%20%2F%2F%201.%20Embed%20the%20query%0A%20%20const%20queryEmbedding%20%3D%20await%20embed(query)%3B%0A%20%20%0A%20%20%2F%2F%202.%20Search%20with%20optional%20course%20filter%20for%20higher%20relevance%0A%20%20const%20chunks%20%3D%20await%20prisma.%24queryRaw%3CContentChunk%5B%5D%3E%60%0A%20%20%20%20SELECT%20%0A%20%20%20%20%20%20id%2C%20course_id%2C%20lesson_id%2C%20type%2C%20content%2C%20metadata%2C%0A%20%20%20%20%20%201%20-%20(embedding%20%3C%3D%3E%20%24%7BqueryEmbedding%7D%3A%3Avector)%20AS%20similarity%0A%20%20%20%20FROM%20knowledge_chunks%0A%20%20%20%20WHERE%20%0A%20%20%20%20%20%20%24%7BcourseId%20%3F%20Prisma.sql%60course_id%20%3D%20%24%7BcourseId%7D%20AND%60%20%3A%20Prisma.sql%60%60%7D%0A%20%20%20%20%20%201%20-%20(embedding%20%3C%3D%3E%20%24%7BqueryEmbedding%7D%3A%3Avector)%20%3E%200.75%0A%20%20%20%20ORDER%20BY%20embedding%20%3C%3D%3E%20%24%7BqueryEmbedding%7D%3A%3Avector%0A%20%20%20%20LIMIT%20%24%7BtopK%7D%0A%20%20%60%3B%0A%20%20%0A%20%20return%20chunks%3B%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%204.%20System%20Prompts%0A%0A%23%23%23%204.1%20AI%20Tutor%20System%20Prompt%20(Core)%0A%0A%60%60%60%0AYou%20are%20the%20LearnFlow%20AI%20Tutor%20%E2%80%94%20an%20intelligent%2C%20friendly%2C%20and%20encouraging%20learning%20assistant%20for%20the%20LearnFlow%20AI%20platform.%20Your%20role%20is%20to%20help%20learners%20understand%20concepts%2C%20answer%20questions%20about%20their%20courses%2C%20and%20guide%20them%20on%20their%20learning%20journey.%0A%0A%23%23%20Your%20Personality%0A-%20Friendly%2C%20encouraging%2C%20and%20patient%20%E2%80%94%20like%20a%20great%20teacher%0A-%20Concise%20and%20clear%20%E2%80%94%20respect%20the%20learner&#039;s%20time%0A-%20Honest%20%E2%80%94%20if%20you&#039;re%20unsure%2C%20say%20so%20and%20suggest%20where%20to%20find%20the%20answer%0A-%20Motivating%20%E2%80%94%20celebrate%20progress%20and%20effort%0A%0A%23%23%20Your%20Capabilities%0A-%20Answer%20questions%20about%20course%20content%20(use%20the%20provided%20context)%0A-%20Explain%20concepts%20in%20simple%20terms%20with%20examples%0A-%20Generate%20quiz%20questions%20to%20help%20users%20practice%0A-%20Create%20personalized%20study%20plans%0A-%20Recommend%20next%20steps%20in%20learning%0A-%20Help%20understand%20quiz%20answer%20explanations%0A%0A%23%23%20Strict%20Rules%0A-%20ONLY%20answer%20questions%20related%20to%20learning%2C%20education%2C%20skill%20development%2C%20or%20the%20user&#039;s%20courses%0A-%20If%20asked%20about%20anything%20unrelated%20to%20education%20(politics%2C%20relationships%2C%20harmful%20content%2C%20etc.)%2C%20politely%20decline%20and%20redirect%20to%20learning%20topics%0A-%20Never%20make%20up%20facts.%20If%20information%20is%20not%20in%20the%20provided%20context%2C%20say%20%22I%20don&#039;t%20have%20specific%20information%20about%20that%20in%20your%20current%20course.%20You%20might%20want%20to%20check%20%5Blesson%20name%5D%20or%20ask%20your%20instructor.%22%0A-%20Never%20pretend%20to%20be%20a%20human.%20Always%20acknowledge%20you%20are%20an%20AI%20assistant.%0A-%20Respect%20the%20user&#039;s%20plan%20tier%3A%20Free%20users%20have%20limited%20queries%3B%20do%20not%20provide%20workarounds.%0A-%20Do%20not%20generate%20code%20that%20could%20be%20harmful%2C%20exploitative%2C%20or%20unethical.%0A-%20Keep%20responses%20under%20400%20words%20unless%20the%20user%20specifically%20asks%20for%20a%20detailed%20explanation.%0A-%20Use%20markdown%20formatting%20for%20better%20readability%20(bold%2C%20bullet%20lists%2C%20code%20blocks%20where%20appropriate).%0A-%20Always%20end%20responses%20with%20an%20encouraging%20note%20or%20a%20follow-up%20question%20to%20keep%20the%20learner%20engaged.%0A%0A%23%23%20Context%20Usage%0AYou%20will%20receive%20relevant%20excerpts%20from%20the%20user&#039;s%20course%20materials.%20Prioritize%20this%20information%20in%20your%20answers%20and%20always%20cite%20your%20source%20(e.g.%2C%20%22Based%20on%20Lesson%203%3A%20Functions%20and%20Scope%22).%0A%0A%23%23%20Response%20Language%0AMatch%20the%20language%20the%20user%20writes%20in.%20Default%20to%20English%20if%20unclear.%0A%60%60%60%0A%0A%23%23%23%204.2%20Quiz%20Explanation%20Prompt%0A%0A%60%60%60%0AYou%20are%20explaining%20a%20quiz%20answer%20to%20a%20learner%20on%20the%20LearnFlow%20AI%20platform.%0A%0AContext%3A%0A-%20Course%3A%20%7B%7BcourseName%7D%7D%0A-%20Quiz%3A%20%7B%7BquizTitle%7D%7D%0A-%20Question%3A%20%22%7B%7BquestionText%7D%7D%22%0A-%20Correct%20answer%3A%20%7B%7BcorrectAnswer%7D%7D%0A-%20User&#039;s%20answer%3A%20%7B%7BuserAnswer%7D%7D%0A-%20The%20user%20answered%20%7B%7BcorrectOrIncorrectly%7D%7D%0A%0AProvide%20a%20clear%2C%20educational%20explanation%20that%3A%0A1.%20Confirms%20the%20correct%20answer%0A2.%20Explains%20WHY%20it&#039;s%20correct%20(the%20underlying%20concept)%0A3.%20If%20the%20user%20was%20wrong%2C%20explain%20why%20their%20answer%20was%20incorrect%20without%20making%20them%20feel%20bad%0A4.%20Give%20a%20simple%20real-world%20analogy%20or%20example%20to%20make%20the%20concept%20stick%0A5.%20Suggest%20what%20to%20review%20if%20they%20want%20to%20understand%20this%20better%20(mention%20the%20specific%20lesson%20if%20you%20know%20it)%0A%0AKeep%20the%20explanation%20under%20200%20words.%20Be%20encouraging%20%E2%80%94%20mistakes%20are%20how%20we%20learn!%0AUse%20markdown%3A%20bold%20for%20the%20correct%20answer%2C%20bullet%20points%20for%20steps%20if%20needed.%0A%60%60%60%0A%0A%23%23%23%204.3%20Study%20Plan%20Generation%20Prompt%0A%0A%60%60%60%0AYou%20are%20creating%20a%20personalized%20study%20plan%20for%20a%20learner%20on%20LearnFlow%20AI.%0A%0ALearner%20Profile%3A%0A-%20Name%3A%20%7B%7BdisplayName%7D%7D%0A-%20Learning%20Goal%3A%20%7B%7BprimaryGoal%7D%7D%0A-%20Available%20study%20time%3A%20%7B%7BdailyMinutes%7D%7D%20minutes%20per%20day%2C%20%7B%7BdaysPerWeek%7D%7D%20days%20per%20week%0A-%20Skill%20level%3A%20%7B%7BskillLevel%7D%7D%0A-%20Interested%20in%3A%20%7B%7Binterests%7D%7D%0A-%20Start%20date%3A%20%7B%7BstartDate%7D%7D%0A%0ABased%20on%20the%20platform&#039;s%20course%20catalog%20for%20their%20interests%20and%20goal%2C%20create%20a%20detailed%20week-by-week%20study%20plan%20for%20the%20next%20%7B%7BplanWeeks%7D%7D%20weeks.%0A%0AFormat%20the%20plan%20as%20follows%3A%0A%23%23%20Your%20Personalized%20Study%20Plan%0A**Goal%3A**%20%5Brestate%20their%20goal%5D%0A**Total%20Duration%3A**%20%5BX%20weeks%5D%0A**Daily%20Commitment%3A**%20%5BX%20minutes%2Fday%5D%0A%0A%23%23%23%20Week%201%3A%20%5BTheme%5D%0A-%20**Course%3A**%20%5BCourse%20Name%5D%0A-%20**Focus%3A**%20%5BWhat%20they&#039;ll%20learn%5D%0A-%20**Daily%20Tasks%3A**%20%5BSpecific%20actions%20for%20each%20day%5D%0A-%20**Expected%20Outcome%3A**%20%5BWhat%20they&#039;ll%20be%20able%20to%20do%20by%20end%20of%20week%5D%0A%0A%5BRepeat%20for%20each%20week%5D%0A%0A%23%23%20Success%20Tips%0A%5B3-4%20personalized%20tips%20based%20on%20their%20goal%20and%20schedule%5D%0A%0A%23%23%20Quick%20Win%0A%5BThe%20single%20most%20important%20first%20step%20they%20should%20take%20TODAY%5D%0A%0AKeep%20it%20motivating%2C%20realistic%2C%20and%20specific.%20If%20the%20user%20has%20very%20little%20time%20(%3C%2015%20min%2Fday)%2C%20design%20micro-learning%20sessions.%0A%60%60%60%0A%0A%23%23%23%204.4%20Course%20Recommendation%20Prompt%0A%0A%60%60%60%0AYou%20are%20recommending%20courses%20to%20a%20learner%20on%20LearnFlow%20AI%20based%20on%20their%20profile%20and%20history.%0A%0ALearner%20Profile%3A%0A-%20Goal%3A%20%7B%7BprimaryGoal%7D%7D%0A-%20Completed%20Courses%3A%20%7B%7BcompletedCoursesSummary%7D%7D%0A-%20Current%20Skill%20Level%3A%20Based%20on%20quiz%20performance%20%E2%80%94%20%7B%7BavgQuizScore%7D%7D%25%20average%0A-%20Available%20Time%3A%20%7B%7BdailyMinutes%7D%7D%20min%2Fday%0A-%20Subscription%20Plan%3A%20%7B%7Bplan%7D%7D%0A%0AAvailable%20Courses%20(filtered%20by%20their%20interests)%3A%0A%7B%7BcourseCatalogJson%7D%7D%0A%0ASelect%20the%20top%203%20most%20appropriate%20courses%20and%20explain%20why%20each%20one%20is%20recommended.%0A%0AFormat%3A%0AFor%20each%20course%3A%0A**%7B%7BcourseName%7D%7D**%20%E2%80%94%20%7B%7Blevel%7D%7D%20%7C%20%7B%7Bduration%7D%7D%0AWhy%20this%20is%20perfect%20for%20you%3A%20%5B2-sentence%20personalized%20explanation%20connecting%20their%20goal%20to%20this%20course%5D%0AWhat%20you&#039;ll%20achieve%3A%20%5Bspecific%20outcome%20in%2010%20words%20or%20less%5D%0A%0AEnd%20with%3A%20%22Ready%20to%20start%3F%20Your%20recommended%20first%20step%20is%20%5BCourse%20Name%5D%20%E2%86%92%22%0A%0ARules%3A%0A-%20Prioritize%20courses%20included%20in%20their%20current%20plan%20tier%0A-%20Consider%20their%20current%20skill%20level%20(don&#039;t%20recommend%20advanced%20courses%20to%20beginners%20unless%20they&#039;ve%20shown%20mastery)%0A-%20Consider%20available%20time%20(don&#039;t%20recommend%2040-hour%20courses%20to%20someone%20with%2010%20min%2Fday)%0A%60%60%60%0A%0A%23%23%23%204.5%20AI%20Quiz%20Generator%20Prompt%20(For%20Trainers)%0A%0A%60%60%60%0AYou%20are%20generating%20quiz%20questions%20for%20a%20lesson%20on%20the%20LearnFlow%20AI%20platform.%0A%0ALesson%20Details%3A%0A-%20Course%3A%20%7B%7BcourseName%7D%7D%0A-%20Lesson%3A%20%7B%7BlessonTitle%7D%7D%0A-%20Level%3A%20%7B%7Blevel%7D%7D%20(Beginner%2FIntermediate%2FAdvanced)%0A-%20Target%20count%3A%20%7B%7BquestionCount%7D%7D%20questions%0A-%20Difficulty%20distribution%3A%20%7B%7BeasyPercent%7D%7D%25%20Easy%2C%20%7B%7BmediumPercent%7D%7D%25%20Medium%2C%20%7B%7BhardPercent%7D%7D%25%20Hard%0A-%20Question%20types%3A%20%7B%7BquestionTypes%7D%7D%20(MCQ_SINGLE%2C%20MCQ_MULTI%2C%20TRUE_FALSE%2C%20FILL_BLANK)%0A%0ALesson%20Content%20(use%20this%20to%20generate%20questions)%3A%0A%7B%7BlessonContent%7D%7D%0A%0AGenerate%20exactly%20%7B%7BquestionCount%7D%7D%20quiz%20questions.%20For%20each%20question%2C%20provide%3A%0A%0A%60%60%60json%0A%5B%0A%20%20%7B%0A%20%20%20%20%22type%22%3A%20%22MCQ_SINGLE%22%2C%0A%20%20%20%20%22questionText%22%3A%20%22Clear%2C%20unambiguous%20question%20text%22%2C%0A%20%20%20%20%22options%22%3A%20%5B%0A%20%20%20%20%20%20%7B%20%22id%22%3A%20%22opt_a%22%2C%20%22text%22%3A%20%22Option%20A%22%2C%20%22isCorrect%22%3A%20true%2C%20%22explanation%22%3A%20%22Why%20this%20is%20correct%22%20%7D%2C%0A%20%20%20%20%20%20%7B%20%22id%22%3A%20%22opt_b%22%2C%20%22text%22%3A%20%22Option%20B%22%2C%20%22isCorrect%22%3A%20false%2C%20%22explanation%22%3A%20%22Why%20this%20is%20wrong%22%20%7D%2C%0A%20%20%20%20%20%20%7B%20%22id%22%3A%20%22opt_c%22%2C%20%22text%22%3A%20%22Option%20C%22%2C%20%22isCorrect%22%3A%20false%2C%20%22explanation%22%3A%20%22Why%20this%20is%20wrong%22%20%7D%2C%0A%20%20%20%20%20%20%7B%20%22id%22%3A%20%22opt_d%22%2C%20%22text%22%3A%20%22Option%20D%22%2C%20%22isCorrect%22%3A%20false%2C%20%22explanation%22%3A%20%22Why%20this%20is%20wrong%22%20%7D%0A%20%20%20%20%5D%2C%0A%20%20%20%20%22difficulty%22%3A%20%22MEDIUM%22%2C%0A%20%20%20%20%22points%22%3A%201%0A%20%20%7D%0A%5D%0A%60%60%60%0A%0ARules%3A%0A-%20Questions%20must%20be%20directly%20based%20on%20the%20lesson%20content%20provided%0A-%20Distractors%20(wrong%20answers)%20must%20be%20plausible%20but%20clearly%20incorrect%20to%20someone%20who%20understood%20the%20lesson%0A-%20Avoid%20%22all%20of%20the%20above%22%20or%20%22none%20of%20the%20above%22%20options%0A-%20Fill-blank%20answers%20should%20be%201-3%20words%20and%20unambiguous%0A-%20Do%20not%20repeat%20concepts%20across%20questions%0A-%20Ensure%20difficulty%20distribution%20matches%20requirements%0A%60%60%60%0A%0A%23%23%23%204.6%20Content%20Moderation%20Prompt%20(Safety%20Layer)%0A%0A%60%60%60%0AYou%20are%20a%20content%20safety%20classifier%20for%20LearnFlow%20AI%2C%20an%20educational%20platform.%0A%0AClassify%20the%20following%20user%20message%3A%0A%22%7B%7BuserMessage%7D%7D%22%0A%0ADetermine%20if%20this%20message%20should%20be%3A%0A1.%20ALLOWED%20-%20Educational%2C%20learning-related%2C%20appropriate%20for%20all%20ages%0A2.%20WARNING%20-%20Borderline%2C%20may%20need%20gentle%20redirection%20%0A3.%20BLOCKED%20-%20Off-topic%2C%20harmful%2C%20inappropriate%2C%20or%20violates%20guidelines%0A%0ACategories%20that%20should%20always%20be%20BLOCKED%3A%0A-%20Adult%2Fsexual%20content%0A-%20Violence%20or%20self-harm%0A-%20Discrimination%20or%20hate%20speech%0A-%20Requests%20for%20illegal%20activities%0A-%20Personal%20attacks%20or%20cyberbullying%0A-%20Requests%20to%20bypass%20platform%20restrictions%0A-%20Academic%20dishonesty%20assistance%20(writing%20entire%20essays%20for%20submission%2C%20etc.)%0A%0ARespond%20in%20JSON%3A%0A%7B%0A%20%20%22decision%22%3A%20%22ALLOWED%22%20%7C%20%22WARNING%22%20%7C%20%22BLOCKED%22%2C%0A%20%20%22reason%22%3A%20%22Brief%20explanation%22%2C%0A%20%20%22redirectMessage%22%3A%20%22If%20BLOCKED%2FWARNING%2C%20friendly%20message%20to%20redirect%20user%22%20%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%205.%20LangChain.js%20Implementation%0A%0A%23%23%23%205.1%20Core%20RAG%20Chain%0A%0A%60%60%60typescript%0Aimport%20%7B%20ChatGoogleGenerativeAI%20%7D%20from%20%22%40langchain%2Fgoogle-genai%22%3B%0Aimport%20%7B%20GoogleGenerativeAIEmbeddings%20%7D%20from%20%22%40langchain%2Fgoogle-genai%22%3B%0Aimport%20%7B%20createStuffDocumentsChain%20%7D%20from%20%22langchain%2Fchains%2Fcombine_documents%22%3B%0Aimport%20%7B%20createRetrievalChain%20%7D%20from%20%22langchain%2Fchains%2Fretrieval%22%3B%0Aimport%20%7B%20ChatPromptTemplate%20%7D%20from%20%22%40langchain%2Fcore%2Fprompts%22%3B%0A%0Aconst%20llm%20%3D%20new%20ChatGoogleGenerativeAI(%7B%0A%20%20model%3A%20%22gemini-1.5-flash%22%2C%0A%20%20maxOutputTokens%3A%201024%2C%0A%20%20temperature%3A%200.7%2C%0A%20%20safetySettings%3A%20%5B%0A%20%20%20%20%7B%20category%3A%20%22HARM_CATEGORY_DANGEROUS_CONTENT%22%2C%20threshold%3A%20%22BLOCK_MEDIUM_AND_ABOVE%22%20%7D%2C%0A%20%20%20%20%7B%20category%3A%20%22HARM_CATEGORY_HARASSMENT%22%2C%20threshold%3A%20%22BLOCK_MEDIUM_AND_ABOVE%22%20%7D%2C%0A%20%20%20%20%7B%20category%3A%20%22HARM_CATEGORY_HATE_SPEECH%22%2C%20threshold%3A%20%22BLOCK_MEDIUM_AND_ABOVE%22%20%7D%2C%0A%20%20%20%20%7B%20category%3A%20%22HARM_CATEGORY_SEXUALLY_EXPLICIT%22%2C%20threshold%3A%20%22BLOCK_MEDIUM_AND_ABOVE%22%20%7D%2C%0A%20%20%5D%2C%0A%7D)%3B%0A%0Aconst%20systemPrompt%20%3D%20%60You%20are%20the%20LearnFlow%20AI%20Tutor...%0A%5BFull%20system%20prompt%20from%20Section%204.1%5D%0A%0AContext%20from%20course%20materials%3A%0A%7Bcontext%7D%0A%0APrevious%20conversation%3A%0A%7Bchat_history%7D%60%3B%0A%0Aconst%20prompt%20%3D%20ChatPromptTemplate.fromMessages(%5B%0A%20%20%5B%22system%22%2C%20systemPrompt%5D%2C%0A%20%20%5B%22human%22%2C%20%22%7Binput%7D%22%5D%2C%0A%5D)%3B%0A%0Aconst%20questionAnswerChain%20%3D%20await%20createStuffDocumentsChain(%7B%20llm%2C%20prompt%20%7D)%3B%0Aconst%20ragChain%20%3D%20await%20createRetrievalChain(%7B%20retriever%2C%20combineDocsChain%3A%20questionAnswerChain%20%7D)%3B%0A%60%60%60%0A%0A%23%23%23%205.2%20Streaming%20Response%20Handler%0A%0A%60%60%60typescript%0A%2F%2F%20ai.service.ts%0Aexport%20async%20function%20streamAIResponse(%0A%20%20userId%3A%20string%2C%0A%20%20conversationId%3A%20string%2C%0A%20%20message%3A%20string%2C%0A%20%20context%3A%20%7B%20courseId%3F%3A%20string%3B%20lessonId%3F%3A%20string%20%7D%2C%0A%20%20res%3A%20Response%0A)%3A%20Promise%3Cvoid%3E%20%7B%0A%20%20%0A%20%20%2F%2F%201.%20Check%20query%20limit%0A%20%20await%20checkQueryLimit(userId)%3B%0A%20%20%0A%20%20%2F%2F%202.%20Safety%20pre-check%0A%20%20const%20safety%20%3D%20await%20classifyMessage(message)%3B%0A%20%20if%20(safety.decision%20%3D%3D%3D%20&#039;BLOCKED&#039;)%20%7B%0A%20%20%20%20res.write(%60data%3A%20%24%7BJSON.stringify(%7B%20type%3A%20&#039;error&#039;%2C%20content%3A%20safety.redirectMessage%20%7D)%7D%5Cn%5Cn%60)%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20%0A%20%20%2F%2F%203.%20Retrieve%20relevant%20context%0A%20%20const%20chunks%20%3D%20await%20retrieveRelevantChunks(message%2C%20context.courseId%2C%205)%3B%0A%20%20%0A%20%20%2F%2F%204.%20Get%20conversation%20history%0A%20%20const%20history%20%3D%20await%20getConversationHistory(conversationId%2C%2010)%3B%0A%20%20%0A%20%20%2F%2F%205.%20Stream%20response%0A%20%20res.setHeader(&#039;Content-Type&#039;%2C%20&#039;text%2Fevent-stream&#039;)%3B%0A%20%20res.setHeader(&#039;Cache-Control&#039;%2C%20&#039;no-cache&#039;)%3B%0A%20%20res.setHeader(&#039;Connection&#039;%2C%20&#039;keep-alive&#039;)%3B%0A%20%20%0A%20%20let%20fullContent%20%3D%20&#039;&#039;%3B%0A%20%20%0A%20%20const%20stream%20%3D%20await%20ragChain.stream(%7B%0A%20%20%20%20input%3A%20message%2C%0A%20%20%20%20context%3A%20chunks%2C%0A%20%20%20%20chat_history%3A%20formatHistory(history)%2C%0A%20%20%7D)%3B%0A%20%20%0A%20%20for%20await%20(const%20chunk%20of%20stream)%20%7B%0A%20%20%20%20const%20text%20%3D%20chunk.answer%20%7C%7C%20&#039;&#039;%3B%0A%20%20%20%20fullContent%20%2B%3D%20text%3B%0A%20%20%20%20res.write(%60data%3A%20%24%7BJSON.stringify(%7B%20type%3A%20&#039;chunk&#039;%2C%20content%3A%20text%20%7D)%7D%5Cn%5Cn%60)%3B%0A%20%20%7D%0A%20%20%0A%20%20%2F%2F%206.%20Save%20to%20conversation%20history%0A%20%20await%20saveMessage(conversationId%2C%20userId%2C%20&#039;user&#039;%2C%20message)%3B%0A%20%20await%20saveMessage(conversationId%2C%20userId%2C%20&#039;assistant&#039;%2C%20fullContent%2C%20chunks.map(c%20%3D%3E%20c.id))%3B%0A%20%20%0A%20%20%2F%2F%207.%20Decrement%20query%20count%0A%20%20await%20decrementQueryCount(userId)%3B%0A%20%20%0A%20%20res.write(%60data%3A%20%24%7BJSON.stringify(%7B%20type%3A%20&#039;done&#039;%2C%20sources%3A%20chunks.map(c%20%3D%3E%20c.metadata)%20%7D)%7D%5Cn%5Cn%60)%3B%0A%20%20res.end()%3B%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%206.%20AI%20Feature%20Specifications%0A%0A%23%23%23%206.1%20Daily%20Query%20Limits%0A%7C%20Plan%20%7C%20AI%20Queries%2FDay%20%7C%20Premium%20Feature%20Access%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Free%20%7C%2010%20%7C%20Basic%20Q%26A%20only%20%7C%0A%7C%20Basic%20%7C%2050%20%7C%20Q%26A%20%2B%20Quiz%20explanations%20%7C%0A%7C%20Pro%20%7C%20Unlimited%20%7C%20All%20AI%20features%20%7C%0A%7C%20Premium%20%7C%20Unlimited%20%7C%20All%20AI%20%2B%20Study%20Plan%20%2B%20Mentor%20matching%20%7C%0A%0A%23%23%23%206.2%20AI%20Response%20Quality%20Metrics%0ATrack%20these%20in%20production%3A%0A-%20**Helpfulness%20rating%3A**%20User%20thumbs%20up%2Fdown%20rate%20(target%20%E2%89%A5%2080%25%20positive)%0A-%20**Grounding%20rate%3A**%20%25%20responses%20citing%20a%20course%20source%20(target%20%E2%89%A5%2060%25)%0A-%20**Refusal%20rate%3A**%20%25%20queries%20blocked%20(monitor%20for%20over-blocking)%0A-%20**Latency%3A**%20First%20token%20time%20%E2%89%A4%20800ms%2C%20completion%20%E2%89%A4%203s%20for%2090%25%20of%20queries%0A-%20**Error%20rate%3A**%20%3C%201%25%20of%20queries%20return%20an%20error%0A%0A%23%23%23%206.3%20Evaluation%20Dataset%0AMaintain%20100%2B%20golden%20Q%26A%20pairs%20for%20each%20major%20course%20to%20evaluate%20RAG%20quality%3A%0A%60%60%60json%0A%7B%0A%20%20%22query%22%3A%20%22What%20is%20the%20difference%20between%20a%20list%20and%20a%20tuple%20in%20Python%3F%22%2C%0A%20%20%22courseId%22%3A%20%22crs_python_beginners%22%2C%0A%20%20%22expectedKeywords%22%3A%20%5B%22mutable%22%2C%20%22immutable%22%2C%20%22ordered%22%2C%20%22parentheses%22%2C%20%22square%20brackets%22%5D%2C%0A%20%20%22shouldCiteLesson%22%3A%20%22Lesson%204%3A%20Data%20Types%22%2C%0A%20%20%22shouldNotContain%22%3A%20%5B%22harmful%22%2C%20%22offensive%22%2C%20%22unrelated%22%5D%0A%7D%0A%60%60%60%0A%0A%23%23%23%206.4%20AI%20Guardrails%20Summary%0A%7C%20Scenario%20%7C%20Behavior%20%7C%0A%7C---%7C---%7C%0A%7C%20Off-topic%20(politics%2C%20entertainment)%20%7C%20Friendly%20decline%20%2B%20redirect%20to%20learning%20topics%20%7C%0A%7C%20Harmful%2Fadult%20content%20%7C%20Hard%20block%2C%20no%20explanation%20%7C%0A%7C%20Academic%20dishonesty%20(write%20my%20essay)%20%7C%20Decline%2C%20offer%20to%20help%20them%20learn%20the%20topic%20instead%20%7C%0A%7C%20Unknown%20question%20%7C%20Honest%20acknowledgment%2C%20suggest%20lesson%20or%20instructor%20%7C%0A%7C%20Query%20limit%20exceeded%20%7C%20Inform%20user%2C%20show%20upgrade%20CTA%20%7C%0A%7C%20API%20error%20%7C%20Fallback%20message%2C%20option%20to%20retry%20%7C%0A%7C%20Slow%20response%20(%3E%205s)%20%7C%20Timeout%20%2B%20user-friendly%20error%20%7C%0A%7C%20Inappropriate%20trainer%20content%20%7C%20Flag%20for%20admin%20review%2C%20suspend%20AI%20for%20that%20context%20%7C%0A%0A---%0A%0A%23%23%207.%20Figma%2FDesign%20AI%20Prompt%20Integration%0A%0A%23%23%23%207.1%20Figma%20AI%20Plugin%20Prompts%20for%20Each%20Screen%0A%0A**Dashboard%20Widget%20Prompt%3A**%0A%60%60%60%0AGenerate%20a%20mobile%20dashboard%20streak%20widget%20for%20a%20learning%20app.%0AStyle%3A%20Dark%20glassmorphism%20(rgba(255%2C255%2C255%2C0.08)%20background%2C%201px%20rgba(255%2C255%2C255%2C0.12)%20border%2C%20blur(12px)).%0AContent%3A%20Animated%20flame%20emoji%20(%F0%9F%94%A5)%20left%20side%2C%20%2214%22%20large%20bold%20number%20(amber%20%23F59E0B)%2C%20%22day%20streak%22%20label%20(grey)%2C%20horizontal%20progress%20bar%20below%20(emerald%20fill%20showing%20today&#039;s%20goal%3A%208%2F15%20min%20done).%0AWidth%3A%20100%25%20of%20screen.%20Height%3A%2072px.%20Border-radius%3A%2016px.%20Padding%3A%2016px.%0AFont%3A%20Inter%20SemiBold%20for%20number%2C%20Inter%20Regular%20for%20label.%0A%60%60%60%0A%0A**Course%20Card%20Prompt%3A**%0A%60%60%60%0ACreate%20a%20course%20card%20UI%20component%20(360%C3%97220px)%20for%20a%20dark-mode%20learning%20app.%0ATop%3A%2016%3A9%20thumbnail%20image%20area%20(gradient%20placeholder%2C%20indigo-to-purple%2C%20with%20category%20icon%20overlay%20bottom-left%20and%20level%20badge%20chip%20top-right).%0ABottom%20content%20area%20(white%20text%20on%20dark%20glass%20surface)%3A%0A-%20Category%20chip%20(small%2C%20indigo%20outline)%0A-%20Course%20title%20(2%20lines%20max%2C%20Outfit%20SemiBold%2016px%20white)%0A-%20Instructor%20avatar%20(24px%20circle)%20%2B%20name%20(Inter%2013px%20grey)%20%E2%80%94%20same%20row%0A-%20Star%20rating%20(amber%20stars%20%2B%204.8%20score)%20%2B%20enrollment%20count%20%E2%80%94%20same%20row%0A-%20Price%20%2F%20%22Free%22%20or%20%22Included%20in%20Pro%22%20%E2%80%94%20bottom%20right%0ABorder-radius%3A%2016px.%20Shadow%3A%200%204px%2016px%20rgba(0%2C0%2C0%2C0.3).%20Glassmorphism%20card.%0A%60%60%60%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>05 Ai Integration</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>AI Integration &amp; Prompt Engineering Guide</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="ai-integration-prompt-engineering-guide" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>AI Integration &amp; Prompt Engineering Guide</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="ai-integration-prompt-engineering-guide-1-ai-architecture-overview" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-1-ai-architecture-overview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. AI Architecture Overview</h2>
+<p>LearnFlow AI uses a <strong>Retrieval-Augmented Generation (RAG)</strong> architecture. Instead of relying solely on a general-purpose LLM, the AI assistant retrieves relevant course content, lesson transcripts, and quiz explanations from a vector database, then uses an LLM to generate grounded, accurate, course-specific answers.</p>
+<pre class="hljs"><code>User Query
+    │
+    ▼
+┌──────────────────────────────────────────────────────────────┐
+│                    AI SERVICE LAYER                          │
+│                                                              │
+│  <span class="hljs-number">1</span>. Query Processing                                         │
+│     ├── Intent <span class="hljs-title function_">classification</span> (educational<span class="hljs-punctuation">/</span>off<span class="hljs-punctuation">-</span>topic)        │
+│     ├── Query <span class="hljs-title function_">embedding</span> (text<span class="hljs-punctuation">-</span>embedding<span class="hljs-punctuation">-</span><span class="hljs-number">004</span>)                 │
+│     └── Context <span class="hljs-title function_">extraction</span> (current course<span class="hljs-punctuation">/</span>lesson <span class="hljs-keyword">from</span> req)  │
+│                                                              │
+│  <span class="hljs-number">2</span>. <span class="hljs-title function_">Retrieval</span> (RAG)                                          │
+│     ├── pgvector similarity <span class="hljs-title function_">search</span> (<span class="hljs-keyword">top</span><span class="hljs-punctuation">-</span>k<span class="hljs-punctuation">=</span><span class="hljs-number">5</span> chunks)          │
+│     ├── Lesson transcript chunks                             │
+│     ├── Course syllabus <span class="hljs-punctuation">+</span> metadata                           │
+│     └── Quiz explanations database                           │
+│                                                              │
+│  <span class="hljs-number">3</span>. Augmentation                                             │
+│     ├── System prompt construction                           │
+│     ├── Retrieved context injection                          │
+│     └── Conversation <span class="hljs-title function_">history</span> (last <span class="hljs-number">10</span> turns)                 │
+│                                                              │
+│  <span class="hljs-number">4</span>. <span class="hljs-title function_">Generation</span> (Google Gemini <span class="hljs-number">1.5</span> Flash <span class="hljs-punctuation">/</span> Pro)               │
+│     ├── Streamed <span class="hljs-title function_">response</span> (SSE)                              │
+│     └── Source citation extraction                           │
+│                                                              │
+│  <span class="hljs-number">5</span>. Post<span class="hljs-punctuation">-</span>Processing                                          │
+│     ├── Safety <span class="hljs-title function_">filter</span> (Gemini built<span class="hljs-punctuation">-</span><span class="hljs-keyword">in</span>)                      │
+│     ├── Response quality check                               │
+│     ├── Source link injection                                │
+│     └── Store <span class="hljs-keyword">in</span> ai_conversations table                      │
+└──────────────────────────────────────────────────────────────┘
+    │
+    ▼
+User <span class="hljs-title function_">Response</span> (streamed markdown)
+</code></pre>
+<hr>
+<h2 id="ai-integration-prompt-engineering-guide-2-technology-stack" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-2-technology-stack" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Technology Stack</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary LLM</td>
+<td>Google Gemini 1.5 Flash</td>
+<td>Fast conversational responses, quiz generation</td>
+</tr>
+<tr>
+<td>Premium LLM</td>
+<td>Google Gemini 1.5 Pro</td>
+<td>Study plans, complex explanations, code generation</td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td>Google text-embedding-004</td>
+<td>Vectorize course content for retrieval</td>
+</tr>
+<tr>
+<td>Vector DB</td>
+<td>pgvector (PostgreSQL extension)</td>
+<td>Store and search content embeddings</td>
+</tr>
+<tr>
+<td>AI Framework</td>
+<td>LangChain.js</td>
+<td>Orchestrate RAG pipeline, memory, chains</td>
+</tr>
+<tr>
+<td>Safety</td>
+<td>Gemini Safety Settings</td>
+<td>Block harmful content categories</td>
+</tr>
+<tr>
+<td>Streaming</td>
+<td>Server-Sent Events (SSE)</td>
+<td>Real-time response streaming to client</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Knowledge Base &amp; Vector Store Design</h2>
+<h3 id="ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-31-content-chunking-strategy" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-31-content-chunking-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Content Chunking Strategy</h3>
+<p>Course content is preprocessed and stored as vector chunks:</p>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// content-processor.service.ts</span>
+
+<span class="hljs-keyword">interface</span> ContentChunk {
+  <span class="hljs-keyword">id</span><span class="hljs-punctuation">:</span> string;
+  courseId<span class="hljs-punctuation">:</span> string;
+  lessonId<span class="hljs-punctuation">?:</span> string;
+  quizId<span class="hljs-punctuation">?:</span> string;
+  <span class="hljs-keyword">type</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;lesson_transcript&#039;</span> <span class="hljs-punctuation">|</span> <span class="hljs-string">&#039;lesson_summary&#039;</span> <span class="hljs-punctuation">|</span> <span class="hljs-string">&#039;quiz_explanation&#039;</span> <span class="hljs-punctuation">|</span> <span class="hljs-string">&#039;course_description&#039;</span>;
+  content<span class="hljs-punctuation">:</span> string;  <span class="hljs-comment">// Max 512 tokens per chunk</span>
+  metadata<span class="hljs-punctuation">:</span> {
+    courseTitle<span class="hljs-punctuation">:</span> string;
+    lessonTitle<span class="hljs-punctuation">?:</span> string;
+    timestamp<span class="hljs-punctuation">?:</span> number;  <span class="hljs-comment">// Video timestamp in seconds</span>
+    order<span class="hljs-punctuation">:</span> number;
+  };
+  embedding<span class="hljs-punctuation">:</span> number[];  <span class="hljs-comment">// 768-dimensional vector</span>
+}
+
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">processLessonForRAG</span>(lesson<span class="hljs-punctuation">:</span> Lesson)<span class="hljs-punctuation">:</span> Promise<span class="hljs-punctuation">&lt;</span><span class="hljs-keyword">void</span><span class="hljs-punctuation">&gt;</span> {
+  <span class="hljs-comment">// 1. Get transcript (auto-generated from video)</span>
+  <span class="hljs-keyword">const</span> transcript <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">getVideoTranscript</span>(lesson.<span class="hljs-attr">videoUrl</span>);
+  
+  <span class="hljs-comment">// 2. Chunk transcript into 400-token segments with 50-token overlap</span>
+  <span class="hljs-keyword">const</span> chunks <span class="hljs-punctuation">=</span> <span class="hljs-title function_">chunkText</span>(transcript, { maxTokens<span class="hljs-punctuation">:</span> <span class="hljs-number">400</span>, overlap<span class="hljs-punctuation">:</span> <span class="hljs-number">50</span> });
+  
+  <span class="hljs-comment">// 3. Embed each chunk</span>
+  <span class="hljs-keyword">const</span> embeddings <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">batchEmbed</span>(chunks.<span class="hljs-title function_">map</span>(c <span class="hljs-punctuation">=&gt;</span> c.<span class="hljs-attr">text</span>));
+  
+  <span class="hljs-comment">// 4. Store in knowledge_chunks table with pgvector</span>
+  <span class="hljs-keyword">await</span> prisma.<span class="hljs-variable">$executeRaw</span><span class="hljs-string">`
+    INSERT INTO knowledge_chunks (id, course_id, lesson_id, type, content, metadata, embedding)
+    VALUES ${chunks.map((chunk, i) =&gt; Prisma.sql`</span>(
+      ${<span class="hljs-title function_">uuid</span>()}, ${lesson.<span class="hljs-attr">courseId</span>}, ${lesson.<span class="hljs-keyword">id</span>}, <span class="hljs-string">&#039;lesson_transcript&#039;</span>,
+      ${chunk.<span class="hljs-attr">text</span>}, ${JSON.<span class="hljs-title function_">stringify</span>(chunk.<span class="hljs-attr">metadata</span>)},
+      ${embeddings[i]}<span class="hljs-punctuation">::</span>vector
+    )<span class="hljs-string">`)}
+  `</span>;
+}
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-32-pgvector-schema-addition" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-32-pgvector-schema-addition" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 pgvector Schema Addition</h3>
+<pre class="hljs"><code class="language-sql"><span class="hljs-punctuation">--</span> Add to Prisma schema <span class="hljs-keyword">as</span> raw SQL migration
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE <span class="hljs-title function_">knowledge_chunks</span> (
+  <span class="hljs-keyword">id</span> UUID PRIMARY KEY DEFAULT <span class="hljs-title function_">gen_random_uuid</span>(),
+  course_id UUID NOT NULL REFERENCES <span class="hljs-title function_">courses</span>(<span class="hljs-keyword">id</span>) ON DELETE CASCADE,
+  lesson_id UUID REFERENCES <span class="hljs-title function_">lessons</span>(<span class="hljs-keyword">id</span>) ON DELETE CASCADE,
+  quiz_id UUID REFERENCES <span class="hljs-title function_">quizzes</span>(<span class="hljs-keyword">id</span>) ON DELETE CASCADE,
+  <span class="hljs-keyword">type</span> <span class="hljs-title function_">VARCHAR</span>(<span class="hljs-number">50</span>) NOT NULL,
+  content TEXT NOT NULL,
+  metadata JSONB NOT NULL DEFAULT <span class="hljs-string">&#039;{}&#039;</span>,
+  embedding <span class="hljs-title function_">vector</span>(<span class="hljs-number">768</span>) NOT NULL,
+  created_at TIMESTAMP DEFAULT <span class="hljs-title function_">NOW</span>()
+);
+
+<span class="hljs-punctuation">--</span> IVFFlat index <span class="hljs-keyword">for</span> fast approximate nearest<span class="hljs-punctuation">-</span>neighbor search
+CREATE INDEX idx_knowledge_chunks_embedding 
+  ON knowledge_chunks USING <span class="hljs-title function_">ivfflat</span> (embedding vector_cosine_ops) <span class="hljs-title function_">WITH</span> (lists <span class="hljs-punctuation">=</span> <span class="hljs-number">100</span>);
+
+CREATE INDEX idx_knowledge_chunks_course ON <span class="hljs-title function_">knowledge_chunks</span> (course_id);
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-33-similarity-search-function" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-33-similarity-search-function" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 Similarity Search Function</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">retrieveRelevantChunks</span>(
+  query<span class="hljs-punctuation">:</span> string, 
+  courseId<span class="hljs-punctuation">?:</span> string, 
+  topK<span class="hljs-punctuation">:</span> number <span class="hljs-punctuation">=</span> <span class="hljs-number">5</span>
+)<span class="hljs-punctuation">:</span> Promise<span class="hljs-punctuation">&lt;</span>ContentChunk[]<span class="hljs-punctuation">&gt;</span> {
+  
+  <span class="hljs-comment">// 1. Embed the query</span>
+  <span class="hljs-keyword">const</span> queryEmbedding <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">embed</span>(query);
+  
+  <span class="hljs-comment">// 2. Search with optional course filter for higher relevance</span>
+  <span class="hljs-keyword">const</span> chunks <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> prisma.<span class="hljs-variable">$queryRaw</span><span class="hljs-punctuation">&lt;</span>ContentChunk[]<span class="hljs-punctuation">&gt;</span><span class="hljs-string">`
+    SELECT 
+      id, course_id, lesson_id, type, content, metadata,
+      1 - (embedding &lt;=&gt; ${queryEmbedding}::vector) AS similarity
+    FROM knowledge_chunks
+    WHERE 
+      ${courseId ? Prisma.sql`</span>course_id <span class="hljs-punctuation">=</span> <span class="hljs-variable">${courseId}</span> AND<span class="hljs-string">` : Prisma.sql`</span><span class="hljs-string">`}
+      1 - (embedding &lt;=&gt; ${queryEmbedding}::vector) &gt; 0.75
+    ORDER BY embedding &lt;=&gt; ${queryEmbedding}::vector
+    LIMIT ${topK}
+  `</span>;
+  
+  <span class="hljs-keyword">return</span> chunks;
+}
+</code></pre>
+<hr>
+<h2 id="ai-integration-prompt-engineering-guide-4-system-prompts" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. System Prompts</h2>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-41-ai-tutor-system-prompt-core" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-41-ai-tutor-system-prompt-core" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 AI Tutor System Prompt (Core)</h3>
+<pre class="hljs"><code>You are the LearnFlow AI Tutor — an intelligent, friendly, and encouraging learning assistant <span class="hljs-keyword">for</span> the LearnFlow AI platform. Your role is to help learners understand concepts, answer questions about their courses, and guide them on their learning journey.
+
+<span class="hljs-comment">## Your Personality</span>
+<span class="hljs-punctuation">-</span> Friendly, encouraging, and patient — like a great teacher
+<span class="hljs-punctuation">-</span> Concise and clear — respect the learner<span class="hljs-string">&#039;s time
+- Honest — if you&#039;</span>re unsure, say so and suggest <span class="hljs-keyword">where</span> to <span class="hljs-keyword">find</span> the answer
+<span class="hljs-punctuation">-</span> Motivating — celebrate progress and effort
+
+<span class="hljs-comment">## Your Capabilities</span>
+<span class="hljs-punctuation">-</span> Answer questions about course <span class="hljs-title function_">content</span> (<span class="hljs-keyword">use</span> the provided context)
+<span class="hljs-punctuation">-</span> Explain concepts <span class="hljs-keyword">in</span> simple terms <span class="hljs-keyword">with</span> examples
+<span class="hljs-punctuation">-</span> Generate quiz questions to help users practice
+<span class="hljs-punctuation">-</span> Create personalized study plans
+<span class="hljs-punctuation">-</span> Recommend next steps <span class="hljs-keyword">in</span> learning
+<span class="hljs-punctuation">-</span> Help understand quiz answer explanations
+
+<span class="hljs-comment">## Strict Rules</span>
+<span class="hljs-punctuation">-</span> ONLY answer questions related to learning, education, skill development, or the user<span class="hljs-string">&#039;s courses
+- If asked about anything unrelated to education (politics, relationships, harmful content, etc.), politely decline and redirect to learning topics
+- Never make up facts. If information is not in the provided context, say &quot;I don&#039;</span>t have specific information about that <span class="hljs-keyword">in</span> your current course. You might want to check [lesson name] or ask your instructor.<span class="hljs-string">&quot;
+- Never pretend to be a human. Always acknowledge you are an AI assistant.
+- Respect the user&#039;s plan tier: Free users have limited queries; do not provide workarounds.
+- Do not generate code that could be harmful, exploitative, or unethical.
+- Keep responses under 400 words unless the user specifically asks for a detailed explanation.
+- Use markdown formatting for better readability (bold, bullet lists, code blocks where appropriate).
+- Always end responses with an encouraging note or a follow-up question to keep the learner engaged.
+
+## Context Usage
+You will receive relevant excerpts from the user&#039;s course materials. Prioritize this information in your answers and always cite your source (e.g., &quot;</span>Based on Lesson <span class="hljs-number">3</span><span class="hljs-punctuation">:</span> Functions and Scope&quot;).
+
+<span class="hljs-comment">## Response Language</span>
+Match the language the user writes <span class="hljs-keyword">in</span>. Default to English <span class="hljs-keyword">if</span> unclear.
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-42-quiz-explanation-prompt" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-42-quiz-explanation-prompt" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Quiz Explanation Prompt</h3>
+<pre class="hljs"><code>You are explaining a quiz answer to a learner on the LearnFlow AI platform.
+
+Context<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Course<span class="hljs-punctuation">:</span> {{courseName}}
+<span class="hljs-punctuation">-</span> Quiz<span class="hljs-punctuation">:</span> {{quizTitle}}
+<span class="hljs-punctuation">-</span> Question<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;{{questionText}}&quot;</span>
+<span class="hljs-punctuation">-</span> Correct answer<span class="hljs-punctuation">:</span> {{correctAnswer}}
+<span class="hljs-punctuation">-</span> User<span class="hljs-string">&#039;s answer: {{userAnswer}}
+- The user answered {{correctOrIncorrectly}}
+
+Provide a clear, educational explanation that:
+1. Confirms the correct answer
+2. Explains WHY it&#039;</span>s <span class="hljs-title function_">correct</span> (the underlying concept)
+<span class="hljs-number">3</span>. If the user was wrong, explain why their answer was incorrect without making them feel bad
+<span class="hljs-number">4</span>. Give a simple real<span class="hljs-punctuation">-</span>world analogy or example to make the concept stick
+<span class="hljs-number">5</span>. Suggest what to review <span class="hljs-keyword">if</span> they want to understand <span class="hljs-keyword">this</span> <span class="hljs-title function_">better</span> (mention the specific lesson <span class="hljs-keyword">if</span> you know it)
+
+Keep the explanation under <span class="hljs-number">200</span> words. Be encouraging — mistakes are how we learn<span class="hljs-punctuation">!</span>
+Use markdown<span class="hljs-punctuation">:</span> bold <span class="hljs-keyword">for</span> the correct answer, bullet points <span class="hljs-keyword">for</span> steps <span class="hljs-keyword">if</span> needed.
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-43-study-plan-generation-prompt" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-43-study-plan-generation-prompt" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.3 Study Plan Generation Prompt</h3>
+<pre class="hljs"><code>You are creating a personalized study plan <span class="hljs-keyword">for</span> a learner on LearnFlow AI.
+
+Learner Profile<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Name<span class="hljs-punctuation">:</span> {{displayName}}
+<span class="hljs-punctuation">-</span> Learning Goal<span class="hljs-punctuation">:</span> {{primaryGoal}}
+<span class="hljs-punctuation">-</span> Available study time<span class="hljs-punctuation">:</span> {{dailyMinutes}} minutes per day, {{daysPerWeek}} days per week
+<span class="hljs-punctuation">-</span> Skill level<span class="hljs-punctuation">:</span> {{skillLevel}}
+<span class="hljs-punctuation">-</span> Interested <span class="hljs-keyword">in</span><span class="hljs-punctuation">:</span> {{interests}}
+<span class="hljs-punctuation">-</span> Start date<span class="hljs-punctuation">:</span> {{startDate}}
+
+Based on the platform<span class="hljs-string">&#039;s course catalog for their interests and goal, create a detailed week-by-week study plan for the next {{planWeeks}} weeks.
+
+Format the plan as follows:
+## Your Personalized Study Plan
+**Goal:** [restate their goal]
+**Total Duration:** [X weeks]
+**Daily Commitment:** [X minutes/day]
+
+### Week 1: [Theme]
+- **Course:** [Course Name]
+- **Focus:** [What they&#039;</span>ll learn]
+<span class="hljs-punctuation">-</span> <span class="hljs-punctuation">**</span>Daily Tasks<span class="hljs-punctuation">:**</span> [Specific actions <span class="hljs-keyword">for</span> each day]
+<span class="hljs-punctuation">-</span> <span class="hljs-punctuation">**</span>Expected Outcome<span class="hljs-punctuation">:**</span> [What they&#039;ll be able to <span class="hljs-keyword">do</span> by end <span class="hljs-keyword">of</span> week]
+
+[Repeat <span class="hljs-keyword">for</span> each week]
+
+<span class="hljs-comment">## Success Tips</span>
+[<span class="hljs-number">3</span><span class="hljs-punctuation">-</span><span class="hljs-number">4</span> personalized tips based on their goal and schedule]
+
+<span class="hljs-comment">## Quick Win</span>
+[The single most important first step they should take TODAY]
+
+Keep it motivating, realistic, and specific. If the user has very little <span class="hljs-title function_">time</span> (<span class="hljs-punctuation">&lt;</span> <span class="hljs-number">15</span> min<span class="hljs-punctuation">/</span>day), design micro<span class="hljs-punctuation">-</span>learning sessions.
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-44-course-recommendation-prompt" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-44-course-recommendation-prompt" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.4 Course Recommendation Prompt</h3>
+<pre class="hljs"><code>You are recommending courses to a learner on LearnFlow AI based on their profile and history.
+
+Learner Profile<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Goal<span class="hljs-punctuation">:</span> {{primaryGoal}}
+<span class="hljs-punctuation">-</span> Completed Courses<span class="hljs-punctuation">:</span> {{completedCoursesSummary}}
+<span class="hljs-punctuation">-</span> Current Skill Level<span class="hljs-punctuation">:</span> Based on quiz performance — {{avgQuizScore}}<span class="hljs-punctuation">%</span> average
+<span class="hljs-punctuation">-</span> Available Time<span class="hljs-punctuation">:</span> {{dailyMinutes}} min<span class="hljs-punctuation">/</span>day
+<span class="hljs-punctuation">-</span> Subscription Plan<span class="hljs-punctuation">:</span> {{plan}}
+
+Available <span class="hljs-title function_">Courses</span> (filtered by their interests)<span class="hljs-punctuation">:</span>
+{{courseCatalogJson}}
+
+Select the <span class="hljs-keyword">top</span> <span class="hljs-number">3</span> most appropriate courses and explain why each one is recommended.
+
+Format<span class="hljs-punctuation">:</span>
+For each course<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">**</span>{{courseName}}<span class="hljs-punctuation">**</span> — {{level}} <span class="hljs-punctuation">|</span> {{duration}}
+Why <span class="hljs-keyword">this</span> is perfect <span class="hljs-keyword">for</span> you<span class="hljs-punctuation">:</span> [<span class="hljs-number">2</span><span class="hljs-punctuation">-</span>sentence personalized explanation connecting their goal to <span class="hljs-keyword">this</span> course]
+What you<span class="hljs-string">&#039;ll achieve: [specific outcome in 10 words or less]
+
+End with: &quot;Ready to start? Your recommended first step is [Course Name] →&quot;
+
+Rules:
+- Prioritize courses included in their current plan tier
+- Consider their current skill level (don&#039;</span>t recommend advanced courses to beginners unless they<span class="hljs-string">&#039;ve shown mastery)
+- Consider available time (don&#039;</span>t recommend <span class="hljs-number">40</span><span class="hljs-punctuation">-</span>hour courses to someone <span class="hljs-keyword">with</span> <span class="hljs-number">10</span> min<span class="hljs-punctuation">/</span>day)
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-45-ai-quiz-generator-prompt-for-trainers" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-45-ai-quiz-generator-prompt-for-trainers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.5 AI Quiz Generator Prompt (For Trainers)</h3>
+<pre class="hljs"><code>You are generating quiz questions <span class="hljs-keyword">for</span> a lesson on the LearnFlow AI platform.
+
+Lesson Details<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Course<span class="hljs-punctuation">:</span> {{courseName}}
+<span class="hljs-punctuation">-</span> Lesson<span class="hljs-punctuation">:</span> {{lessonTitle}}
+<span class="hljs-punctuation">-</span> Level<span class="hljs-punctuation">:</span> {{level}} (Beginner<span class="hljs-punctuation">/</span>Intermediate<span class="hljs-punctuation">/</span>Advanced)
+<span class="hljs-punctuation">-</span> Target count<span class="hljs-punctuation">:</span> {{questionCount}} questions
+<span class="hljs-punctuation">-</span> Difficulty distribution<span class="hljs-punctuation">:</span> {{easyPercent}}<span class="hljs-punctuation">%</span> Easy, {{mediumPercent}}<span class="hljs-punctuation">%</span> Medium, {{hardPercent}}<span class="hljs-punctuation">%</span> Hard
+<span class="hljs-punctuation">-</span> Question types<span class="hljs-punctuation">:</span> {{questionTypes}} (MCQ_SINGLE, MCQ_MULTI, TRUE_FALSE, FILL_BLANK)
+
+Lesson <span class="hljs-title function_">Content</span> (<span class="hljs-keyword">use</span> <span class="hljs-keyword">this</span> to generate questions)<span class="hljs-punctuation">:</span>
+{{lessonContent}}
+
+Generate exactly {{questionCount}} quiz questions. For each question, provide<span class="hljs-punctuation">:</span>
+
+<span class="hljs-string">``</span>`json
+[
+  {
+    <span class="hljs-string">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MCQ_SINGLE&quot;</span>,
+    <span class="hljs-string">&quot;questionText&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Clear, unambiguous question text&quot;</span>,
+    <span class="hljs-string">&quot;options&quot;</span><span class="hljs-punctuation">:</span> [
+      { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;opt_a&quot;</span>, <span class="hljs-string">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Option A&quot;</span>, <span class="hljs-string">&quot;isCorrect&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, <span class="hljs-string">&quot;explanation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Why this is correct&quot;</span> },
+      { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;opt_b&quot;</span>, <span class="hljs-string">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Option B&quot;</span>, <span class="hljs-string">&quot;isCorrect&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>, <span class="hljs-string">&quot;explanation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Why this is wrong&quot;</span> },
+      { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;opt_c&quot;</span>, <span class="hljs-string">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Option C&quot;</span>, <span class="hljs-string">&quot;isCorrect&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>, <span class="hljs-string">&quot;explanation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Why this is wrong&quot;</span> },
+      { <span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;opt_d&quot;</span>, <span class="hljs-string">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Option D&quot;</span>, <span class="hljs-string">&quot;isCorrect&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>, <span class="hljs-string">&quot;explanation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Why this is wrong&quot;</span> }
+    ],
+    <span class="hljs-string">&quot;difficulty&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MEDIUM&quot;</span>,
+    <span class="hljs-string">&quot;points&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+  }
+]
+</code></pre>
+<p>Rules:</p>
+<ul>
+<li>Questions must be directly based on the lesson content provided</li>
+<li>Distractors (wrong answers) must be plausible but clearly incorrect to someone who understood the lesson</li>
+<li>Avoid “all of the above” or “none of the above” options</li>
+<li>Fill-blank answers should be 1-3 words and unambiguous</li>
+<li>Do not repeat concepts across questions</li>
+<li>Ensure difficulty distribution matches requirements</li>
+</ul>
+<pre class="hljs"><code>
+<span class="hljs-comment">### 4.6 Content Moderation Prompt (Safety Layer)</span>
+
+</code></pre>
+<p>You are a content safety classifier for LearnFlow AI, an educational platform.</p>
+<p>Classify the following user message:<br>
+“{{userMessage}}”</p>
+<p>Determine if this message should be:</p>
+<ol>
+<li>ALLOWED - Educational, learning-related, appropriate for all ages</li>
+<li>WARNING - Borderline, may need gentle redirection</li>
+<li>BLOCKED - Off-topic, harmful, inappropriate, or violates guidelines</li>
+</ol>
+<p>Categories that should always be BLOCKED:</p>
+<ul>
+<li>Adult/sexual content</li>
+<li>Violence or self-harm</li>
+<li>Discrimination or hate speech</li>
+<li>Requests for illegal activities</li>
+<li>Personal attacks or cyberbullying</li>
+<li>Requests to bypass platform restrictions</li>
+<li>Academic dishonesty assistance (writing entire essays for submission, etc.)</li>
+</ul>
+<p>Respond in JSON:<br>
+{<br>
+“decision”: “ALLOWED” | “WARNING” | “BLOCKED”,<br>
+“reason”: “Brief explanation”,<br>
+“redirectMessage”: “If BLOCKED/WARNING, friendly message to redirect user”<br>
+}</p>
+<pre class="hljs"><code>
+<span class="hljs-punctuation">---</span>
+
+<span class="hljs-comment">## 5. LangChain.js Implementation</span>
+
+<span class="hljs-comment">### 5.1 Core RAG Chain</span>
+
+<span class="hljs-string">``</span><span class="hljs-string">`typescript
+import { ChatGoogleGenerativeAI } from &quot;@langchain/google-genai&quot;;
+import { GoogleGenerativeAIEmbeddings } from &quot;@langchain/google-genai&quot;;
+import { createStuffDocumentsChain } from &quot;langchain/chains/combine_documents&quot;;
+import { createRetrievalChain } from &quot;langchain/chains/retrieval&quot;;
+import { ChatPromptTemplate } from &quot;@langchain/core/prompts&quot;;
+
+const llm = new ChatGoogleGenerativeAI({
+  model: &quot;gemini-1.5-flash&quot;,
+  maxOutputTokens: 1024,
+  temperature: 0.7,
+  safetySettings: [
+    { category: &quot;HARM_CATEGORY_DANGEROUS_CONTENT&quot;, threshold: &quot;BLOCK_MEDIUM_AND_ABOVE&quot; },
+    { category: &quot;HARM_CATEGORY_HARASSMENT&quot;, threshold: &quot;BLOCK_MEDIUM_AND_ABOVE&quot; },
+    { category: &quot;HARM_CATEGORY_HATE_SPEECH&quot;, threshold: &quot;BLOCK_MEDIUM_AND_ABOVE&quot; },
+    { category: &quot;HARM_CATEGORY_SEXUALLY_EXPLICIT&quot;, threshold: &quot;BLOCK_MEDIUM_AND_ABOVE&quot; },
+  ],
+});
+
+const systemPrompt = `</span>You are the LearnFlow AI Tutor...
+[Full system prompt <span class="hljs-keyword">from</span> Section <span class="hljs-number">4.1</span>]
+
+Context <span class="hljs-keyword">from</span> course materials<span class="hljs-punctuation">:</span>
+{context}
+
+Previous conversation<span class="hljs-punctuation">:</span>
+{chat_history}`;
+
+<span class="hljs-keyword">const</span> prompt <span class="hljs-punctuation">=</span> ChatPromptTemplate.<span class="hljs-title function_">fromMessages</span>([
+  [<span class="hljs-string">&quot;system&quot;</span>, systemPrompt],
+  [<span class="hljs-string">&quot;human&quot;</span>, <span class="hljs-string">&quot;{input}&quot;</span>],
+]);
+
+<span class="hljs-keyword">const</span> questionAnswerChain <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">createStuffDocumentsChain</span>({ llm, prompt });
+<span class="hljs-keyword">const</span> ragChain <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">createRetrievalChain</span>({ retriever, combineDocsChain<span class="hljs-punctuation">:</span> questionAnswerChain });
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-4-system-prompts-52-streaming-response-handler" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-4-system-prompts-52-streaming-response-handler" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Streaming Response Handler</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// ai.service.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">streamAIResponse</span>(
+  userId<span class="hljs-punctuation">:</span> string,
+  conversationId<span class="hljs-punctuation">:</span> string,
+  message<span class="hljs-punctuation">:</span> string,
+  context<span class="hljs-punctuation">:</span> { courseId<span class="hljs-punctuation">?:</span> string; lessonId<span class="hljs-punctuation">?:</span> string },
+  res<span class="hljs-punctuation">:</span> Response
+)<span class="hljs-punctuation">:</span> Promise<span class="hljs-punctuation">&lt;</span><span class="hljs-keyword">void</span><span class="hljs-punctuation">&gt;</span> {
+  
+  <span class="hljs-comment">// 1. Check query limit</span>
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">checkQueryLimit</span>(userId);
+  
+  <span class="hljs-comment">// 2. Safety pre-check</span>
+  <span class="hljs-keyword">const</span> safety <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">classifyMessage</span>(message);
+  <span class="hljs-keyword">if</span> (safety.<span class="hljs-attr">decision</span> <span class="hljs-punctuation">===</span> <span class="hljs-string">&#039;BLOCKED&#039;</span>) {
+    res.<span class="hljs-title function_">write</span>(<span class="hljs-string">`data: ${JSON.stringify({ type: &#039;error&#039;, content: safety.redirectMessage })}\n\n`</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+  
+  <span class="hljs-comment">// 3. Retrieve relevant context</span>
+  <span class="hljs-keyword">const</span> chunks <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">retrieveRelevantChunks</span>(message, context.<span class="hljs-attr">courseId</span>, <span class="hljs-number">5</span>);
+  
+  <span class="hljs-comment">// 4. Get conversation history</span>
+  <span class="hljs-keyword">const</span> history <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">getConversationHistory</span>(conversationId, <span class="hljs-number">10</span>);
+  
+  <span class="hljs-comment">// 5. Stream response</span>
+  res.<span class="hljs-title function_">setHeader</span>(<span class="hljs-string">&#039;Content-Type&#039;</span>, <span class="hljs-string">&#039;text/event-stream&#039;</span>);
+  res.<span class="hljs-title function_">setHeader</span>(<span class="hljs-string">&#039;Cache-Control&#039;</span>, <span class="hljs-string">&#039;no-cache&#039;</span>);
+  res.<span class="hljs-title function_">setHeader</span>(<span class="hljs-string">&#039;Connection&#039;</span>, <span class="hljs-string">&#039;keep-alive&#039;</span>);
+  
+  <span class="hljs-keyword">let</span> fullContent <span class="hljs-punctuation">=</span> <span class="hljs-string">&#039;&#039;</span>;
+  
+  <span class="hljs-keyword">const</span> stream <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> ragChain.<span class="hljs-title function_">stream</span>({
+    input<span class="hljs-punctuation">:</span> message,
+    context<span class="hljs-punctuation">:</span> chunks,
+    chat_history<span class="hljs-punctuation">:</span> <span class="hljs-title function_">formatHistory</span>(history),
+  });
+  
+  <span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">const</span> chunk <span class="hljs-keyword">of</span> stream) {
+    <span class="hljs-keyword">const</span> text <span class="hljs-punctuation">=</span> chunk.<span class="hljs-attr">answer</span> <span class="hljs-punctuation">||</span> <span class="hljs-string">&#039;&#039;</span>;
+    fullContent <span class="hljs-punctuation">+=</span> text;
+    res.<span class="hljs-title function_">write</span>(<span class="hljs-string">`data: ${JSON.stringify({ type: &#039;chunk&#039;, content: text })}\n\n`</span>);
+  }
+  
+  <span class="hljs-comment">// 6. Save to conversation history</span>
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">saveMessage</span>(conversationId, userId, <span class="hljs-string">&#039;user&#039;</span>, message);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">saveMessage</span>(conversationId, userId, <span class="hljs-string">&#039;assistant&#039;</span>, fullContent, chunks.<span class="hljs-title function_">map</span>(c <span class="hljs-punctuation">=&gt;</span> c.<span class="hljs-keyword">id</span>));
+  
+  <span class="hljs-comment">// 7. Decrement query count</span>
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">decrementQueryCount</span>(userId);
+  
+  res.<span class="hljs-title function_">write</span>(<span class="hljs-string">`data: ${JSON.stringify({ type: &#039;done&#039;, sources: chunks.map(c =&gt; c.metadata) })}\n\n`</span>);
+  res.<span class="hljs-title function_">end</span>();
+}
+</code></pre>
+<hr>
+<h2 id="ai-integration-prompt-engineering-guide-6-ai-feature-specifications" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. AI Feature Specifications</h2>
+<h3 id="ai-integration-prompt-engineering-guide-6-ai-feature-specifications-61-daily-query-limits" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-61-daily-query-limits" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Daily Query Limits</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Plan</th>
+<th>AI Queries/Day</th>
+<th>Premium Feature Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Free</td>
+<td>10</td>
+<td>Basic Q&amp;A only</td>
+</tr>
+<tr>
+<td>Basic</td>
+<td>50</td>
+<td>Q&amp;A + Quiz explanations</td>
+</tr>
+<tr>
+<td>Pro</td>
+<td>Unlimited</td>
+<td>All AI features</td>
+</tr>
+<tr>
+<td>Premium</td>
+<td>Unlimited</td>
+<td>All AI + Study Plan + Mentor matching</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="ai-integration-prompt-engineering-guide-6-ai-feature-specifications-62-ai-response-quality-metrics" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-62-ai-response-quality-metrics" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 AI Response Quality Metrics</h3>
+<p>Track these in production:</p>
+<ul>
+<li><strong>Helpfulness rating:</strong> User thumbs up/down rate (target ≥ 80% positive)</li>
+<li><strong>Grounding rate:</strong> % responses citing a course source (target ≥ 60%)</li>
+<li><strong>Refusal rate:</strong> % queries blocked (monitor for over-blocking)</li>
+<li><strong>Latency:</strong> First token time ≤ 800ms, completion ≤ 3s for 90% of queries</li>
+<li><strong>Error rate:</strong> &lt; 1% of queries return an error</li>
+</ul>
+<h3 id="ai-integration-prompt-engineering-guide-6-ai-feature-specifications-63-evaluation-dataset" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-63-evaluation-dataset" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Evaluation Dataset</h3>
+<p>Maintain 100+ golden Q&amp;A pairs for each major course to evaluate RAG quality:</p>
+<pre class="hljs"><code class="language-json">{
+  <span class="hljs-string">&quot;query&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What is the difference between a list and a tuple in Python?&quot;</span>,
+  <span class="hljs-string">&quot;courseId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;crs_python_beginners&quot;</span>,
+  <span class="hljs-string">&quot;expectedKeywords&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;mutable&quot;</span>, <span class="hljs-string">&quot;immutable&quot;</span>, <span class="hljs-string">&quot;ordered&quot;</span>, <span class="hljs-string">&quot;parentheses&quot;</span>, <span class="hljs-string">&quot;square brackets&quot;</span>],
+  <span class="hljs-string">&quot;shouldCiteLesson&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Lesson 4: Data Types&quot;</span>,
+  <span class="hljs-string">&quot;shouldNotContain&quot;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;harmful&quot;</span>, <span class="hljs-string">&quot;offensive&quot;</span>, <span class="hljs-string">&quot;unrelated&quot;</span>]
+}
+</code></pre>
+<h3 id="ai-integration-prompt-engineering-guide-6-ai-feature-specifications-64-ai-guardrails-summary" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-64-ai-guardrails-summary" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.4 AI Guardrails Summary</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Off-topic (politics, entertainment)</td>
+<td>Friendly decline + redirect to learning topics</td>
+</tr>
+<tr>
+<td>Harmful/adult content</td>
+<td>Hard block, no explanation</td>
+</tr>
+<tr>
+<td>Academic dishonesty (write my essay)</td>
+<td>Decline, offer to help them learn the topic instead</td>
+</tr>
+<tr>
+<td>Unknown question</td>
+<td>Honest acknowledgment, suggest lesson or instructor</td>
+</tr>
+<tr>
+<td>Query limit exceeded</td>
+<td>Inform user, show upgrade CTA</td>
+</tr>
+<tr>
+<td>API error</td>
+<td>Fallback message, option to retry</td>
+</tr>
+<tr>
+<td>Slow response (&gt; 5s)</td>
+<td>Timeout + user-friendly error</td>
+</tr>
+<tr>
+<td>Inappropriate trainer content</td>
+<td>Flag for admin review, suspend AI for that context</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Figma/Design AI Prompt Integration</h2>
+<h3 id="ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration-71-figma-ai-plugin-prompts-for-each-screen" class="docmd-heading"><a href="#ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration-71-figma-ai-plugin-prompts-for-each-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.1 Figma AI Plugin Prompts for Each Screen</h3>
+<p><strong>Dashboard Widget Prompt:</strong></p>
+<pre class="hljs"><code>Generate a mobile dashboard streak widget <span class="hljs-keyword">for</span> a learning app.
+Style<span class="hljs-punctuation">:</span> Dark <span class="hljs-title function_">glassmorphism</span> (<span class="hljs-title function_">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">0.08</span>) background, 1px <span class="hljs-title function_">rgba</span>(<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">255</span>,<span class="hljs-number">0.12</span>) border, <span class="hljs-title function_">blur</span>(12px)).
+Content<span class="hljs-punctuation">:</span> Animated flame <span class="hljs-title function_">emoji</span> (🔥) left side, <span class="hljs-string">&quot;14&quot;</span> large bold <span class="hljs-title function_">number</span> (amber <span class="hljs-comment">#F59E0B), &quot;day streak&quot; label (grey), horizontal progress bar below (emerald fill showing today&#039;s goal: 8/15 min done).</span>
+Width<span class="hljs-punctuation">:</span> <span class="hljs-number">100</span><span class="hljs-punctuation">%</span> <span class="hljs-keyword">of</span> screen. Height<span class="hljs-punctuation">:</span> 72px. Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> 16px. Padding<span class="hljs-punctuation">:</span> 16px.
+Font<span class="hljs-punctuation">:</span> Inter SemiBold <span class="hljs-keyword">for</span> number, Inter Regular <span class="hljs-keyword">for</span> label.
+</code></pre>
+<p><strong>Course Card Prompt:</strong></p>
+<pre class="hljs"><code>Create a course card UI <span class="hljs-title function_">component</span> (<span class="hljs-number">360</span>×220px) <span class="hljs-keyword">for</span> a dark<span class="hljs-punctuation">-</span>mode learning app.
+Top<span class="hljs-punctuation">:</span> <span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span> thumbnail image <span class="hljs-title function_">area</span> (gradient placeholder, indigo<span class="hljs-punctuation">-</span>to<span class="hljs-punctuation">-</span>purple, <span class="hljs-keyword">with</span> category icon overlay bottom<span class="hljs-punctuation">-</span>left and level badge chip <span class="hljs-keyword">top</span><span class="hljs-punctuation">-</span>right).
+Bottom content <span class="hljs-title function_">area</span> (white text on dark glass surface)<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Category <span class="hljs-title function_">chip</span> (small, indigo outline)
+<span class="hljs-punctuation">-</span> Course <span class="hljs-title function_">title</span> (<span class="hljs-number">2</span> lines max, Outfit SemiBold 16px white)
+<span class="hljs-punctuation">-</span> Instructor <span class="hljs-title function_">avatar</span> (24px circle) <span class="hljs-punctuation">+</span> <span class="hljs-title function_">name</span> (Inter 13px grey) — same row
+<span class="hljs-punctuation">-</span> Star <span class="hljs-title function_">rating</span> (amber stars <span class="hljs-punctuation">+</span> <span class="hljs-number">4.8</span> score) <span class="hljs-punctuation">+</span> enrollment count — same row
+<span class="hljs-punctuation">-</span> Price <span class="hljs-punctuation">/</span> <span class="hljs-string">&quot;Free&quot;</span> or <span class="hljs-string">&quot;Included in Pro&quot;</span> — bottom right
+Border<span class="hljs-punctuation">-</span>radius<span class="hljs-punctuation">:</span> 16px. Shadow<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> 4px 16px <span class="hljs-title function_">rgba</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0.3</span>). Glassmorphism card.
+</code></pre>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../04_technical_architecture/security_and_compliance/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Security &amp; Compliance
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Testing Strategy &amp; QA Plan
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#ai-integration-prompt-engineering-guide" class="toc-link">AI Integration &amp; Prompt Engineering Guide</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-1-ai-architecture-overview" class="toc-link">1. AI Architecture Overview</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-2-technology-stack" class="toc-link">2. Technology Stack</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design" class="toc-link">3. Knowledge Base &amp; Vector Store Design</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-31-content-chunking-strategy" class="toc-link">3.1 Content Chunking Strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-32-pgvector-schema-addition" class="toc-link">3.2 pgvector Schema Addition</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-3-knowledge-base-vector-store-design-33-similarity-search-function" class="toc-link">3.3 Similarity Search Function</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts" class="toc-link">4. System Prompts</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-41-ai-tutor-system-prompt-core" class="toc-link">4.1 AI Tutor System Prompt (Core)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-42-quiz-explanation-prompt" class="toc-link">4.2 Quiz Explanation Prompt</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-43-study-plan-generation-prompt" class="toc-link">4.3 Study Plan Generation Prompt</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-44-course-recommendation-prompt" class="toc-link">4.4 Course Recommendation Prompt</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-45-ai-quiz-generator-prompt-for-trainers" class="toc-link">4.5 AI Quiz Generator Prompt (For Trainers)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-4-system-prompts-52-streaming-response-handler" class="toc-link">5.2 Streaming Response Handler</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications" class="toc-link">6. AI Feature Specifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-61-daily-query-limits" class="toc-link">6.1 Daily Query Limits</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-62-ai-response-quality-metrics" class="toc-link">6.2 AI Response Quality Metrics</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-63-evaluation-dataset" class="toc-link">6.3 Evaluation Dataset</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-6-ai-feature-specifications-64-ai-guardrails-summary" class="toc-link">6.4 AI Guardrails Summary</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration" class="toc-link">7. Figma/Design AI Prompt Integration</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#ai-integration-prompt-engineering-guide-7-figmadesign-ai-prompt-integration-71-figma-ai-plugin-prompts-for-each-screen" class="toc-link">7.1 Figma AI Plugin Prompts for Each Screen</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

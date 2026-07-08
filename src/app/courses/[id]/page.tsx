@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -12,18 +12,19 @@ import { courses, instructors } from '@/lib/data';
 import { toast } from 'sonner';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function CourseDetailPage({ params }: PageProps) {
   const router = useRouter();
+  const { id } = use(params);
   const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'instructor'>('overview');
 
   const course = useMemo(() => {
-    return courses.find(c => c.id === params.id || c.slug === params.id);
-  }, [params.id]);
+    return courses.find(c => c.id === id || c.slug === id);
+  }, [id]);
 
   const instructor = useMemo(() => {
     if (!course) return null;

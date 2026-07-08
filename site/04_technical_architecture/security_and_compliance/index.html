@@ -1,0 +1,1863 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Security &amp; Compliance : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/04_technical_architecture/security_and_compliance/">
+<meta property="og:title" content="Security &amp; Compliance - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/04_technical_architecture/security_and_compliance/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security &amp; Compliance - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/04_technical_architecture/security_and_compliance.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Security &amp; Compliance
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Security%20%26%20Compliance%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Security%20Philosophy%0A%0ALearnFlow%20AI%20implements%20**Defense%20in%20Depth**%20%E2%80%94%20multiple%20layers%20of%20security%20controls%20so%20that%20even%20if%20one%20layer%20is%20breached%2C%20others%20prevent%20exploitation.%20Security%20is%20not%20an%20afterthought%3B%20it%20is%20baked%20into%20the%20design%20of%20every%20system%20component%20from%20Day%201.%0A%0A**Security%20Pillars%3A**%0A1.%20Identity%20%26%20Access%20%E2%80%94%20Who%20can%20do%20what%0A2.%20Data%20Protection%20%E2%80%94%20Protect%20at%20rest%20and%20in%20transit%0A3.%20Application%20Security%20%E2%80%94%20Prevent%20code-level%20vulnerabilities%0A4.%20Infrastructure%20Security%20%E2%80%94%20Secure%20the%20hosting%20environment%0A5.%20Incident%20Response%20%E2%80%94%20Detect%2C%20respond%2C%20recover%0A%0A---%0A%0A%23%23%202.%20Authentication%20%26%20Identity%20Security%0A%0A%23%23%23%202.1%20JWT%20Token%20Strategy%0A%60%60%60%0AAccess%20Token%3A%0A%20%20-%20Algorithm%3A%20HS256%20(or%20RS256%20for%20public%20key%20infrastructure)%0A%20%20-%20Expiry%3A%2015%20minutes%0A%20%20-%20Payload%3A%20%7B%20sub%3A%20userId%2C%20role%2C%20plan%2C%20iat%2C%20exp%2C%20jti%20(unique%20ID)%20%7D%0A%20%20-%20Storage%3A%20In-memory%20(React%2FFlutter)%20%E2%80%94%20NOT%20in%20localStorage%20or%20cookies%0A%0ARefresh%20Token%3A%0A%20%20-%20Expiry%3A%207%20days%0A%20%20-%20Storage%3A%20Secure%20HttpOnly%20cookie%20(web)%20OR%20flutter_secure_storage%20(mobile)%0A%20%20-%20Rotation%3A%20New%20refresh%20token%20issued%20on%20every%20use%20(refresh%20token%20rotation)%0A%20%20-%20Single%20use%3A%20Old%20token%20immediately%20invalidated%20after%20rotation%0A%20%20-%20Revocation%3A%20Stored%20as%20hashed%20value%20in%20refresh_tokens%20table%3B%20deleted%20on%20logout%0A%0AToken%20Blacklist%3A%0A%20%20-%20Compromised%20access%20tokens%20cached%20in%20Redis%20with%20TTL%20matching%20remaining%20expiry%0A%20%20-%20Checked%20on%20every%20API%20request%0A%60%60%60%0A%0A%23%23%23%202.2%20Password%20Security%0A%60%60%60%0AHashing%20Algorithm%3A%20bcrypt%20with%20cost%20factor%2012%0AMinimum%20password%20strength%20enforced%20server-side%3A%0A%20%20-%20Minimum%208%20characters%0A%20%20-%20At%20least%201%20uppercase%2C%201%20number%2C%201%20special%20character%0A%20%20-%20Not%20a%20known%20breached%20password%20(HaveIBeenPwned%20API%20check%20%E2%80%94%20k-anonymity%20model)%0APassword%20history%3A%20Last%205%20passwords%20stored%20(hashed)%2C%20cannot%20reuse%0AReset%20token%3A%20Cryptographically%20random%2032-byte%20hex%2C%20valid%2024%20hours%2C%20single-use%0A%60%60%60%0A%0A%23%23%23%202.3%20OTP%20Security%0A%60%60%60%0AGeneration%3A%20crypto.randomInt(100000%2C%20999999)%20%E2%80%94%20cryptographically%20secure%20random%0AStorage%3A%20Hashed%20with%20SHA-256%20before%20storing%20in%20Redis%0AExpiry%3A%2010%20minutes%0AAttempt%20limit%3A%203%20attempts%20before%20invalidation%0ADelivery%20rate%20limit%3A%201%20OTP%20per%2060%20seconds%20per%20phone%2Femail%0AProtection%3A%20Twilio&#039;s%20built-in%20rate%20limiting%20%2B%20our%20own%20rate%20limiter%0A%60%60%60%0A%0A%23%23%23%202.4%20Brute%20Force%20Protection%0A%60%60%60%0ALogin%20attempts%3A%205%20per%2015%20minutes%20per%20IP%20%2B%20per%20account%0AOTP%20verification%3A%203%20attempts%20per%20OTP%0APassword%20reset%3A%203%20requests%20per%20hour%20per%20email%0AProgressive%20delay%3A%201s%2C%202s%2C%204s%20delay%20after%203%2B%20failed%20attempts%0AAccount%20lockout%3A%2015%20minutes%20after%205%20failed%20attempts%2C%20email%20notification%20sent%0A%60%60%60%0A%0A%23%23%23%202.5%20Multi-Factor%20Authentication%20(MFA)%0A%60%60%60%0AInstitution%20Admins%3A%20MFA%20required%20(enforced)%0ASupport%20Agents%3A%20MFA%20required%20(enforced)%0ASuper%20Admins%3A%20MFA%20required%20%2B%20hardware%20key%20option%20(FIDO2%2FWebAuthn)%0AOther%20users%3A%20Optional%20%E2%80%94%20TOTP%20(Google%20Authenticator%20compatible)%20or%20backup%20codes%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20Data%20Protection%0A%0A%23%23%23%203.1%20Encryption%20at%20Rest%0A%60%60%60%0ADatabase%20(PostgreSQL)%3A%0A%20%20-%20AWS%20RDS%20with%20AES-256%20encryption%20at%20rest%0A%20%20-%20Encrypted%20snapshots%20(same%20key)%0A%20%20-%20Key%20management%20via%20AWS%20KMS%0A%20%20%0AFile%20Storage%20(S3)%3A%0A%20%20-%20Server-Side%20Encryption%3A%20SSE-S3%20(AES-256)%0A%20%20-%20Bucket%20policies%3A%20block%20all%20public%20access%0A%20%20-%20Pre-signed%20URLs%20for%20private%20content%20(15-minute%20expiry)%0A%20%20%0ASensitive%20fields%20(additional%20column-level%20encryption)%3A%0A%20%20-%20payment%20card%20data%3A%20never%20stored%20(tokenized%20by%20gateway)%0A%20%20-%20%60passwordHash%60%3A%20bcrypt%20(not%20reversible)%0A%20%20-%20%60phone%60%3A%20encrypted%20with%20AES-256-GCM%20before%20DB%20storage%0A%20%20-%20AI%20conversation%20content%3A%20encrypted%20at%20rest%20with%20row-level%20key%0A%20%20%0AMobile%20(Flutter)%3A%0A%20%20-%20flutter_secure_storage%20%E2%86%92%20iOS%20Keychain%20%2F%20Android%20Keystore%0A%20%20-%20Downloaded%20lesson%20videos%3A%20AES-256%20encrypted%20with%20device-bound%20key%0A%60%60%60%0A%0A%23%23%23%203.2%20Encryption%20in%20Transit%0A%60%60%60%0AAll%20communications%3A%20TLS%201.3%20minimum%20(TLS%201.2%20fallback%20for%20old%20clients)%0ACertificate%3A%20Let&#039;s%20Encrypt%20with%20auto-renewal%2C%20or%20AWS%20Certificate%20Manager%0AHSTS%3A%20max-age%3D31536000%3B%20includeSubDomains%3B%20preload%0APerfect%20Forward%20Secrecy%3A%20ECDHE%20cipher%20suites%20enforced%0AAPI%20Gateway%3A%20Cloudflare%20with%20TLS%201.3%20%2B%20HTTP%2F2%0AInternal%20services%3A%20mTLS%20(mutual%20TLS)%20in%20Phase%202%20when%20microservices%20introduced%0A%60%60%60%0A%0A%23%23%23%203.3%20Data%20Minimization%20%26%20Privacy%0A%60%60%60%0ACollection%20principle%3A%20Collect%20only%20what%20is%20functionally%20necessary%0APayment%20data%3A%20Never%20stored%20%E2%80%94%20all%20card%2FUPI%20data%20handled%20by%20Razorpay%2FStripe%20tokenization%0AUser%20age%20data%3A%20Stored%20as%20range%20(%2213-17%22)%20not%20exact%20date%20of%20birth%0ALocation%3A%20Stored%20as%20country-level%20only%20(from%20IP%20geo-lookup%20for%20analytics)%0AIP%20addresses%3A%20Logged%20with%20a%2090-day%20TTL%20then%20anonymized%0AAnalytics%3A%20Anonymized%20after%2012%20months%3B%20PII%20stripped%20from%20event%20data%0AAI%20conversations%3A%20User%20can%20delete%20at%20any%20time%3B%20auto-purged%20after%2090%20days%20of%20inactivity%0A%60%60%60%0A%0A---%0A%0A%23%23%204.%20Application%20Security%20(OWASP%20Top%2010)%0A%0A%23%23%23%204.1%20SQL%20Injection%20Prevention%0A-%20Prisma%20ORM%20with%20parameterized%20queries%20%E2%80%94%20direct%20string%20interpolation%20into%20SQL%20is%20architecturally%20impossible%0A-%20Prisma%20raw%20queries%20(%60%24queryRaw%60)%20only%20used%20where%20necessary%2C%20always%20with%20tagged%20template%20literals%0A-%20Input%20sanitization%20via%20Zod%20schema%20validation%20before%20any%20data%20reaches%20the%20DB%20layer%0A%0A%23%23%23%204.2%20Cross-Site%20Scripting%20(XSS)%20Prevention%0A%60%60%60javascript%0A%2F%2F%20Helmet.js%20headers%0Aapp.use(helmet(%7B%0A%20%20contentSecurityPolicy%3A%20%7B%0A%20%20%20%20directives%3A%20%7B%0A%20%20%20%20%20%20defaultSrc%3A%20%5B%22&#039;self&#039;%22%5D%2C%0A%20%20%20%20%20%20scriptSrc%3A%20%5B%22&#039;self&#039;%22%2C%20%22https%3A%2F%2Fcheckout.razorpay.com%22%2C%20%22&#039;nonce-%7Brandom%7D&#039;%22%5D%2C%0A%20%20%20%20%20%20styleSrc%3A%20%5B%22&#039;self&#039;%22%2C%20%22https%3A%2F%2Ffonts.googleapis.com%22%5D%2C%0A%20%20%20%20%20%20imgSrc%3A%20%5B%22&#039;self&#039;%22%2C%20%22data%3A%22%2C%20%22https%3A%2F%2Fcdn.learnflow.ai%22%5D%2C%0A%20%20%20%20%20%20connectSrc%3A%20%5B%22&#039;self&#039;%22%2C%20%22https%3A%2F%2Fapi.learnflow.ai%22%5D%2C%0A%20%20%20%20%20%20frameAncestors%3A%20%5B%22&#039;none&#039;%22%5D%2C%0A%20%20%20%20%7D%2C%0A%20%20%7D%2C%0A%20%20xFrameOptions%3A%20%7B%20action%3A%20&#039;deny&#039;%20%7D%2C%0A%20%20noSniff%3A%20true%2C%0A%20%20referrerPolicy%3A%20%7B%20policy%3A%20&#039;strict-origin-when-cross-origin&#039;%20%7D%2C%0A%7D))%3B%0A%60%60%60%0A-%20React%2FNext.js%20auto-escapes%20all%20JSX%20content%20(no%20dangerouslySetInnerHTML%20except%20in%20tightly%20controlled%20rich%20text%20renderer%20with%20DOMPurify%20sanitization)%0A-%20Rich%20text%20from%20trainers%20sanitized%20with%20DOMPurify%20before%20rendering%0A%0A%23%23%23%204.3%20Cross-Site%20Request%20Forgery%20(CSRF)%0A-%20JWT-based%20authentication%20with%20Authorization%20header%20(not%20cookies)%20for%20API%20%E2%80%94%20immune%20to%20CSRF%20by%20design%0A-%20SameSite%3DStrict%20on%20all%20cookies%0A-%20Web%20app%20does%20not%20use%20form-based%20session%20cookies%20for%20API%20authentication%0A%0A%23%23%23%204.4%20Broken%20Access%20Control%0A%60%60%60typescript%0A%2F%2F%20Every%20endpoint%20explicitly%20defines%20required%20permissions%0Arouter.patch(&#039;%2Fadmin%2Fusers%2F%3Aid&#039;%2C%20%0A%20%20authenticate%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Must%20be%20authenticated%0A%20%20requireRole(&#039;ADMIN&#039;)%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Must%20be%20admin%0A%20%20validate(updateUserSchema)%2C%20%20%20%20%20%20%20%20%2F%2F%20Input%20validation%0A%20%20auditLog(&#039;UPDATE&#039;%2C%20&#039;user&#039;)%2C%20%20%20%20%20%20%20%20%2F%2F%20Audit%20trail%0A%20%20adminUsersController.updateUser%20%20%20%20%2F%2F%20Handler%0A)%3B%0A%0A%2F%2F%20Ownership%20checks%20enforced%20in%20service%20layer%0Aasync%20function%20downloadCertificate(userId%3A%20string%2C%20certId%3A%20string)%20%7B%0A%20%20const%20cert%20%3D%20await%20certRepository.findById(certId)%3B%0A%20%20if%20(!cert)%20throw%20new%20NotFoundError(&#039;Certificate%20not%20found&#039;)%3B%0A%20%20if%20(cert.userId%20!%3D%3D%20userId)%20throw%20new%20ForbiddenError(&#039;Access%20denied&#039;)%3B%0A%20%20return%20generateCertificatePdf(cert)%3B%0A%7D%0A%60%60%60%0A%0A%23%23%23%204.5%20Security%20Misconfiguration%20Prevention%0A-%20Environment%20variables%20managed%20via%20AWS%20Parameter%20Store%20%2F%20Secrets%20Manager%20(never%20in%20.env%20files%20in%20production)%0A-%20Debug%20mode%3A%20disabled%20in%20production%20(NODE_ENV%3Dproduction%20enforced)%0A-%20Error%20messages%3A%20generic%20in%20production%20(no%20stack%20traces%20exposed%20to%20client)%0A-%20Dependency%20scanning%3A%20%60npm%20audit%60%20%2B%20Snyk%20in%20CI%2FCD%20pipeline%0A-%20Docker%20images%3A%20non-root%20user%2C%20minimal%20base%20image%20(node%3A20-alpine)%0A%0A%23%23%23%204.6%20File%20Upload%20Security%0A%60%60%60typescript%0Aconst%20upload%20%3D%20multer(%7B%0A%20%20storage%3A%20multerS3(%7B...%7D)%2C%0A%20%20fileFilter%3A%20(req%2C%20file%2C%20cb)%20%3D%3E%20%7B%0A%20%20%20%20const%20allowedTypes%20%3D%20%7B%0A%20%20%20%20%20%20&#039;video%2F*&#039;%3A%20%5B&#039;video%2Fmp4&#039;%2C%20&#039;video%2Fquicktime&#039;%2C%20&#039;video%2Fwebm&#039;%5D%2C%0A%20%20%20%20%20%20&#039;image%2F*&#039;%3A%20%5B&#039;image%2Fjpeg&#039;%2C%20&#039;image%2Fpng&#039;%2C%20&#039;image%2Fwebp&#039;%5D%2C%0A%20%20%20%20%20%20&#039;application%2Fpdf&#039;%3A%20%5B&#039;application%2Fpdf&#039;%5D%2C%0A%20%20%20%20%7D%3B%0A%20%20%20%20const%20isAllowed%20%3D%20Object.values(allowedTypes).flat().includes(file.mimetype)%3B%0A%20%20%20%20cb(null%2C%20isAllowed)%3B%0A%20%20%7D%2C%0A%20%20limits%3A%20%7B%0A%20%20%20%20fileSize%3A%202%20*%201024%20*%201024%20*%201024%2C%20%20%2F%2F%202GB%20for%20video%0A%20%20%20%20files%3A%201%2C%0A%20%20%7D%2C%0A%7D)%3B%0A%0A%2F%2F%20After%20upload%3A%20virus%20scan%20via%20AWS%20GuardDuty%20Malware%20Protection%20on%20S3%0A%2F%2F%20Files%20quarantined%20if%20malware%20detected%2C%20uploader%20notified%0A%60%60%60%0A%0A%23%23%23%204.7%20Input%20Validation%20(Zod)%0A%60%60%60typescript%0A%2F%2F%20All%20API%20request%20bodies%20validated%20with%20Zod%20before%20processing%0Aconst%20registerSchema%20%3D%20z.object(%7B%0A%20%20email%3A%20z.string().email().max(255)%2C%0A%20%20password%3A%20z.string().min(8).max(128).regex(%0A%20%20%20%20%2F%5E(%3F%3D.*%5BA-Z%5D)(%3F%3D.*%5Cd)(%3F%3D.*%5B%40%24!%25*%3F%26%5D)%2F%2C%0A%20%20%20%20&#039;Password%20must%20include%20uppercase%2C%20number%2C%20and%20special%20character&#039;%0A%20%20)%2C%0A%20%20displayName%3A%20z.string().min(2).max(100).trim()%2C%0A%7D)%3B%0A%0A%2F%2F%20Validation%20middleware%0Aexport%20const%20validate%20%3D%20(schema%3A%20ZodSchema)%20%3D%3E%20%7B%0A%20%20return%20(req%3A%20Request%2C%20res%3A%20Response%2C%20next%3A%20NextFunction)%20%3D%3E%20%7B%0A%20%20%20%20const%20result%20%3D%20schema.safeParse(req.body)%3B%0A%20%20%20%20if%20(!result.success)%20%7B%0A%20%20%20%20%20%20return%20res.status(400).json(%7B%20success%3A%20false%2C%20error%3A%20%7B%20%0A%20%20%20%20%20%20%20%20code%3A%20&#039;VALIDATION_ERROR&#039;%2C%20%0A%20%20%20%20%20%20%20%20details%3A%20result.error.flatten().fieldErrors%20%0A%20%20%20%20%20%20%7D%7D)%3B%0A%20%20%20%20%7D%0A%20%20%20%20req.body%20%3D%20result.data%3B%0A%20%20%20%20next()%3B%0A%20%20%7D%3B%0A%7D%3B%0A%60%60%60%0A%0A---%0A%0A%23%23%205.%20Infrastructure%20Security%0A%0A%23%23%23%205.1%20Network%20Architecture%0A%60%60%60%0AInternet%0A%20%20%20%E2%86%93%0ACloudflare%20(DDoS%20protection%2C%20WAF%2C%20TLS%20termination)%0A%20%20%20%E2%86%93%0AAWS%20ALB%20(Load%20Balancer%2C%20SSL%20termination%20backup)%0A%20%20%20%E2%86%93%0APrivate%20Subnet%20%E2%80%94%20EC2%20%2F%20ECS%20Fargate%20(API%20servers)%0A%20%20%20%E2%86%93%0APrivate%20Subnet%20%E2%80%94%20PostgreSQL%20RDS%20(DB%2C%20no%20public%20access)%0A%20%20%20%E2%86%93%0APrivate%20Subnet%20%E2%80%94%20Redis%20ElastiCache%20(Cache%2C%20no%20public%20access)%0A%0AAll%20internal%20communication%20via%20AWS%20VPC%20private%20IPs%20only.%0ANo%20direct%20public%20internet%20access%20to%20DB%20or%20cache%20layers.%0A%60%60%60%0A%0A%23%23%23%205.2%20Container%20Security%0A%60%60%60%0ABase%20image%3A%20node%3A20-alpine%20(minimal%20attack%20surface)%0ANon-root%20user%3A%20USER%20node%20(runs%20as%20uid%201000)%0ARead-only%20filesystem%20where%20possible%0ANo%20secrets%20in%20Dockerfile%20or%20image%20layers%0ARegular%20image%20scanning%3A%20AWS%20ECR%20Scan%20%2B%20Trivy%20in%20CI%2FCD%0A%60%60%60%0A%0A%23%23%23%205.3%20Secrets%20Management%0A%60%60%60%0ADevelopment%3A%20.env%20files%20(gitignored)%0AProduction%3A%20AWS%20Secrets%20Manager%20%2F%20Parameter%20Store%0ARotation%3A%20Database%20passwords%20rotated%20every%2090%20days%0AAPI%20keys%3A%20Rotated%20every%20180%20days%20or%20immediately%20on%20suspected%20compromise%0AAccess%3A%20Secrets%20accessible%20only%20to%20specific%20IAM%20roles%20(least%20privilege)%0A%60%60%60%0A%0A%23%23%23%205.4%20Logging%20%26%20Monitoring%0A%60%60%60%0AApplication%20logs%3A%20Winston%20%E2%86%92%20CloudWatch%20Logs%0AError%20tracking%3A%20Sentry%20(stack%20traces%2C%20user%20context)%0APerformance%3A%20DataDog%20APM%20or%20New%20Relic%0ASecurity%20events%3A%20CloudTrail%20(AWS%20API%20calls)%0AAudit%20logs%3A%20Stored%20in%20audit_logs%20table%20(all%20admin%20actions)%0AAlert%20triggers%3A%0A%20%20-%20%3E%2050%20failed%20logins%20in%205%20minutes%20from%20same%20IP%0A%20%20-%20Admin%20panel%20access%20from%20new%20country%0A%20%20-%20Database%20query%20time%20%3E%205%20seconds%0A%20%20-%20Error%20rate%20%3E%201%25%20of%20requests%0A%20%20-%20Payment%20failure%20rate%20%3E%205%25%0A%60%60%60%0A%0A---%0A%0A%23%23%206.%20Compliance%20Frameworks%0A%0A%23%23%23%206.1%20GDPR%20%2F%20India%20DPDPA%20Compliance%0A%0A%7C%20Requirement%20%7C%20Implementation%20%7C%0A%7C---%7C---%7C%0A%7C%20Right%20to%20access%20%7C%20%60GET%20%2Fusers%2Fme%60%20returns%20all%20personal%20data%3B%20%60GET%20%2Fusers%2Fme%2Fdata-export%60%20generates%20full%20export%20%7C%0A%7C%20Right%20to%20erasure%20%7C%20%60DELETE%20%2Fusers%2Fme%60%20triggers%20soft-delete%20%E2%86%92%20anonymization%20job%20(30-day%20grace%20period)%20%7C%0A%7C%20Right%20to%20portability%20%7C%20Data%20export%20in%20JSON%20format%2C%20emailed%20within%2048%20hours%20%7C%0A%7C%20Consent%20%7C%20Explicit%20consent%20recorded%20with%20timestamp%20and%20version%20for%20marketing%20emails%2C%20analytics%20%7C%0A%7C%20Data%20retention%20%7C%20Payment%20records%3A%207%20years%20(legal)%2C%20Chat%20logs%3A%2090%20days%2C%20Activity%20logs%3A%2012%20months%20%7C%0A%7C%20Data%20breach%20notification%20%7C%20Procedure%3A%20detect%20%E2%86%92%20notify%20DPO%20%E2%86%92%20notify%20users%20within%2072%20hours%20%E2%86%92%20notify%20regulator%20%7C%0A%7C%20DPA%20%7C%20Data%20Processing%20Agreement%20template%20available%20for%20institutional%20clients%20%7C%0A%7C%20Privacy%20policy%20%7C%20Accessible%20at%20%2Fprivacy%2C%20version-controlled%2C%20plain%20language%20%7C%0A%0A%23%23%23%206.2%20COPPA%20Compliance%20(Minors%2C%20Age%2013%E2%80%9317)%0A%60%60%60%0AAge%20verification%3A%20Age%20range%20collected%20during%20onboarding%0AParental%20consent%3A%20If%20age%2013%E2%80%9315%2C%20parental%20consent%20email%20required%0AData%20collection%3A%20Minimal%20%E2%80%94%20no%20location%20tracking%2C%20no%20behavioral%20profiling%20for%20ads%0AAI%20restrictions%3A%20More%20conservative%20content%20filters%20for%20minor%20accounts%0AProfile%20visibility%3A%20No%20public%20profiles%20for%20minor%20accounts%0AData%20deletion%3A%20Easier%20deletion%20process%20for%20minors%0A%60%60%60%0A%0A%23%23%23%206.3%20Payment%20Card%20Industry%20(PCI%20DSS)%0A%60%60%60%0AScope%3A%20Minimal%20%E2%80%94%20we%20do%20not%20store%2C%20process%2C%20or%20transmit%20card%20data%0AImplementation%3A%20Razorpay%20and%20Stripe%20handle%20all%20card%20processing%0AOur%20responsibility%3A%20SAQ%20A%20compliance%20(merchant%20with%20outsourced%20cardholder%20data)%0ARequirements%3A%20Secure%20redirect%20to%20payment%20gateway%2C%20no%20card%20data%20in%20logs%20or%20DB%0AAnnual%20review%3A%20SAQ%20A%20self-assessment%20completed%20annually%0A%60%60%60%0A%0A---%0A%0A%23%23%207.%20Security%20Testing%0A%0A%23%23%23%207.1%20Pre-Launch%20VAPT%20Requirements%0A-%20Automated%20DAST%20scanning%3A%20OWASP%20ZAP%20against%20staging%20environment%0A-%20Dependency%20audit%3A%20%60npm%20audit%20--audit-level%3Dhigh%60%20%E2%80%94%20zero%20high%2Fcritical%20vulnerabilities%0A-%20Static%20analysis%3A%20ESLint%20security%20rules%20%2B%20SonarQube%0A-%20Manual%20penetration%20testing%3A%20External%20security%20firm%2C%203-day%20engagement%0A-%20Red%20team%20exercise%3A%20Simulated%20phishing%20%2B%20social%20engineering%20test%0A%0A%23%23%23%207.2%20Ongoing%20Security%20Testing%0A%7C%20Test%20%7C%20Frequency%20%7C%20Tool%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Dependency%20vulnerability%20scan%20%7C%20Daily%20(CI%2FCD)%20%7C%20Snyk%20%2F%20npm%20audit%20%7C%0A%7C%20Container%20image%20scan%20%7C%20Per%20deployment%20%7C%20Trivy%20%7C%0A%7C%20DAST%20scan%20%7C%20Weekly%20%7C%20OWASP%20ZAP%20%7C%0A%7C%20Infrastructure%20scan%20%7C%20Monthly%20%7C%20AWS%20Inspector%20%7C%0A%7C%20Penetration%20test%20%7C%20Annually%20%7C%20External%20firm%20%7C%0A%7C%20Social%20engineering%20test%20%7C%20Annually%20%7C%20External%20firm%20%7C%0A%0A---%0A%0A%23%23%208.%20Incident%20Response%20Plan%0A%0A%23%23%23%208.1%20Incident%20Severity%20Levels%0A%7C%20Level%20%7C%20Description%20%7C%20Example%20%7C%20Response%20Time%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20P1%20-%20Critical%20%7C%20Data%20breach%2C%20service%20down%20%7C%20DB%20exposed%20publicly%20%7C%2015%20minutes%20%7C%0A%7C%20P2%20-%20High%20%7C%20Major%20feature%20broken%2C%20payment%20issue%20%7C%20Payment%20processing%20down%20%7C%201%20hour%20%7C%0A%7C%20P3%20-%20Medium%20%7C%20Degraded%20performance%2C%20minor%20feature%20broken%20%7C%20Slow%20API%20responses%20%7C%204%20hours%20%7C%0A%7C%20P4%20-%20Low%20%7C%20UI%20issue%2C%20minor%20bug%20%7C%20Button%20alignment%20wrong%20%7C%2024%20hours%20%7C%0A%0A%23%23%23%208.2%20Response%20Procedure%20(P1%20-%20Critical)%0A1.%20**Detect**%20%E2%80%94%20Automated%20alert%20fires%20(Sentry%2FDataDog)%20%E2%86%92%20On-call%20engineer%20paged%0A2.%20**Contain**%20%E2%80%94%20Isolate%20affected%20system%3B%20rotate%20credentials%20if%20compromised%0A3.%20**Assess**%20%E2%80%94%20Determine%20scope%20of%20breach%2Fimpact%0A4.%20**Notify**%20%E2%80%94%20Internal%20escalation%20%E2%86%92%20Legal%2FDPO%20%E2%86%92%20If%20user%20data%20affected%3A%20notify%20users%20within%2072h%0A5.%20**Remediate**%20%E2%80%94%20Fix%20vulnerability%2C%20deploy%20patch%2C%20restore%20service%0A6.%20**Review**%20%E2%80%94%20Post-incident%20report%20within%2048h%3B%20update%20runbooks%0A7.%20**Test**%20%E2%80%94%20Verify%20fix%20%2B%20run%20regression%0A%0A%23%23%23%208.3%20Contact%20%26%20Escalation%0A-%20Security%20email%3A%20security%40learnflow.ai%0A-%20Bug%20bounty%3A%20Responsible%20disclosure%20program%20at%20hackerone.learnflow.ai%0A-%20On-call%20rotation%3A%20PagerDuty%20with%2024%2F7%20coverage%20for%20P1%2FP2%20incidents%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>04 Technical Architecture</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Security &amp; Compliance</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="security-compliance" class="docmd-heading"><a href="#security-compliance" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Security &amp; Compliance</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="security-compliance-1-security-philosophy" class="docmd-heading"><a href="#security-compliance-1-security-philosophy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Security Philosophy</h2>
+<p>LearnFlow AI implements <strong>Defense in Depth</strong> — multiple layers of security controls so that even if one layer is breached, others prevent exploitation. Security is not an afterthought; it is baked into the design of every system component from Day 1.</p>
+<p><strong>Security Pillars:</strong></p>
+<ol>
+<li>Identity &amp; Access — Who can do what</li>
+<li>Data Protection — Protect at rest and in transit</li>
+<li>Application Security — Prevent code-level vulnerabilities</li>
+<li>Infrastructure Security — Secure the hosting environment</li>
+<li>Incident Response — Detect, respond, recover</li>
+</ol>
+<hr>
+<h2 id="security-compliance-2-authentication-identity-security" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Authentication &amp; Identity Security</h2>
+<h3 id="security-compliance-2-authentication-identity-security-21-jwt-token-strategy" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security-21-jwt-token-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.1 JWT Token Strategy</h3>
+<pre class="hljs"><code>Access Token<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Algorithm<span class="hljs-punctuation">:</span> <span class="hljs-title function_">HS256</span> (or RS256 <span class="hljs-keyword">for</span> <span class="hljs-keyword">public</span> key infrastructure)
+  <span class="hljs-punctuation">-</span> Expiry<span class="hljs-punctuation">:</span> <span class="hljs-number">15</span> minutes
+  <span class="hljs-punctuation">-</span> Payload<span class="hljs-punctuation">:</span> { sub<span class="hljs-punctuation">:</span> userId, role, plan, iat, exp, <span class="hljs-title function_">jti</span> (unique ID) }
+  <span class="hljs-punctuation">-</span> Storage<span class="hljs-punctuation">:</span> In<span class="hljs-punctuation">-</span><span class="hljs-title function_">memory</span> (React<span class="hljs-punctuation">/</span>Flutter) — NOT <span class="hljs-keyword">in</span> localStorage or cookies
+
+Refresh Token<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Expiry<span class="hljs-punctuation">:</span> <span class="hljs-number">7</span> days
+  <span class="hljs-punctuation">-</span> Storage<span class="hljs-punctuation">:</span> Secure HttpOnly <span class="hljs-title function_">cookie</span> (web) OR <span class="hljs-title function_">flutter_secure_storage</span> (mobile)
+  <span class="hljs-punctuation">-</span> Rotation<span class="hljs-punctuation">:</span> New refresh token issued on every <span class="hljs-keyword">use</span> (refresh token rotation)
+  <span class="hljs-punctuation">-</span> Single <span class="hljs-keyword">use</span><span class="hljs-punctuation">:</span> Old token immediately invalidated after rotation
+  <span class="hljs-punctuation">-</span> Revocation<span class="hljs-punctuation">:</span> Stored <span class="hljs-keyword">as</span> hashed value <span class="hljs-keyword">in</span> refresh_tokens table; deleted on logout
+
+Token Blacklist<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Compromised access tokens cached <span class="hljs-keyword">in</span> Redis <span class="hljs-keyword">with</span> TTL matching remaining expiry
+  <span class="hljs-punctuation">-</span> Checked on every API request
+</code></pre>
+<h3 id="security-compliance-2-authentication-identity-security-22-password-security" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security-22-password-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.2 Password Security</h3>
+<pre class="hljs"><code>Hashing Algorithm<span class="hljs-punctuation">:</span> bcrypt <span class="hljs-keyword">with</span> cost factor <span class="hljs-number">12</span>
+Minimum password strength enforced server<span class="hljs-punctuation">-</span>side<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Minimum <span class="hljs-number">8</span> characters
+  <span class="hljs-punctuation">-</span> At least <span class="hljs-number">1</span> uppercase, <span class="hljs-number">1</span> number, <span class="hljs-number">1</span> special character
+  <span class="hljs-punctuation">-</span> Not a known breached <span class="hljs-title function_">password</span> (HaveIBeenPwned API check — k<span class="hljs-punctuation">-</span>anonymity model)
+Password history<span class="hljs-punctuation">:</span> Last <span class="hljs-number">5</span> passwords <span class="hljs-title function_">stored</span> (hashed), cannot reuse
+Reset token<span class="hljs-punctuation">:</span> Cryptographically random <span class="hljs-number">32</span><span class="hljs-punctuation">-</span>byte hex, valid <span class="hljs-number">24</span> hours, single<span class="hljs-punctuation">-</span><span class="hljs-keyword">use</span>
+</code></pre>
+<h3 id="security-compliance-2-authentication-identity-security-23-otp-security" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security-23-otp-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.3 OTP Security</h3>
+<pre class="hljs"><code>Generation<span class="hljs-punctuation">:</span> crypto.<span class="hljs-title function_">randomInt</span>(<span class="hljs-number">100000</span>, <span class="hljs-number">999999</span>) — cryptographically secure random
+Storage<span class="hljs-punctuation">:</span> Hashed <span class="hljs-keyword">with</span> SHA<span class="hljs-punctuation">-</span><span class="hljs-number">256</span> before storing <span class="hljs-keyword">in</span> Redis
+Expiry<span class="hljs-punctuation">:</span> <span class="hljs-number">10</span> minutes
+Attempt limit<span class="hljs-punctuation">:</span> <span class="hljs-number">3</span> attempts before invalidation
+Delivery rate limit<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span> OTP per <span class="hljs-number">60</span> seconds per phone<span class="hljs-punctuation">/</span>email
+Protection<span class="hljs-punctuation">:</span> Twilio&#039;s built<span class="hljs-punctuation">-</span><span class="hljs-keyword">in</span> rate limiting <span class="hljs-punctuation">+</span> our own rate limiter
+</code></pre>
+<h3 id="security-compliance-2-authentication-identity-security-24-brute-force-protection" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security-24-brute-force-protection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.4 Brute Force Protection</h3>
+<pre class="hljs"><code>Login attempts<span class="hljs-punctuation">:</span> <span class="hljs-number">5</span> per <span class="hljs-number">15</span> minutes per IP <span class="hljs-punctuation">+</span> per account
+OTP verification<span class="hljs-punctuation">:</span> <span class="hljs-number">3</span> attempts per OTP
+Password reset<span class="hljs-punctuation">:</span> <span class="hljs-number">3</span> requests per hour per email
+Progressive delay<span class="hljs-punctuation">:</span> 1s, 2s, 4s delay after <span class="hljs-number">3</span><span class="hljs-punctuation">+</span> failed attempts
+Account lockout<span class="hljs-punctuation">:</span> <span class="hljs-number">15</span> minutes after <span class="hljs-number">5</span> failed attempts, email notification sent
+</code></pre>
+<h3 id="security-compliance-2-authentication-identity-security-25-multi-factor-authentication-mfa" class="docmd-heading"><a href="#security-compliance-2-authentication-identity-security-25-multi-factor-authentication-mfa" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.5 Multi-Factor Authentication (MFA)</h3>
+<pre class="hljs"><code>Institution Admins<span class="hljs-punctuation">:</span> MFA <span class="hljs-title function_">required</span> (enforced)
+Support Agents<span class="hljs-punctuation">:</span> MFA <span class="hljs-title function_">required</span> (enforced)
+Super Admins<span class="hljs-punctuation">:</span> MFA required <span class="hljs-punctuation">+</span> hardware key <span class="hljs-title function_">option</span> (FIDO2<span class="hljs-punctuation">/</span>WebAuthn)
+Other users<span class="hljs-punctuation">:</span> Optional — <span class="hljs-title function_">TOTP</span> (Google Authenticator compatible) or backup codes
+</code></pre>
+<hr>
+<h2 id="security-compliance-3-data-protection" class="docmd-heading"><a href="#security-compliance-3-data-protection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Data Protection</h2>
+<h3 id="security-compliance-3-data-protection-31-encryption-at-rest" class="docmd-heading"><a href="#security-compliance-3-data-protection-31-encryption-at-rest" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Encryption at Rest</h3>
+<pre class="hljs"><code><span class="hljs-title function_">Database</span> (PostgreSQL)<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> AWS RDS <span class="hljs-keyword">with</span> AES<span class="hljs-punctuation">-</span><span class="hljs-number">256</span> encryption at rest
+  <span class="hljs-punctuation">-</span> Encrypted <span class="hljs-title function_">snapshots</span> (same key)
+  <span class="hljs-punctuation">-</span> Key management via AWS KMS
+  
+File <span class="hljs-title function_">Storage</span> (S3)<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Server<span class="hljs-punctuation">-</span>Side Encryption<span class="hljs-punctuation">:</span> SSE<span class="hljs-punctuation">-</span><span class="hljs-title function_">S3</span> (AES<span class="hljs-punctuation">-</span><span class="hljs-number">256</span>)
+  <span class="hljs-punctuation">-</span> Bucket policies<span class="hljs-punctuation">:</span> block all <span class="hljs-keyword">public</span> access
+  <span class="hljs-punctuation">-</span> Pre<span class="hljs-punctuation">-</span>signed URLs <span class="hljs-keyword">for</span> <span class="hljs-keyword">private</span> <span class="hljs-title function_">content</span> (<span class="hljs-number">15</span><span class="hljs-punctuation">-</span>minute expiry)
+  
+Sensitive <span class="hljs-title function_">fields</span> (additional column<span class="hljs-punctuation">-</span>level encryption)<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> payment card data<span class="hljs-punctuation">:</span> never <span class="hljs-title function_">stored</span> (tokenized by gateway)
+  <span class="hljs-punctuation">-</span> <span class="hljs-string">`passwordHash`</span><span class="hljs-punctuation">:</span> <span class="hljs-title function_">bcrypt</span> (not reversible)
+  <span class="hljs-punctuation">-</span> <span class="hljs-string">`phone`</span><span class="hljs-punctuation">:</span> encrypted <span class="hljs-keyword">with</span> AES<span class="hljs-punctuation">-</span><span class="hljs-number">256</span><span class="hljs-punctuation">-</span>GCM before DB storage
+  <span class="hljs-punctuation">-</span> AI conversation content<span class="hljs-punctuation">:</span> encrypted at rest <span class="hljs-keyword">with</span> row<span class="hljs-punctuation">-</span>level key
+  
+<span class="hljs-title function_">Mobile</span> (Flutter)<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> flutter_secure_storage → iOS Keychain <span class="hljs-punctuation">/</span> Android Keystore
+  <span class="hljs-punctuation">-</span> Downloaded lesson videos<span class="hljs-punctuation">:</span> AES<span class="hljs-punctuation">-</span><span class="hljs-number">256</span> encrypted <span class="hljs-keyword">with</span> device<span class="hljs-punctuation">-</span>bound key
+</code></pre>
+<h3 id="security-compliance-3-data-protection-32-encryption-in-transit" class="docmd-heading"><a href="#security-compliance-3-data-protection-32-encryption-in-transit" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 Encryption in Transit</h3>
+<pre class="hljs"><code>All communications<span class="hljs-punctuation">:</span> TLS <span class="hljs-number">1.3</span> <span class="hljs-title function_">minimum</span> (TLS <span class="hljs-number">1.2</span> fallback <span class="hljs-keyword">for</span> old clients)
+Certificate<span class="hljs-punctuation">:</span> Let&#039;s Encrypt <span class="hljs-keyword">with</span> auto<span class="hljs-punctuation">-</span>renewal, or AWS Certificate Manager
+HSTS<span class="hljs-punctuation">:</span> max<span class="hljs-punctuation">-</span>age<span class="hljs-punctuation">=</span><span class="hljs-number">31536000</span>; includeSubDomains; preload
+Perfect Forward Secrecy<span class="hljs-punctuation">:</span> ECDHE cipher suites enforced
+API Gateway<span class="hljs-punctuation">:</span> Cloudflare <span class="hljs-keyword">with</span> TLS <span class="hljs-number">1.3</span> <span class="hljs-punctuation">+</span> HTTP<span class="hljs-punctuation">/</span><span class="hljs-number">2</span>
+Internal services<span class="hljs-punctuation">:</span> <span class="hljs-title function_">mTLS</span> (mutual TLS) <span class="hljs-keyword">in</span> Phase <span class="hljs-number">2</span> when microservices introduced
+</code></pre>
+<h3 id="security-compliance-3-data-protection-33-data-minimization-privacy" class="docmd-heading"><a href="#security-compliance-3-data-protection-33-data-minimization-privacy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 Data Minimization &amp; Privacy</h3>
+<pre class="hljs"><code>Collection principle<span class="hljs-punctuation">:</span> Collect only what is functionally necessary
+Payment data<span class="hljs-punctuation">:</span> Never stored — all card<span class="hljs-punctuation">/</span>UPI data handled by Razorpay<span class="hljs-punctuation">/</span>Stripe tokenization
+User age data<span class="hljs-punctuation">:</span> Stored <span class="hljs-keyword">as</span> <span class="hljs-title function_">range</span> (<span class="hljs-string">&quot;13-17&quot;</span>) not exact date <span class="hljs-keyword">of</span> birth
+Location<span class="hljs-punctuation">:</span> Stored <span class="hljs-keyword">as</span> country<span class="hljs-punctuation">-</span>level <span class="hljs-title function_">only</span> (<span class="hljs-keyword">from</span> IP geo<span class="hljs-punctuation">-</span>lookup <span class="hljs-keyword">for</span> analytics)
+IP addresses<span class="hljs-punctuation">:</span> Logged <span class="hljs-keyword">with</span> a <span class="hljs-number">90</span><span class="hljs-punctuation">-</span>day TTL then anonymized
+Analytics<span class="hljs-punctuation">:</span> Anonymized after <span class="hljs-number">12</span> months; PII stripped <span class="hljs-keyword">from</span> event data
+AI conversations<span class="hljs-punctuation">:</span> User can delete at any time; auto<span class="hljs-punctuation">-</span>purged after <span class="hljs-number">90</span> days <span class="hljs-keyword">of</span> inactivity
+</code></pre>
+<hr>
+<h2 id="security-compliance-4-application-security-owasp-top-10" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Application Security (OWASP Top 10)</h2>
+<h3 id="security-compliance-4-application-security-owasp-top-10-41-sql-injection-prevention" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-41-sql-injection-prevention" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 SQL Injection Prevention</h3>
+<ul>
+<li>Prisma ORM with parameterized queries — direct string interpolation into SQL is architecturally impossible</li>
+<li>Prisma raw queries (<code>$queryRaw</code>) only used where necessary, always with tagged template literals</li>
+<li>Input sanitization via Zod schema validation before any data reaches the DB layer</li>
+</ul>
+<h3 id="security-compliance-4-application-security-owasp-top-10-42-cross-site-scripting-xss-prevention" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-42-cross-site-scripting-xss-prevention" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Cross-Site Scripting (XSS) Prevention</h3>
+<pre class="hljs"><code class="language-javascript"><span class="hljs-comment">// Helmet.js headers</span>
+app.<span class="hljs-keyword">use</span>(<span class="hljs-title function_">helmet</span>({
+  contentSecurityPolicy<span class="hljs-punctuation">:</span> {
+    directives<span class="hljs-punctuation">:</span> {
+      defaultSrc<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;self&#039;&quot;</span>],
+      scriptSrc<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;self&#039;&quot;</span>, <span class="hljs-string">&quot;https://checkout.razorpay.com&quot;</span>, <span class="hljs-string">&quot;&#039;nonce-{random}&#039;&quot;</span>],
+      styleSrc<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;self&#039;&quot;</span>, <span class="hljs-string">&quot;https://fonts.googleapis.com&quot;</span>],
+      imgSrc<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;self&#039;&quot;</span>, <span class="hljs-string">&quot;data:&quot;</span>, <span class="hljs-string">&quot;https://cdn.learnflow.ai&quot;</span>],
+      connectSrc<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;self&#039;&quot;</span>, <span class="hljs-string">&quot;https://api.learnflow.ai&quot;</span>],
+      frameAncestors<span class="hljs-punctuation">:</span> [<span class="hljs-string">&quot;&#039;none&#039;&quot;</span>],
+    },
+  },
+  xFrameOptions<span class="hljs-punctuation">:</span> { action<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;deny&#039;</span> },
+  noSniff<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  referrerPolicy<span class="hljs-punctuation">:</span> { policy<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;strict-origin-when-cross-origin&#039;</span> },
+}));
+</code></pre>
+<ul>
+<li>React/Next.js auto-escapes all JSX content (no dangerouslySetInnerHTML except in tightly controlled rich text renderer with DOMPurify sanitization)</li>
+<li>Rich text from trainers sanitized with DOMPurify before rendering</li>
+</ul>
+<h3 id="security-compliance-4-application-security-owasp-top-10-43-cross-site-request-forgery-csrf" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-43-cross-site-request-forgery-csrf" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.3 Cross-Site Request Forgery (CSRF)</h3>
+<ul>
+<li>JWT-based authentication with Authorization header (not cookies) for API — immune to CSRF by design</li>
+<li>SameSite=Strict on all cookies</li>
+<li>Web app does not use form-based session cookies for API authentication</li>
+</ul>
+<h3 id="security-compliance-4-application-security-owasp-top-10-44-broken-access-control" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-44-broken-access-control" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.4 Broken Access Control</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// Every endpoint explicitly defines required permissions</span>
+router.<span class="hljs-title function_">patch</span>(<span class="hljs-string">&#039;/admin/users/:id&#039;</span>, 
+  authenticate,                      <span class="hljs-comment">// Must be authenticated</span>
+  <span class="hljs-title function_">requireRole</span>(<span class="hljs-string">&#039;ADMIN&#039;</span>),              <span class="hljs-comment">// Must be admin</span>
+  <span class="hljs-title function_">validate</span>(updateUserSchema),        <span class="hljs-comment">// Input validation</span>
+  <span class="hljs-title function_">auditLog</span>(<span class="hljs-string">&#039;UPDATE&#039;</span>, <span class="hljs-string">&#039;user&#039;</span>),        <span class="hljs-comment">// Audit trail</span>
+  adminUsersController.<span class="hljs-attr">updateUser</span>    <span class="hljs-comment">// Handler</span>
+);
+
+<span class="hljs-comment">// Ownership checks enforced in service layer</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">downloadCertificate</span>(userId<span class="hljs-punctuation">:</span> string, certId<span class="hljs-punctuation">:</span> string) {
+  <span class="hljs-keyword">const</span> cert <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> certRepository.<span class="hljs-title function_">findById</span>(certId);
+  <span class="hljs-keyword">if</span> (<span class="hljs-punctuation">!</span>cert) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">NotFoundError</span>(<span class="hljs-string">&#039;Certificate not found&#039;</span>);
+  <span class="hljs-keyword">if</span> (cert.<span class="hljs-attr">userId</span> <span class="hljs-punctuation">!==</span> userId) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">ForbiddenError</span>(<span class="hljs-string">&#039;Access denied&#039;</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">generateCertificatePdf</span>(cert);
+}
+</code></pre>
+<h3 id="security-compliance-4-application-security-owasp-top-10-45-security-misconfiguration-prevention" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-45-security-misconfiguration-prevention" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.5 Security Misconfiguration Prevention</h3>
+<ul>
+<li>Environment variables managed via AWS Parameter Store / Secrets Manager (never in .env files in production)</li>
+<li>Debug mode: disabled in production (NODE_ENV=production enforced)</li>
+<li>Error messages: generic in production (no stack traces exposed to client)</li>
+<li>Dependency scanning: <code>npm audit</code> + Snyk in CI/CD pipeline</li>
+<li>Docker images: non-root user, minimal base image (node:20-alpine)</li>
+</ul>
+<h3 id="security-compliance-4-application-security-owasp-top-10-46-file-upload-security" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-46-file-upload-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.6 File Upload Security</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-keyword">const</span> upload <span class="hljs-punctuation">=</span> <span class="hljs-title function_">multer</span>({
+  storage<span class="hljs-punctuation">:</span> <span class="hljs-title function_">multerS3</span>({...}),
+  fileFilter<span class="hljs-punctuation">:</span> (req, file, cb) <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> allowedTypes <span class="hljs-punctuation">=</span> {
+      <span class="hljs-string">&#039;video/*&#039;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&#039;video/mp4&#039;</span>, <span class="hljs-string">&#039;video/quicktime&#039;</span>, <span class="hljs-string">&#039;video/webm&#039;</span>],
+      <span class="hljs-string">&#039;image/*&#039;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&#039;image/jpeg&#039;</span>, <span class="hljs-string">&#039;image/png&#039;</span>, <span class="hljs-string">&#039;image/webp&#039;</span>],
+      <span class="hljs-string">&#039;application/pdf&#039;</span><span class="hljs-punctuation">:</span> [<span class="hljs-string">&#039;application/pdf&#039;</span>],
+    };
+    <span class="hljs-keyword">const</span> isAllowed <span class="hljs-punctuation">=</span> Object.<span class="hljs-title function_">values</span>(allowedTypes).<span class="hljs-title function_">flat</span>().<span class="hljs-title function_">includes</span>(file.<span class="hljs-attr">mimetype</span>);
+    <span class="hljs-title function_">cb</span>(<span class="hljs-keyword">null</span>, isAllowed);
+  },
+  limits<span class="hljs-punctuation">:</span> {
+    fileSize<span class="hljs-punctuation">:</span> <span class="hljs-number">2</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">1024</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">1024</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">1024</span>,  <span class="hljs-comment">// 2GB for video</span>
+    files<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>,
+  },
+});
+
+<span class="hljs-comment">// After upload: virus scan via AWS GuardDuty Malware Protection on S3</span>
+<span class="hljs-comment">// Files quarantined if malware detected, uploader notified</span>
+</code></pre>
+<h3 id="security-compliance-4-application-security-owasp-top-10-47-input-validation-zod" class="docmd-heading"><a href="#security-compliance-4-application-security-owasp-top-10-47-input-validation-zod" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.7 Input Validation (Zod)</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// All API request bodies validated with Zod before processing</span>
+<span class="hljs-keyword">const</span> registerSchema <span class="hljs-punctuation">=</span> z.<span class="hljs-title function_">object</span>({
+  email<span class="hljs-punctuation">:</span> z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">email</span>().<span class="hljs-title function_">max</span>(<span class="hljs-number">255</span>),
+  password<span class="hljs-punctuation">:</span> z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">8</span>).<span class="hljs-title function_">max</span>(<span class="hljs-number">128</span>).<span class="hljs-title function_">regex</span>(
+    <span class="hljs-punctuation">/^</span>(<span class="hljs-punctuation">?=</span>.<span class="hljs-punctuation">*</span>[A<span class="hljs-punctuation">-</span>Z])(<span class="hljs-punctuation">?=</span>.<span class="hljs-punctuation">*</span>\d)(<span class="hljs-punctuation">?=</span>.<span class="hljs-punctuation">*</span>[@$<span class="hljs-punctuation">!%*?&amp;</span>])<span class="hljs-punctuation">/</span>,
+    <span class="hljs-string">&#039;Password must include uppercase, number, and special character&#039;</span>
+  ),
+  displayName<span class="hljs-punctuation">:</span> z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">2</span>).<span class="hljs-title function_">max</span>(<span class="hljs-number">100</span>).<span class="hljs-title function_">trim</span>(),
+});
+
+<span class="hljs-comment">// Validation middleware</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> validate <span class="hljs-punctuation">=</span> (schema<span class="hljs-punctuation">:</span> ZodSchema) <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">return</span> (req<span class="hljs-punctuation">:</span> Request, res<span class="hljs-punctuation">:</span> Response, next<span class="hljs-punctuation">:</span> NextFunction) <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> result <span class="hljs-punctuation">=</span> schema.<span class="hljs-title function_">safeParse</span>(req.<span class="hljs-attr">body</span>);
+    <span class="hljs-keyword">if</span> (<span class="hljs-punctuation">!</span>result.<span class="hljs-attr">success</span>) {
+      <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">status</span>(<span class="hljs-number">400</span>).<span class="hljs-title function_">json</span>({ success<span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>, error<span class="hljs-punctuation">:</span> { 
+        code<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;VALIDATION_ERROR&#039;</span>, 
+        details<span class="hljs-punctuation">:</span> result.<span class="hljs-attr">error</span>.<span class="hljs-title function_">flatten</span>().<span class="hljs-attr">fieldErrors</span> 
+      }});
+    }
+    req.<span class="hljs-attr">body</span> <span class="hljs-punctuation">=</span> result.<span class="hljs-attr">data</span>;
+    <span class="hljs-title function_">next</span>();
+  };
+};
+</code></pre>
+<hr>
+<h2 id="security-compliance-5-infrastructure-security" class="docmd-heading"><a href="#security-compliance-5-infrastructure-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Infrastructure Security</h2>
+<h3 id="security-compliance-5-infrastructure-security-51-network-architecture" class="docmd-heading"><a href="#security-compliance-5-infrastructure-security-51-network-architecture" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 Network Architecture</h3>
+<pre class="hljs"><code>Internet
+   ↓
+<span class="hljs-title function_">Cloudflare</span> (DDoS protection, WAF, TLS termination)
+   ↓
+AWS <span class="hljs-title function_">ALB</span> (Load Balancer, SSL termination backup)
+   ↓
+Private Subnet — EC2 <span class="hljs-punctuation">/</span> ECS <span class="hljs-title function_">Fargate</span> (API servers)
+   ↓
+Private Subnet — PostgreSQL <span class="hljs-title function_">RDS</span> (DB, no <span class="hljs-keyword">public</span> access)
+   ↓
+Private Subnet — Redis <span class="hljs-title function_">ElastiCache</span> (Cache, no <span class="hljs-keyword">public</span> access)
+
+All internal communication via AWS VPC <span class="hljs-keyword">private</span> IPs only.
+No direct <span class="hljs-keyword">public</span> internet access to DB or cache layers.
+</code></pre>
+<h3 id="security-compliance-5-infrastructure-security-52-container-security" class="docmd-heading"><a href="#security-compliance-5-infrastructure-security-52-container-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Container Security</h3>
+<pre class="hljs"><code>Base image<span class="hljs-punctuation">:</span> <span class="hljs-keyword">node</span><span class="hljs-punctuation">:</span><span class="hljs-number">20</span><span class="hljs-punctuation">-</span><span class="hljs-title function_">alpine</span> (minimal attack surface)
+Non<span class="hljs-punctuation">-</span>root user<span class="hljs-punctuation">:</span> USER <span class="hljs-keyword">node</span> (runs <span class="hljs-keyword">as</span> uid <span class="hljs-number">1000</span>)
+Read<span class="hljs-punctuation">-</span>only filesystem <span class="hljs-keyword">where</span> possible
+No secrets <span class="hljs-keyword">in</span> Dockerfile or image layers
+Regular image scanning<span class="hljs-punctuation">:</span> AWS ECR Scan <span class="hljs-punctuation">+</span> Trivy <span class="hljs-keyword">in</span> CI<span class="hljs-punctuation">/</span>CD
+</code></pre>
+<h3 id="security-compliance-5-infrastructure-security-53-secrets-management" class="docmd-heading"><a href="#security-compliance-5-infrastructure-security-53-secrets-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.3 Secrets Management</h3>
+<pre class="hljs"><code>Development<span class="hljs-punctuation">:</span> .<span class="hljs-attr">env</span> <span class="hljs-title function_">files</span> (gitignored)
+Production<span class="hljs-punctuation">:</span> AWS Secrets Manager <span class="hljs-punctuation">/</span> Parameter Store
+Rotation<span class="hljs-punctuation">:</span> Database passwords rotated every <span class="hljs-number">90</span> days
+API keys<span class="hljs-punctuation">:</span> Rotated every <span class="hljs-number">180</span> days or immediately on suspected compromise
+Access<span class="hljs-punctuation">:</span> Secrets accessible only to specific IAM <span class="hljs-title function_">roles</span> (least privilege)
+</code></pre>
+<h3 id="security-compliance-5-infrastructure-security-54-logging-monitoring" class="docmd-heading"><a href="#security-compliance-5-infrastructure-security-54-logging-monitoring" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.4 Logging &amp; Monitoring</h3>
+<pre class="hljs"><code>Application logs<span class="hljs-punctuation">:</span> Winston → CloudWatch Logs
+Error tracking<span class="hljs-punctuation">:</span> <span class="hljs-title function_">Sentry</span> (stack traces, user context)
+Performance<span class="hljs-punctuation">:</span> DataDog APM or New Relic
+Security events<span class="hljs-punctuation">:</span> <span class="hljs-title function_">CloudTrail</span> (AWS API calls)
+Audit logs<span class="hljs-punctuation">:</span> Stored <span class="hljs-keyword">in</span> audit_logs <span class="hljs-title function_">table</span> (all admin actions)
+Alert triggers<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> <span class="hljs-punctuation">&gt;</span> <span class="hljs-number">50</span> failed logins <span class="hljs-keyword">in</span> <span class="hljs-number">5</span> minutes <span class="hljs-keyword">from</span> same IP
+  <span class="hljs-punctuation">-</span> Admin panel access <span class="hljs-keyword">from</span> <span class="hljs-keyword">new</span> country
+  <span class="hljs-punctuation">-</span> Database query time <span class="hljs-punctuation">&gt;</span> <span class="hljs-number">5</span> seconds
+  <span class="hljs-punctuation">-</span> Error rate <span class="hljs-punctuation">&gt;</span> <span class="hljs-number">1</span><span class="hljs-punctuation">%</span> <span class="hljs-keyword">of</span> requests
+  <span class="hljs-punctuation">-</span> Payment failure rate <span class="hljs-punctuation">&gt;</span> <span class="hljs-number">5</span><span class="hljs-punctuation">%</span>
+</code></pre>
+<hr>
+<h2 id="security-compliance-6-compliance-frameworks" class="docmd-heading"><a href="#security-compliance-6-compliance-frameworks" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Compliance Frameworks</h2>
+<h3 id="security-compliance-6-compliance-frameworks-61-gdpr-india-dpdpa-compliance" class="docmd-heading"><a href="#security-compliance-6-compliance-frameworks-61-gdpr-india-dpdpa-compliance" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 GDPR / India DPDPA Compliance</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right to access</td>
+<td><code>GET /users/me</code> returns all personal data; <code>GET /users/me/data-export</code> generates full export</td>
+</tr>
+<tr>
+<td>Right to erasure</td>
+<td><code>DELETE /users/me</code> triggers soft-delete → anonymization job (30-day grace period)</td>
+</tr>
+<tr>
+<td>Right to portability</td>
+<td>Data export in JSON format, emailed within 48 hours</td>
+</tr>
+<tr>
+<td>Consent</td>
+<td>Explicit consent recorded with timestamp and version for marketing emails, analytics</td>
+</tr>
+<tr>
+<td>Data retention</td>
+<td>Payment records: 7 years (legal), Chat logs: 90 days, Activity logs: 12 months</td>
+</tr>
+<tr>
+<td>Data breach notification</td>
+<td>Procedure: detect → notify DPO → notify users within 72 hours → notify regulator</td>
+</tr>
+<tr>
+<td>DPA</td>
+<td>Data Processing Agreement template available for institutional clients</td>
+</tr>
+<tr>
+<td>Privacy policy</td>
+<td>Accessible at /privacy, version-controlled, plain language</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="security-compliance-6-compliance-frameworks-62-coppa-compliance-minors-age-1317" class="docmd-heading"><a href="#security-compliance-6-compliance-frameworks-62-coppa-compliance-minors-age-1317" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 COPPA Compliance (Minors, Age 13–17)</h3>
+<pre class="hljs"><code>Age verification<span class="hljs-punctuation">:</span> Age range collected during onboarding
+Parental consent<span class="hljs-punctuation">:</span> If age <span class="hljs-number">13</span>–<span class="hljs-number">15</span>, parental consent email required
+Data collection<span class="hljs-punctuation">:</span> Minimal — no location tracking, no behavioral profiling <span class="hljs-keyword">for</span> ads
+AI restrictions<span class="hljs-punctuation">:</span> More conservative content filters <span class="hljs-keyword">for</span> minor accounts
+Profile visibility<span class="hljs-punctuation">:</span> No <span class="hljs-keyword">public</span> profiles <span class="hljs-keyword">for</span> minor accounts
+Data deletion<span class="hljs-punctuation">:</span> Easier deletion process <span class="hljs-keyword">for</span> minors
+</code></pre>
+<h3 id="security-compliance-6-compliance-frameworks-63-payment-card-industry-pci-dss" class="docmd-heading"><a href="#security-compliance-6-compliance-frameworks-63-payment-card-industry-pci-dss" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Payment Card Industry (PCI DSS)</h3>
+<pre class="hljs"><code>Scope<span class="hljs-punctuation">:</span> Minimal — we <span class="hljs-keyword">do</span> not store, process, or transmit card data
+Implementation<span class="hljs-punctuation">:</span> Razorpay and Stripe handle all card processing
+Our responsibility<span class="hljs-punctuation">:</span> SAQ A <span class="hljs-title function_">compliance</span> (merchant <span class="hljs-keyword">with</span> outsourced cardholder data)
+Requirements<span class="hljs-punctuation">:</span> Secure redirect to payment gateway, no card data <span class="hljs-keyword">in</span> logs or DB
+Annual review<span class="hljs-punctuation">:</span> SAQ A self<span class="hljs-punctuation">-</span>assessment completed annually
+</code></pre>
+<hr>
+<h2 id="security-compliance-7-security-testing" class="docmd-heading"><a href="#security-compliance-7-security-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Security Testing</h2>
+<h3 id="security-compliance-7-security-testing-71-pre-launch-vapt-requirements" class="docmd-heading"><a href="#security-compliance-7-security-testing-71-pre-launch-vapt-requirements" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.1 Pre-Launch VAPT Requirements</h3>
+<ul>
+<li>Automated DAST scanning: OWASP ZAP against staging environment</li>
+<li>Dependency audit: <code>npm audit --audit-level=high</code> — zero high/critical vulnerabilities</li>
+<li>Static analysis: ESLint security rules + SonarQube</li>
+<li>Manual penetration testing: External security firm, 3-day engagement</li>
+<li>Red team exercise: Simulated phishing + social engineering test</li>
+</ul>
+<h3 id="security-compliance-7-security-testing-72-ongoing-security-testing" class="docmd-heading"><a href="#security-compliance-7-security-testing-72-ongoing-security-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.2 Ongoing Security Testing</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Frequency</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dependency vulnerability scan</td>
+<td>Daily (CI/CD)</td>
+<td>Snyk / npm audit</td>
+</tr>
+<tr>
+<td>Container image scan</td>
+<td>Per deployment</td>
+<td>Trivy</td>
+</tr>
+<tr>
+<td>DAST scan</td>
+<td>Weekly</td>
+<td>OWASP ZAP</td>
+</tr>
+<tr>
+<td>Infrastructure scan</td>
+<td>Monthly</td>
+<td>AWS Inspector</td>
+</tr>
+<tr>
+<td>Penetration test</td>
+<td>Annually</td>
+<td>External firm</td>
+</tr>
+<tr>
+<td>Social engineering test</td>
+<td>Annually</td>
+<td>External firm</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="security-compliance-8-incident-response-plan" class="docmd-heading"><a href="#security-compliance-8-incident-response-plan" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Incident Response Plan</h2>
+<h3 id="security-compliance-8-incident-response-plan-81-incident-severity-levels" class="docmd-heading"><a href="#security-compliance-8-incident-response-plan-81-incident-severity-levels" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.1 Incident Severity Levels</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Description</th>
+<th>Example</th>
+<th>Response Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1 - Critical</td>
+<td>Data breach, service down</td>
+<td>DB exposed publicly</td>
+<td>15 minutes</td>
+</tr>
+<tr>
+<td>P2 - High</td>
+<td>Major feature broken, payment issue</td>
+<td>Payment processing down</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>P3 - Medium</td>
+<td>Degraded performance, minor feature broken</td>
+<td>Slow API responses</td>
+<td>4 hours</td>
+</tr>
+<tr>
+<td>P4 - Low</td>
+<td>UI issue, minor bug</td>
+<td>Button alignment wrong</td>
+<td>24 hours</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="security-compliance-8-incident-response-plan-82-response-procedure-p1-critical" class="docmd-heading"><a href="#security-compliance-8-incident-response-plan-82-response-procedure-p1-critical" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.2 Response Procedure (P1 - Critical)</h3>
+<ol>
+<li><strong>Detect</strong> — Automated alert fires (Sentry/DataDog) → On-call engineer paged</li>
+<li><strong>Contain</strong> — Isolate affected system; rotate credentials if compromised</li>
+<li><strong>Assess</strong> — Determine scope of breach/impact</li>
+<li><strong>Notify</strong> — Internal escalation → Legal/DPO → If user data affected: notify users within 72h</li>
+<li><strong>Remediate</strong> — Fix vulnerability, deploy patch, restore service</li>
+<li><strong>Review</strong> — Post-incident report within 48h; update runbooks</li>
+<li><strong>Test</strong> — Verify fix + run regression</li>
+</ol>
+<h3 id="security-compliance-8-incident-response-plan-83-contact-escalation" class="docmd-heading"><a href="#security-compliance-8-incident-response-plan-83-contact-escalation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.3 Contact &amp; Escalation</h3>
+<ul>
+<li>Security email: <a href="mailto:security@learnflow.ai">security@learnflow.ai</a></li>
+<li>Bug bounty: Responsible disclosure program at <a href="http://hackerone.learnflow.ai">hackerone.learnflow.ai</a></li>
+<li>On-call rotation: PagerDuty with 24/7 coverage for P1/P2 incidents</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Frontend Architecture — Flutter &amp; React/Next.js
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            AI Integration &amp; Prompt Engineering Guide
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#security-compliance" class="toc-link">Security &amp; Compliance</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-1-security-philosophy" class="toc-link">1. Security Philosophy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-2-authentication-identity-security" class="toc-link">2. Authentication &amp; Identity Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-2-authentication-identity-security-21-jwt-token-strategy" class="toc-link">2.1 JWT Token Strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-2-authentication-identity-security-22-password-security" class="toc-link">2.2 Password Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-2-authentication-identity-security-23-otp-security" class="toc-link">2.3 OTP Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-2-authentication-identity-security-24-brute-force-protection" class="toc-link">2.4 Brute Force Protection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-2-authentication-identity-security-25-multi-factor-authentication-mfa" class="toc-link">2.5 Multi-Factor Authentication (MFA)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-3-data-protection" class="toc-link">3. Data Protection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-3-data-protection-31-encryption-at-rest" class="toc-link">3.1 Encryption at Rest</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-3-data-protection-32-encryption-in-transit" class="toc-link">3.2 Encryption in Transit</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-3-data-protection-33-data-minimization-privacy" class="toc-link">3.3 Data Minimization &amp; Privacy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-4-application-security-owasp-top-10" class="toc-link">4. Application Security (OWASP Top 10)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-41-sql-injection-prevention" class="toc-link">4.1 SQL Injection Prevention</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-42-cross-site-scripting-xss-prevention" class="toc-link">4.2 Cross-Site Scripting (XSS) Prevention</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-43-cross-site-request-forgery-csrf" class="toc-link">4.3 Cross-Site Request Forgery (CSRF)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-44-broken-access-control" class="toc-link">4.4 Broken Access Control</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-45-security-misconfiguration-prevention" class="toc-link">4.5 Security Misconfiguration Prevention</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-46-file-upload-security" class="toc-link">4.6 File Upload Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-4-application-security-owasp-top-10-47-input-validation-zod" class="toc-link">4.7 Input Validation (Zod)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-5-infrastructure-security" class="toc-link">5. Infrastructure Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-5-infrastructure-security-51-network-architecture" class="toc-link">5.1 Network Architecture</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-5-infrastructure-security-52-container-security" class="toc-link">5.2 Container Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-5-infrastructure-security-53-secrets-management" class="toc-link">5.3 Secrets Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-5-infrastructure-security-54-logging-monitoring" class="toc-link">5.4 Logging &amp; Monitoring</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-6-compliance-frameworks" class="toc-link">6. Compliance Frameworks</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-6-compliance-frameworks-61-gdpr-india-dpdpa-compliance" class="toc-link">6.1 GDPR / India DPDPA Compliance</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-6-compliance-frameworks-62-coppa-compliance-minors-age-1317" class="toc-link">6.2 COPPA Compliance (Minors, Age 13–17)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-6-compliance-frameworks-63-payment-card-industry-pci-dss" class="toc-link">6.3 Payment Card Industry (PCI DSS)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-7-security-testing" class="toc-link">7. Security Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-7-security-testing-71-pre-launch-vapt-requirements" class="toc-link">7.1 Pre-Launch VAPT Requirements</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-7-security-testing-72-ongoing-security-testing" class="toc-link">7.2 Ongoing Security Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#security-compliance-8-incident-response-plan" class="toc-link">8. Incident Response Plan</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-8-incident-response-plan-81-incident-severity-levels" class="toc-link">8.1 Incident Severity Levels</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-8-incident-response-plan-82-response-procedure-p1-critical" class="toc-link">8.2 Response Procedure (P1 - Critical)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#security-compliance-8-incident-response-plan-83-contact-escalation" class="toc-link">8.3 Contact &amp; Escalation</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

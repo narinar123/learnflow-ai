@@ -1,0 +1,2499 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Product Requirements Document (PRD) : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/01_business_and_prd/product_requirements_document_prd/">
+<meta property="og:title" content="Product Requirements Document (PRD) - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/01_business_and_prd/product_requirements_document_prd/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Product Requirements Document (PRD) - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/01_business_and_prd/product_requirements_document_prd.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Product Requirements Document (PRD)
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Product%20Requirements%20Document%20(PRD)%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%20%7C%20**Status%3A**%20Approved%0A%0A---%0A%0A%23%23%201.%20Document%20Purpose%20%26%20Scope%0A%0AThis%20PRD%20defines%20all%20functional%20and%20non-functional%20requirements%20for%20**LearnFlow%20AI**%2C%20an%20AI-powered%2C%20cross-platform%20learning%20and%20membership%20management%20system.%20It%20serves%20as%20the%20authoritative%20source%20of%20truth%20for%20the%20product%20team%2C%20engineering%20team%2C%20design%20team%2C%20QA%2C%20and%20stakeholders%20throughout%20all%20development%20phases.%0A%0A**Scope%20Includes%3A**%20All%20modules%20from%20authentication%20through%20AI%20assistant%2C%20gamification%2C%20payments%2C%20certificates%2C%20admin%2C%20and%20marketing%20website%20across%20all%20target%20platforms.%0A%0A**Scope%20Excludes%3A**%20Offline-first%20native%20desktop%20clients%2C%20third-party%20LMS%20integrations%20(Phase%202%2B)%2C%20hardware%20products.%0A%0A---%0A%0A%23%23%202.%20Product%20Summary%0A%0ALearnFlow%20AI%20is%20an%20AI-powered%20eLearning%20and%20membership%20management%20platform%20available%20across%20iOS%2C%20Android%2C%20iPad%2C%20tablet%2C%20web%20app%2C%20desktop%20(Electron)%2C%20and%20a%20marketing%20website.%20It%20enables%20learners%20to%20discover%2C%20enroll%20in%2C%20and%20complete%20courses%3B%20trainers%20to%20create%20and%20monetize%20content%3B%20institutions%20to%20manage%20team%20learning%3B%20and%20administrators%20to%20operate%20the%20business%20%E2%80%94%20all%20powered%20by%20an%20embedded%20AI%20assistant%20and%20gamification%20engine.%0A%0A---%0A%0A%23%23%203.%20Stakeholders%0A%0A%7C%20Stakeholder%20%7C%20Role%20%7C%20Key%20Interest%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Product%20Manager%20%7C%20Owner%20of%20this%20PRD%20%7C%20Feature%20completeness%2C%20market%20fit%20%7C%0A%7C%20UX%2FUI%20Designer%20%7C%20Design%20execution%20%7C%20Usability%2C%20accessibility%2C%20aesthetics%20%7C%0A%7C%20Frontend%20Engineers%20(Flutter%20%2B%20React)%20%7C%20UI%20implementation%20%7C%20Clear%20specs%2C%20design%20tokens%2C%20API%20contracts%20%7C%0A%7C%20Backend%20Engineers%20(Node.js)%20%7C%20API%20%2B%20DB%20implementation%20%7C%20Data%20models%2C%20performance%2C%20security%20%7C%0A%7C%20AI%2FML%20Engineer%20%7C%20AI%20integration%20%7C%20Prompt%20quality%2C%20RAG%20accuracy%2C%20latency%20%7C%0A%7C%20QA%20Engineers%20%7C%20Testing%20%7C%20Acceptance%20criteria%2C%20edge%20cases%20%7C%0A%7C%20Trainers%20%7C%20Content%20creators%20%7C%20Easy%20publishing%2C%20high%20revenue%20share%20%7C%0A%7C%20Learners%20%7C%20End%20users%20%7C%20Value%2C%20ease%20of%20use%2C%20motivation%20%7C%0A%7C%20Institutions%20%7C%20B2B%20clients%20%7C%20Reporting%2C%20admin%20control%2C%20ROI%20%7C%0A%7C%20Investors%20%7C%20Funding%20partners%20%7C%20Growth%20metrics%2C%20retention%2C%20revenue%20%7C%0A%0A---%0A%0A%23%23%204.%20Platform%20%26%20Device%20Requirements%0A%0A%7C%20Platform%20%7C%20Minimum%20Spec%20%7C%20Target%20Framework%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20iOS%20%7C%20iPhone%2012%2B%2C%20iOS%2016%2B%20%7C%20Flutter%203.x%20%7C%0A%7C%20Android%20%7C%20Android%208.0%20(API%2026)%2B%2C%202GB%20RAM%20%7C%20Flutter%203.x%20%7C%0A%7C%20iPad%20%7C%20iPadOS%2016%2B%2C%20any%20iPad%20%7C%20Flutter%203.x%20(adaptive%20layout)%20%7C%0A%7C%20Android%20Tablet%20%7C%20Android%2010%2B%2C%201920%C3%971200%20%7C%20Flutter%203.x%20%7C%0A%7C%20Web%20App%20%7C%20Chrome%20110%2B%2C%20Firefox%20115%2B%2C%20Safari%2016%2B%20%7C%20Next.js%2014%2B%20(App%20Router)%20%7C%0A%7C%20Desktop%20App%20%7C%20macOS%2012%2B%2C%20Windows%2010%2B%20%7C%20Electron%2030%2B%20wrapping%20Next.js%20build%20%7C%0A%7C%20Marketing%20Website%20%7C%20All%20modern%20browsers%20%7C%20Next.js%2014%2B%20(SSG%2FSSR)%20%7C%0A%0A---%0A%0A%23%23%205.%20Functional%20Requirements%20by%20Module%0A%0A%23%23%23%20Module%20AUTH%20%E2%80%94%20Authentication%20%26%20Identity%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20AUTH-001%20%7C%20User%20shall%20register%20with%20email%20%2B%20password%20%7C%20P0%20%7C%20Form%20validates%20email%20format%2C%20password%20min%208%20chars%2C%20account%20created%2C%20OTP%20sent%20%7C%0A%7C%20AUTH-002%20%7C%20User%20shall%20register%20with%20phone%20number%20%2B%20OTP%20%7C%20P0%20%7C%206-digit%20OTP%20delivered%20via%20SMS%20within%2030s%2C%20valid%20for%2010%20minutes%2C%203-attempt%20limit%20%7C%0A%7C%20AUTH-003%20%7C%20User%20shall%20log%20in%20with%20email%20%2B%20password%20%7C%20P0%20%7C%20Valid%20credentials%20grant%20JWT%20access%20%2B%20refresh%20tokens%20%7C%0A%7C%20AUTH-004%20%7C%20User%20shall%20log%20in%20with%20phone%20%2B%20OTP%20%7C%20P0%20%7C%20Same%20as%20AUTH-002%20for%20login%20flow%20%7C%0A%7C%20AUTH-005%20%7C%20User%20shall%20log%20in%20with%20Google%20OAuth2%20%7C%20P1%20%7C%20Google%20OAuth%20flow%20completes%2C%20profile%20auto-populated%20%7C%0A%7C%20AUTH-006%20%7C%20User%20shall%20log%20in%20with%20Apple%20Sign-In%20(iOS)%20%7C%20P1%20%7C%20Apple%20ID%20login%20completes%2C%20anonymous%20email%20option%20supported%20%7C%0A%7C%20AUTH-007%20%7C%20User%20shall%20reset%20password%20via%20email%20link%20%7C%20P0%20%7C%20Password%20reset%20email%20sent%20within%2060s%2C%20link%20expires%20in%2024h%20%7C%0A%7C%20AUTH-008%20%7C%20System%20shall%20enforce%20JWT%20refresh%20token%20rotation%20%7C%20P0%20%7C%20Access%20token%20expires%20in%2015min%2C%20refresh%20token%20in%207%20days%2C%20rotation%20on%20use%20%7C%0A%7C%20AUTH-009%20%7C%20User%20shall%20enable%20biometric%20authentication%20%7C%20P1%20%7C%20Face%20ID%20%2F%20fingerprint%20stored%20locally%2C%20used%20to%20skip%20PIN%20entry%20on%20reopen%20%7C%0A%7C%20AUTH-010%20%7C%20System%20shall%20lock%20account%20after%205%20failed%20login%20attempts%20%7C%20P0%20%7C%20Account%20locked%20for%2015%20minutes%2C%20email%20notification%20sent%20%7C%0A%7C%20AUTH-011%20%7C%20Admin%20shall%20be%20able%20to%20terminate%20any%20user%20session%20%7C%20P0%20%7C%20Admin%20action%20invalidates%20all%20refresh%20tokens%20for%20target%20user%20%7C%0A%7C%20AUTH-012%20%7C%20System%20shall%20log%20all%20authentication%20events%20%7C%20P0%20%7C%20Timestamp%2C%20IP%2C%20device%20ID%20logged%20per%20login%2Flogout%2Ffailed%20attempt%20%7C%0A%0A%23%23%23%20Module%20COURSES%20%E2%80%94%20Course%20Discovery%20%26%20Management%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20CRS-001%20%7C%20User%20shall%20browse%20course%20catalog%20with%20categories%20%7C%20P0%20%7C%20Categories%20load%20in%20%E2%89%A4500ms%2C%20at%20least%2020%20categories%20supported%20%7C%0A%7C%20CRS-002%20%7C%20User%20shall%20search%20courses%20with%20text%20%2B%20filters%20%7C%20P0%20%7C%20Search%20returns%20results%20in%20%E2%89%A4300ms%2C%20filters%3A%20category%2C%20level%2C%20duration%2C%20rating%2C%20price%20%7C%0A%7C%20CRS-003%20%7C%20User%20shall%20view%20course%20detail%20page%20%7C%20P0%20%7C%20Shows%20title%2C%20description%2C%20syllabus%2C%20instructor%2C%20reviews%2C%20price%2C%20enroll%20CTA%20%7C%0A%7C%20CRS-004%20%7C%20User%20shall%20enroll%20in%20a%20free%20course%20instantly%20%7C%20P0%20%7C%20One%20click%2C%20enrollment%20confirmed%2C%20redirect%20to%20lesson%20player%20%7C%0A%7C%20CRS-005%20%7C%20User%20shall%20purchase%20a%20paid%20course%20%7C%20P0%20%7C%20Razorpay%2FStripe%20checkout%20completes%2C%20enrollment%20activated%20on%20payment%20%7C%0A%7C%20CRS-006%20%7C%20User%20shall%20bookmark%2Fsave%20courses%20for%20later%20%7C%20P1%20%7C%20Saved%20courses%20appear%20in%20%22My%20Wishlist%22%20section%20%7C%0A%7C%20CRS-007%20%7C%20User%20shall%20rate%20and%20review%20a%20course%20%7C%20P1%20%7C%20Rating%201%E2%80%935%20stars%20%2B%20text%20review%2C%20submitted%20after%20completing%20%E2%89%A520%25%20of%20course%20%7C%0A%7C%20CRS-008%20%7C%20System%20shall%20recommend%20courses%20based%20on%20AI%20%7C%20P1%20%7C%20AI%20recommendation%20appears%20on%20dashboard%2C%20based%20on%20enrolled%20courses%20%2B%20goals%20%7C%0A%7C%20CRS-009%20%7C%20Trainer%20shall%20create%20a%20new%20course%20with%20title%20and%20description%20%7C%20P0%20%7C%20Course%20saved%20as%20draft%2C%20visible%20only%20to%20trainer%20until%20published%20%7C%0A%7C%20CRS-010%20%7C%20Trainer%20shall%20publish%2Funpublish%20a%20course%20%7C%20P0%20%7C%20Published%20courses%20appear%20in%20catalog%3B%20unpublished%20are%20hidden%20but%20data%20retained%20%7C%0A%7C%20CRS-011%20%7C%20Admin%20shall%20feature%20or%20remove%20a%20course%20from%20homepage%20%7C%20P1%20%7C%20Featured%20flag%20toggled%20in%20admin%20panel%2C%20updates%20homepage%20within%205%20minutes%20%7C%0A%7C%20CRS-012%20%7C%20System%20shall%20track%20and%20display%20course%20progress%20%7C%20P0%20%7C%20Progress%20bar%20shows%20%25%20completion%2C%20auto-updated%20after%20each%20lesson%20%7C%0A%0A%23%23%23%20Module%20LESSONS%20%E2%80%94%20Lesson%20Delivery%20%26%20Player%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20LSN-001%20%7C%20User%20shall%20play%20video%20lessons%20with%20controls%20%7C%20P0%20%7C%20Play%2C%20pause%2C%20seek%2C%20fullscreen%2C%20playback%20speed%20(0.5x%E2%80%932x)%2C%20volume%20control%20%7C%0A%7C%20LSN-002%20%7C%20User%20shall%20view%20PDF%2Fdocument%20lessons%20inline%20%7C%20P0%20%7C%20PDF%20renders%20inside%20app%20(no%20external%20app%20launch)%2C%20zoom%20supported%20%7C%0A%7C%20LSN-003%20%7C%20User%20shall%20take%20and%20save%20lesson%20notes%20%7C%20P1%20%7C%20Notes%20editor%20opens%20as%20overlay%2C%20saved%20per%20lesson%2C%20exportable%20as%20PDF%20%7C%0A%7C%20LSN-004%20%7C%20User%20shall%20bookmark%20timestamps%20in%20video%20lessons%20%7C%20P1%20%7C%20Bookmarks%20stored%20per%20user-lesson%2C%20listed%20in%20%22My%20Notes%22%20%7C%0A%7C%20LSN-005%20%7C%20User%20shall%20download%20lesson%20for%20offline%20viewing%20%7C%20P1%20%7C%20Download%20queued%2C%20stored%20encrypted%20locally%2C%20accessible%20without%20internet%20%7C%0A%7C%20LSN-006%20%7C%20System%20shall%20auto-resume%20lesson%20from%20last%20position%20%7C%20P0%20%7C%20Playback%20resumes%20from%20last%20watched%20second%20across%20sessions%20and%20devices%20%7C%0A%7C%20LSN-007%20%7C%20System%20shall%20mark%20lesson%20complete%20on%20reaching%20end%20%7C%20P0%20%7C%20Lesson%20marked%20complete%20when%2090%25%2B%20of%20content%20viewed%2Fplayed%20%7C%0A%7C%20LSN-008%20%7C%20Trainer%20shall%20upload%20video%20files%20up%20to%202GB%20%7C%20P0%20%7C%20Multi-part%20upload%20to%20cloud%20storage%2C%20progress%20indicator%2C%20auto-transcoding%20%7C%0A%7C%20LSN-009%20%7C%20System%20shall%20generate%20auto-captions%20for%20videos%20%7C%20P1%20%7C%20AI-generated%20captions%20available%20in%20English%2C%20editable%20by%20trainer%20%7C%0A%7C%20LSN-010%20%7C%20System%20shall%20support%20lesson%20ordering%20via%20drag-and-drop%20%7C%20P1%20%7C%20Trainer%20can%20reorder%20lessons%20in%20course%20builder%20%7C%0A%0A%23%23%23%20Module%20QUIZ%20%E2%80%94%20Quiz%20%26%20Assessment%20Engine%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20QUIZ-001%20%7C%20System%20shall%20support%20multiple-choice%20questions%20(MCQ)%20%7C%20P0%20%7C%20Single%20correct%20answer%2C%20immediate%20feedback%20after%20submission%20%7C%0A%7C%20QUIZ-002%20%7C%20System%20shall%20support%20multiple-select%20questions%20%7C%20P1%20%7C%20Multiple%20correct%20answers%2C%20partial%20scoring%20supported%20%7C%0A%7C%20QUIZ-003%20%7C%20System%20shall%20support%20true%2Ffalse%20questions%20%7C%20P0%20%7C%20Binary%20choice%2C%20scored%200%20or%201%20%7C%0A%7C%20QUIZ-004%20%7C%20System%20shall%20support%20fill-in-the-blank%20questions%20%7C%20P1%20%7C%20Text%20input%2C%20case-insensitive%20matching%20with%20accepted%20variations%20%7C%0A%7C%20QUIZ-005%20%7C%20System%20shall%20support%20image-based%20questions%20%7C%20P2%20%7C%20Question%20includes%20image%20reference%2C%20MCQ%20answers%20%7C%0A%7C%20QUIZ-006%20%7C%20Quiz%20shall%20support%20countdown%20timer%20%7C%20P0%20%7C%20Timer%20visible%2C%20quiz%20auto-submits%20on%20timeout%2C%20time%20per%20question%20configurable%20%7C%0A%7C%20QUIZ-007%20%7C%20User%20shall%20see%20instant%20result%20with%20score%20and%20review%20%7C%20P0%20%7C%20Score%20shown%20immediately%2C%20correct%20answers%20shown%20for%20incorrect%20responses%20%7C%0A%7C%20QUIZ-008%20%7C%20User%20shall%20retry%20a%20failed%20quiz%20after%20cool-down%20period%20%7C%20P0%20%7C%20Configurable%20attempts%20(1%E2%80%935)%2C%20cool-down%20period%20(0%E2%80%9324h)%20set%20by%20trainer%20%7C%0A%7C%20QUIZ-009%20%7C%20AI%20shall%20generate%20quiz%20questions%20from%20lesson%20content%20%7C%20P1%20%7C%20AI%20generates%205%E2%80%9310%20MCQ%2Ffill-blank%20questions%20per%20lesson%20on%20trainer%20request%20%7C%0A%7C%20QUIZ-010%20%7C%20System%20shall%20record%20quiz%20attempt%20history%20%7C%20P0%20%7C%20All%20attempts%20stored%20with%20score%2C%20time%20taken%2C%20answers%2C%20date%20%7C%0A%7C%20QUIZ-011%20%7C%20Admin%20shall%20configure%20quiz%20passing%20threshold%20%7C%20P0%20%7C%20Pass%20score%2050%E2%80%93100%25%20configurable%20per%20quiz%20%7C%0A%7C%20QUIZ-012%20%7C%20System%20shall%20display%20leaderboard%20for%20timed%20quizzes%20%7C%20P2%20%7C%20Top%2010%20scores%20shown%20for%20course-level%20competitive%20quizzes%20%7C%0A%0A%23%23%23%20Module%20CERTIFICATES%20%E2%80%94%20Certificate%20Generation%20%26%20Management%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20CERT-001%20%7C%20System%20shall%20auto-generate%20certificate%20on%20course%20completion%20%7C%20P0%20%7C%20Certificate%20generated%20within%205%20seconds%20of%20completion%20%7C%0A%7C%20CERT-002%20%7C%20Certificate%20shall%20include%20user%20name%2C%20course%20name%2C%20date%2C%20trainer%20name%20%7C%20P0%20%7C%20All%20fields%20populated%20from%20DB%2C%20visually%20verified%20%7C%0A%7C%20CERT-003%20%7C%20User%20shall%20download%20certificate%20as%20PDF%20%7C%20P0%20%7C%20High-quality%20PDF%20(A4%20300dpi)%2C%20branded%20template%20%7C%0A%7C%20CERT-004%20%7C%20User%20shall%20share%20certificate%20to%20LinkedIn%20%7C%20P0%20%7C%20LinkedIn%20Add-to-Profile%20URL%20pre-populated%20with%20title%2C%20org%2C%20date%2C%20URL%20%7C%0A%7C%20CERT-005%20%7C%20Certificate%20shall%20have%20a%20unique%20verification%20URL%2FQR%20code%20%7C%20P0%20%7C%20Public%20verification%20page%20shows%20certificate%20authenticity%20without%20login%20%7C%0A%7C%20CERT-006%20%7C%20System%20shall%20support%20multiple%20certificate%20templates%20%7C%20P1%20%7C%20Admin%20can%20select%20from%205%2B%20templates%20per%20course%2Finstitution%20%7C%0A%7C%20CERT-007%20%7C%20Admin%20shall%20revoke%20a%20certificate%20with%20reason%20%7C%20P0%20%7C%20Revoked%20certificate%20shows%20%22Invalid%22%20on%20verification%20page%20%7C%0A%7C%20CERT-008%20%7C%20User%20shall%20view%20all%20earned%20certificates%20in%20profile%20%7C%20P0%20%7C%20Certificate%20gallery%20with%20search%20and%20filter%20%7C%0A%0A%23%23%23%20Module%20MEMBERSHIP%20%E2%80%94%20Subscription%20Management%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20MEM-001%20%7C%20User%20shall%20view%20all%20membership%20plan%20details%20%7C%20P0%20%7C%20Plans%20page%20shows%20features%2C%20price%20(monthly%20%2B%20annual)%2C%20CTA%20%7C%0A%7C%20MEM-002%20%7C%20User%20shall%20subscribe%20to%20a%20plan%20%7C%20P0%20%7C%20Payment%20processed%2C%20plan%20activated%20immediately%2C%20receipt%20emailed%20%7C%0A%7C%20MEM-003%20%7C%20User%20shall%20upgrade%20or%20downgrade%20plan%20%7C%20P0%20%7C%20Prorated%20billing%20applied%2C%20effective%20immediately%20%7C%0A%7C%20MEM-004%20%7C%20User%20shall%20cancel%20subscription%20%7C%20P0%20%7C%20Cancellation%20effective%20at%20end%20of%20billing%20period%2C%20access%20retained%20until%20then%20%7C%0A%7C%20MEM-005%20%7C%20System%20shall%20send%20renewal%20reminder%207%20days%20before%20expiry%20%7C%20P0%20%7C%20Push%20%2B%20email%20notification%20sent%20at%207%20days%20and%201%20day%20before%20expiry%20%7C%0A%7C%20MEM-006%20%7C%20System%20shall%20handle%20failed%20payment%20with%20retry%20logic%20%7C%20P0%20%7C%203%20retry%20attempts%20over%207%20days%2C%20dunning%20email%20sent%2C%20grace%20period%203%20days%20%7C%0A%7C%20MEM-007%20%7C%20Admin%20shall%20manually%20apply%20or%20remove%20a%20coupon%2Fdiscount%20%7C%20P1%20%7C%20Discount%20applied%20to%20next%20invoice%2C%20tracked%20in%20payment%20records%20%7C%0A%7C%20MEM-008%20%7C%20Institution%20shall%20purchase%20bulk%20seats%20%7C%20P0%20%7C%20Minimum%2010%20seats%2C%20quote%20request%20flow%2C%20admin%20dashboard%20provisioned%20%7C%0A%0A%23%23%23%20Module%20PAYMENTS%20%E2%80%94%20Payment%20Processing%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20PAY-001%20%7C%20System%20shall%20process%20payments%20via%20Razorpay%20(India)%20%7C%20P0%20%7C%20UPI%2C%20Net%20Banking%2C%20Cards%2C%20Wallets%20supported%20%7C%0A%7C%20PAY-002%20%7C%20System%20shall%20process%20payments%20via%20Stripe%20(International)%20%7C%20P0%20%7C%20Visa%2C%20Mastercard%2C%20PayPal%20supported%20%7C%0A%7C%20PAY-003%20%7C%20System%20shall%20generate%20invoice%20for%20every%20transaction%20%7C%20P0%20%7C%20Invoice%20PDF%20generated%2C%20stored%20in%20user%20account%2C%20emailed%20%7C%0A%7C%20PAY-004%20%7C%20System%20shall%20process%20refunds%20within%207%20business%20days%20%7C%20P0%20%7C%20Refund%20initiated%20via%20admin%20panel%2C%20timeline%20displayed%20to%20user%20%7C%0A%7C%20PAY-005%20%7C%20System%20shall%20handle%20multi-currency%20pricing%20%7C%20P1%20%7C%20INR%20for%20India%2C%20USD%20for%20international%2C%20auto-detected%20by%20IP%20%7C%0A%7C%20PAY-006%20%7C%20System%20shall%20maintain%20complete%20payment%20audit%20log%20%7C%20P0%20%7C%20All%20transactions%20with%20status%2C%20timestamps%2C%20gateway%20response%20logged%20%7C%0A%7C%20PAY-007%20%7C%20Trainer%20shall%20receive%20revenue%20share%20payouts%20monthly%20%7C%20P1%20%7C%2070%25%20of%20course%20sale%20amount%20transferred%20to%20linked%20bank%20account%20%7C%0A%0A%23%23%23%20Module%20AI%20ASSISTANT%20%E2%80%94%20AI%20Learning%20Companion%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20AI-001%20%7C%20User%20shall%20open%20AI%20chat%20assistant%20from%20any%20screen%20%7C%20P0%20%7C%20Floating%20button%2C%20slide-up%20drawer%2C%20responds%20in%20%E2%89%A42%20seconds%20%7C%0A%7C%20AI-002%20%7C%20AI%20shall%20answer%20questions%20about%20lesson%20content%20%7C%20P0%20%7C%20RAG-powered%20responses%20using%20lesson%20transcript%2FPDF%20context%20%7C%0A%7C%20AI-003%20%7C%20AI%20shall%20recommend%20next%20course%20based%20on%20history%20%7C%20P0%20%7C%20Recommendation%20with%20rationale%20shown%20in%20sidebar%20and%20email%20digest%20%7C%0A%7C%20AI-004%20%7C%20AI%20shall%20generate%20a%20personalized%20study%20plan%20%7C%20P1%20%7C%20Input%3A%20goal%2C%20available%20hours%2Fweek%20%E2%86%92%20Output%3A%20week-by-week%20course%20plan%20%7C%0A%7C%20AI-005%20%7C%20AI%20shall%20explain%20quiz%20answers%20in%20detail%20%7C%20P1%20%7C%20After%20quiz%20submission%2C%20%22Explain%20this%20answer%22%20button%20triggers%20AI%20explanation%20%7C%0A%7C%20AI-006%20%7C%20AI%20shall%20support%20voice%20queries%20%7C%20P2%20%7C%20Speech-to-text%20input%2C%20AI%20responds%20in%20text%20(TTS%20optional%20in%20P2)%20%7C%0A%7C%20AI-007%20%7C%20AI%20shall%20refuse%20inappropriate%2Foff-topic%20requests%20%7C%20P0%20%7C%20System%20prompt%20guardrails%2C%20refusal%20message%20with%20redirect%20to%20support%20%7C%0A%7C%20AI-008%20%7C%20System%20shall%20store%20conversation%20history%20per%20user%20%7C%20P0%20%7C%20Conversation%20history%20persisted%2C%20searchable%2C%20clearable%20by%20user%20%7C%0A%7C%20AI-009%20%7C%20System%20shall%20limit%20AI%20queries%20based%20on%20plan%20tier%20%7C%20P0%20%7C%20Free%3A%2010%2Fday%2C%20Basic%3A%2050%2Fday%2C%20Pro%2B%3A%20unlimited%20%7C%0A%7C%20AI-010%20%7C%20Admin%20shall%20review%20AI%20conversation%20logs%20for%20safety%20%7C%20P1%20%7C%20Admin%20view%20of%20flagged%20conversations%2C%20with%20redaction%20tools%20%7C%0A%0A%23%23%23%20Module%20GAMIFICATION%20%E2%80%94%20Engagement%20Engine%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20GAM-001%20%7C%20System%20shall%20award%20XP%20for%20learning%20actions%20%7C%20P0%20%7C%20XP%20awarded%20immediately%2C%20visible%20on%20profile%20and%20activity%20feed%20%7C%0A%7C%20GAM-002%20%7C%20System%20shall%20display%20user%20level%20and%20progress%20to%20next%20level%20%7C%20P0%20%7C%20Level%20badge%20visible%20in%20profile%20header%2C%20XP%20bar%20shows%20progress%20%7C%0A%7C%20GAM-003%20%7C%20System%20shall%20award%20badges%20for%20achievements%20%7C%20P0%20%7C%20Badge%20awarded%20instantly%2C%20trophy%20case%20visible%20in%20profile%20%7C%0A%7C%20GAM-004%20%7C%20System%20shall%20maintain%20daily%20learning%20streaks%20%7C%20P0%20%7C%20Streak%20incremented%20on%20first%20lesson%2Fquiz%20per%20day%2C%20visible%20on%20dashboard%20%7C%0A%7C%20GAM-005%20%7C%20System%20shall%20show%20global%20and%20course%20leaderboards%20%7C%20P1%20%7C%20Weekly%20leaderboard%2C%20updated%20daily%2C%20opt-out%20option%20available%20%7C%0A%7C%20GAM-006%20%7C%20System%20shall%20present%20daily%20quests%20%7C%20P1%20%7C%203%20daily%20quests%20displayed%20on%20dashboard%2C%20expire%20at%20midnight%20%7C%0A%7C%20GAM-007%20%7C%20System%20shall%20display%20streak%20recovery%20(freeze)%20option%20%7C%20P1%20%7C%20Streak%20freeze%20purchasable%20with%20XP%20or%20real%20money%2C%20max%203%20active%20%7C%0A%7C%20GAM-008%20%7C%20System%20shall%20animate%20level-up%20and%20badge%20events%20%7C%20P0%20%7C%20Celebratory%20animation%20plays%20on%20achievement%2C%20dismissible%20%7C%0A%0A%23%23%23%20Module%20NOTIFICATIONS%20%E2%80%94%20Notification%20System%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20NOT-001%20%7C%20System%20shall%20send%20push%20notifications%20(iOS%20%2B%20Android)%20%7C%20P0%20%7C%20FCM%20%2B%20APNs%20configured%2C%20delivery%20rate%20%E2%89%A598%25%20%7C%0A%7C%20NOT-002%20%7C%20System%20shall%20send%20in-app%20notification%20bell%20%7C%20P0%20%7C%20Bell%20icon%20shows%20count%2C%20notifications%20list%20with%20read%2Funread%20state%20%7C%0A%7C%20NOT-003%20%7C%20System%20shall%20send%20transactional%20emails%20%7C%20P0%20%7C%20Welcome%2C%20receipt%2C%20OTP%2C%20password%20reset%2C%20certificate%20via%20SendGrid%20%7C%0A%7C%20NOT-004%20%7C%20System%20shall%20send%20re-engagement%20push%20after%203%20days%20inactivity%20%7C%20P1%20%7C%20Personalized%20message%20with%20course%20progress%20CTA%20%7C%0A%7C%20NOT-005%20%7C%20User%20shall%20manage%20notification%20preferences%20%7C%20P0%20%7C%20Toggle%20by%20type%3A%20Learning%20reminders%2C%20streak%20alerts%2C%20offers%2C%20news%20%7C%0A%7C%20NOT-006%20%7C%20System%20shall%20schedule%20notifications%20for%20best%20engagement%20time%20%7C%20P1%20%7C%20ML%20model%20predicts%20optimal%20send%20time%20per%20user%20based%20on%20activity%20history%20%7C%0A%0A%23%23%23%20Module%20SUPPORT%20%E2%80%94%20User%20Support%20System%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20SUP-001%20%7C%20User%20shall%20access%20FAQ%2Fhelp%20center%20via%20search%20%7C%20P0%20%7C%20Search%20returns%20relevant%20articles%20in%20%E2%89%A4200ms%2C%20categorized%20%7C%0A%7C%20SUP-002%20%7C%20User%20shall%20submit%20a%20support%20ticket%20%7C%20P0%20%7C%20Form%20with%20category%2C%20priority%2C%20description%3B%20confirmation%20with%20ticket%20ID%20%7C%0A%7C%20SUP-003%20%7C%20User%20shall%20track%20ticket%20status%20%7C%20P0%20%7C%20Status%3A%20Open%2C%20In%20Progress%2C%20Resolved%2C%20Closed%20%E2%80%94%20visible%20in%20support%20center%20%7C%0A%7C%20SUP-004%20%7C%20AI%20chatbot%20shall%20handle%20first-line%20support%20%7C%20P1%20%7C%20Chatbot%20resolves%20%E2%89%A540%25%20of%20queries%20without%20human%20agent%20%7C%0A%7C%20SUP-005%20%7C%20Support%20agent%20shall%20respond%20to%20tickets%20within%20SLA%20%7C%20P0%20%7C%20Free%3A%2048h%2C%20Basic%3A%2024h%2C%20Pro%3A%208h%2C%20Premium%3A%202h%20SLA%20%7C%0A%7C%20SUP-006%20%7C%20User%20shall%20rate%20support%20experience%20%7C%20P0%20%7C%20Post-resolution%20CSAT%20survey%20(1%E2%80%935%20stars%20%2B%20comment)%20%7C%0A%0A%23%23%23%20Module%20ADMIN%2FCRM%20%E2%80%94%20Administration%20%26%20Operations%0A%0A%7C%20ID%20%7C%20Requirement%20%7C%20Priority%20%7C%20Acceptance%20Criteria%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20ADM-001%20%7C%20Admin%20shall%20view%20real-time%20dashboard%20with%20key%20metrics%20%7C%20P0%20%7C%20Dashboard%20shows%3A%20DAU%2C%20MAU%2C%20MRR%2C%20enrollments%2C%20tickets%2C%20errors%20%7C%0A%7C%20ADM-002%20%7C%20Admin%20shall%20manage%20user%20accounts%20(view%2C%20edit%2C%20suspend%2C%20delete)%20%7C%20P0%20%7C%20CRUD%20operations%20with%20audit%20log%20%7C%0A%7C%20ADM-003%20%7C%20Admin%20shall%20manage%20all%20courses%20(approve%2C%20feature%2C%20remove)%20%7C%20P0%20%7C%20Course%20list%20with%20filters%2C%20approve%2Freject%2Ffeature%20controls%20%7C%0A%7C%20ADM-004%20%7C%20Admin%20shall%20create%20and%20manage%20promotional%20coupons%20%7C%20P1%20%7C%20Coupon%20with%3A%20code%2C%20discount%20type%20(%25%2C%20fixed)%2C%20usage%20limit%2C%20expiry%20date%20%7C%0A%7C%20ADM-005%20%7C%20Admin%20shall%20export%20user%20and%20revenue%20data%20as%20CSV%20%7C%20P0%20%7C%20Export%20triggers%20async%20job%2C%20download%20link%20emailed%20when%20ready%20%7C%0A%7C%20ADM-006%20%7C%20Admin%20shall%20view%20and%20manage%20support%20tickets%20%7C%20P0%20%7C%20Queue%20with%20filters%2C%20assignment%2C%20status%20update%2C%20response%20%7C%0A%7C%20ADM-007%20%7C%20Admin%20shall%20send%20broadcast%20notification%20to%20user%20segments%20%7C%20P1%20%7C%20Segment%20by%20plan%2C%20role%2C%20last%20active%20date%2C%20course%20enrollment%20%7C%0A%7C%20ADM-008%20%7C%20Admin%20shall%20view%20content%20analytics%20per%20course%20%7C%20P0%20%7C%20Enrollment%2C%20completion%2C%20drop-off%20point%2C%20average%20quiz%20score%20%7C%0A%7C%20ADM-009%20%7C%20Admin%20shall%20manage%20membership%20plan%20pricing%20%7C%20P0%20%7C%20Edit%20plan%20prices%2C%20features%2C%20billing%20cycle%20%7C%0A%7C%20ADM-010%20%7C%20Admin%20shall%20view%20AI%20usage%20statistics%20%7C%20P1%20%7C%20Queries%20per%20day%2C%20popular%20topics%2C%20failed%20responses%20%7C%0A%0A---%0A%0A%23%23%206.%20Non-Functional%20Requirements%0A%0A%23%23%23%206.1%20Performance%0A%7C%20Metric%20%7C%20Requirement%20%7C%0A%7C---%7C---%7C%0A%7C%20API%20response%20time%20(p50)%20%7C%20%3C%20100ms%20%7C%0A%7C%20API%20response%20time%20(p95)%20%7C%20%3C%20200ms%20%7C%0A%7C%20App%20cold%20start%20time%20%7C%20%3C%202%20seconds%20%7C%0A%7C%20Video%20buffer-to-play%20time%20%7C%20%3C%201%20second%20(on%204G)%20%7C%0A%7C%20Dashboard%20page%20load%20(web)%20%7C%20%3C%201.5%20seconds%20(LCP)%20%7C%0A%7C%20Search%20results%20return%20%7C%20%3C%20300ms%20%7C%0A%7C%20Certificate%20generation%20%7C%20%3C%205%20seconds%20%7C%0A%0A%23%23%23%206.2%20Scalability%0A-%20Support%20100%2C000%20concurrent%20users%20at%20launch%3B%20horizontally%20scalable%20to%201M%2B%0A-%20Database%20must%20support%2050M%2B%20records%20with%20%3C%20100ms%20query%20times%20(indexed)%0A-%20CDN-delivered%20video%20and%20static%20assets%2C%20edge-cached%20globally%0A%0A%23%23%23%206.3%20Accessibility%0A-%20WCAG%202.2%20Level%20AA%20compliance%20across%20all%20screens%0A-%20Minimum%20contrast%20ratio%3A%204.5%3A1%20for%20body%20text%2C%203%3A1%20for%20large%20text%0A-%20All%20interactive%20elements%20keyboard%20accessible%0A-%20Screen%20reader%20compatible%20(ARIA%20labels%2C%20semantic%20HTML%20for%20web)%0A-%20Minimum%20touch%20target%3A%2044%C3%9744pt%20(iOS)%2C%2048%C3%9748dp%20(Android)%0A-%20No%20color-only%20information%20encoding%0A-%20Captions%20for%20all%20video%20content%0A-%20Error%20messages%20must%20be%20descriptive%20and%20suggest%20correction%0A%0A%23%23%23%206.4%20Security%0A-%20OWASP%20Top%2010%20compliance%0A-%20All%20data%20encrypted%20at%20rest%20(AES-256)%20and%20in%20transit%20(TLS%201.3)%0A-%20JWT%20with%20short%20expiry%20and%20refresh%20rotation%0A-%20Rate%20limiting%20on%20all%20endpoints%20(per-IP%20and%20per-user)%0A-%20SQL%20injection%20and%20XSS%20protection%20via%20ORM%20%2B%20input%20sanitization%0A-%20File%20upload%20scanning%20for%20malware%20before%20storage%0A-%20VAPT%20(Vulnerability%20Assessment%20%26%20Pen%20Testing)%20before%20launch%0A%0A%23%23%23%206.5%20Reliability%20%26%20Uptime%0A-%20API%20uptime%3A%20%E2%89%A5%2099.9%25%20(excluding%20planned%20maintenance)%0A-%20Planned%20maintenance%20windows%3A%20Sunday%202%E2%80%934%20AM%20IST%0A-%20RTO%20(Recovery%20Time%20Objective)%3A%20%3C%201%20hour%0A-%20RPO%20(Recovery%20Point%20Objective)%3A%20%3C%2015%20minutes%0A-%20Automated%20database%20backups%3A%20every%206%20hours%2C%20retained%2030%20days%0A%0A%23%23%23%206.6%20Localization%0A-%20**Phase%201%3A**%20English%20(default)%0A-%20**Phase%202%3A**%20Hindi%2C%20Telugu%0A-%20**Phase%203%3A**%20Tamil%2C%20Kannada%2C%20Bengali%2C%20Marathi%0A-%20RTL%20language%20support%20architecture%20in%20place%20from%20Day%201%0A%0A---%0A%0A%23%23%207.%20Constraints%20%26%20Assumptions%0A%0A**Constraints%3A**%0A-%20Development%20team%20size%3A%208%E2%80%9312%20members%0A-%20Initial%20infrastructure%20budget%3A%20%E2%82%B93%20Lakh%2Fmonth%20(AWS%2FGCP)%0A-%20No%20hardware%20devices%20%E2%80%94%20software%20only%0A-%20Phase%201%20must%20launch%20within%2090%20days%20of%20design%20approval%0A%0A**Assumptions%3A**%0A-%20Razorpay%20and%20Stripe%20will%20be%20used%20as%20primary%20payment%20gateways%0A-%20Video%20storage%20will%20use%20S3-compatible%20object%20storage%20(AWS%20S3%20or%20Wasabi)%0A-%20AI%20assistant%20will%20be%20powered%20by%20Google%20Gemini%20API%20with%20RAG%20layer%0A-%20FCM%2FAPNs%20are%20available%20for%20push%20notifications%0A-%20All%20trainers%20are%20vetted%20manually%20in%20Phase%201%20(automated%20in%20Phase%202)%0A%0A---%0A%0A%23%23%208.%20Out%20of%20Scope%20(Phase%201)%0A%0A-%20Live%20streaming%20%2F%20webinar%20hosting%20(Phase%202)%0A-%20Discussion%20forums%20%2F%20community%20features%20(Phase%202)%0A-%20AI-generated%20course%20builder%20for%20trainers%20(Phase%203)%0A-%20Physical%20merchandise%20or%20vouchers%0A-%20Integration%20with%20external%20LMS%20(Moodle%2C%20Canvas)%0A-%20Native%20smart%20TV%20app%0A-%20AR%2FVR%20learning%20experiences%0A%0A---%0A%0A%23%23%209.%20Glossary%0A%0A%7C%20Term%20%7C%20Definition%20%7C%0A%7C---%7C---%7C%0A%7C%20Learner%20%7C%20Any%20user%20who%20enrolls%20in%20and%20studies%20courses%20%7C%0A%7C%20Trainer%20%7C%20A%20verified%20content%20creator%20who%20publishes%20courses%20on%20the%20platform%20%7C%0A%7C%20Institution%20%7C%20A%20corporate%20or%20educational%20organization%20purchasing%20group%20access%20%7C%0A%7C%20XP%20%7C%20Experience%20Points%2C%20the%20platform&#039;s%20gamification%20currency%20%7C%0A%7C%20RAG%20%7C%20Retrieval-Augmented%20Generation%20%E2%80%94%20AI%20technique%20combining%20a%20knowledge%20base%20with%20an%20LLM%20%7C%0A%7C%20LTV%20%7C%20Lifetime%20Value%20%E2%80%94%20total%20revenue%20expected%20from%20a%20single%20customer%20%7C%0A%7C%20CAC%20%7C%20Customer%20Acquisition%20Cost%20%E2%80%94%20total%20cost%20to%20acquire%20one%20paying%20customer%20%7C%0A%7C%20DAU%2FMAU%20%7C%20Daily%2FMonthly%20Active%20Users%20%E2%80%94%20core%20engagement%20metric%20%7C%0A%7C%20p95%20latency%20%7C%20The%20response%20time%20that%2095%25%20of%20all%20requests%20fall%20below%20%7C%0A%7C%20WCAG%202.2%20%7C%20Web%20Content%20Accessibility%20Guidelines%20version%202.2%20%7C%0A%7C%20OTP%20%7C%20One-Time%20Password%20%E2%80%94%20used%20for%20phone%2Femail%20verification%20%7C%0A%7C%20JWT%20%7C%20JSON%20Web%20Token%20%E2%80%94%20used%20for%20stateless%20authentication%20%7C%0A%7C%20FCM%20%7C%20Firebase%20Cloud%20Messaging%20%E2%80%94%20push%20notification%20service%20%7C%0A%7C%20SLA%20%7C%20Service%20Level%20Agreement%20%E2%80%94%20guaranteed%20support%20response%20time%20%7C%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>01 Business And Prd</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Product Requirements Document (PRD)</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="product-requirements-document-prd" class="docmd-heading"><a href="#product-requirements-document-prd" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Product Requirements Document (PRD)</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026 | <strong>Status:</strong> Approved</p>
+<hr>
+<h2 id="product-requirements-document-prd-1-document-purpose-scope" class="docmd-heading"><a href="#product-requirements-document-prd-1-document-purpose-scope" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Document Purpose &amp; Scope</h2>
+<p>This PRD defines all functional and non-functional requirements for <strong>LearnFlow AI</strong>, an AI-powered, cross-platform learning and membership management system. It serves as the authoritative source of truth for the product team, engineering team, design team, QA, and stakeholders throughout all development phases.</p>
+<p><strong>Scope Includes:</strong> All modules from authentication through AI assistant, gamification, payments, certificates, admin, and marketing website across all target platforms.</p>
+<p><strong>Scope Excludes:</strong> Offline-first native desktop clients, third-party LMS integrations (Phase 2+), hardware products.</p>
+<hr>
+<h2 id="product-requirements-document-prd-2-product-summary" class="docmd-heading"><a href="#product-requirements-document-prd-2-product-summary" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Product Summary</h2>
+<p>LearnFlow AI is an AI-powered eLearning and membership management platform available across iOS, Android, iPad, tablet, web app, desktop (Electron), and a marketing website. It enables learners to discover, enroll in, and complete courses; trainers to create and monetize content; institutions to manage team learning; and administrators to operate the business — all powered by an embedded AI assistant and gamification engine.</p>
+<hr>
+<h2 id="product-requirements-document-prd-3-stakeholders" class="docmd-heading"><a href="#product-requirements-document-prd-3-stakeholders" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Stakeholders</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Stakeholder</th>
+<th>Role</th>
+<th>Key Interest</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product Manager</td>
+<td>Owner of this PRD</td>
+<td>Feature completeness, market fit</td>
+</tr>
+<tr>
+<td>UX/UI Designer</td>
+<td>Design execution</td>
+<td>Usability, accessibility, aesthetics</td>
+</tr>
+<tr>
+<td>Frontend Engineers (Flutter + React)</td>
+<td>UI implementation</td>
+<td>Clear specs, design tokens, API contracts</td>
+</tr>
+<tr>
+<td>Backend Engineers (Node.js)</td>
+<td>API + DB implementation</td>
+<td>Data models, performance, security</td>
+</tr>
+<tr>
+<td>AI/ML Engineer</td>
+<td>AI integration</td>
+<td>Prompt quality, RAG accuracy, latency</td>
+</tr>
+<tr>
+<td>QA Engineers</td>
+<td>Testing</td>
+<td>Acceptance criteria, edge cases</td>
+</tr>
+<tr>
+<td>Trainers</td>
+<td>Content creators</td>
+<td>Easy publishing, high revenue share</td>
+</tr>
+<tr>
+<td>Learners</td>
+<td>End users</td>
+<td>Value, ease of use, motivation</td>
+</tr>
+<tr>
+<td>Institutions</td>
+<td>B2B clients</td>
+<td>Reporting, admin control, ROI</td>
+</tr>
+<tr>
+<td>Investors</td>
+<td>Funding partners</td>
+<td>Growth metrics, retention, revenue</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="product-requirements-document-prd-4-platform-device-requirements" class="docmd-heading"><a href="#product-requirements-document-prd-4-platform-device-requirements" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Platform &amp; Device Requirements</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Minimum Spec</th>
+<th>Target Framework</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS</td>
+<td>iPhone 12+, iOS 16+</td>
+<td>Flutter 3.x</td>
+</tr>
+<tr>
+<td>Android</td>
+<td>Android 8.0 (API 26)+, 2GB RAM</td>
+<td>Flutter 3.x</td>
+</tr>
+<tr>
+<td>iPad</td>
+<td>iPadOS 16+, any iPad</td>
+<td>Flutter 3.x (adaptive layout)</td>
+</tr>
+<tr>
+<td>Android Tablet</td>
+<td>Android 10+, 1920×1200</td>
+<td>Flutter 3.x</td>
+</tr>
+<tr>
+<td>Web App</td>
+<td>Chrome 110+, Firefox 115+, Safari 16+</td>
+<td>Next.js 14+ (App Router)</td>
+</tr>
+<tr>
+<td>Desktop App</td>
+<td>macOS 12+, Windows 10+</td>
+<td>Electron 30+ wrapping Next.js build</td>
+</tr>
+<tr>
+<td>Marketing Website</td>
+<td>All modern browsers</td>
+<td>Next.js 14+ (SSG/SSR)</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="product-requirements-document-prd-5-functional-requirements-by-module" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Functional Requirements by Module</h2>
+<h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-auth-authentication-identity" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-auth-authentication-identity" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module AUTH — Authentication &amp; Identity</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AUTH-001</td>
+<td>User shall register with email + password</td>
+<td>P0</td>
+<td>Form validates email format, password min 8 chars, account created, OTP sent</td>
+</tr>
+<tr>
+<td>AUTH-002</td>
+<td>User shall register with phone number + OTP</td>
+<td>P0</td>
+<td>6-digit OTP delivered via SMS within 30s, valid for 10 minutes, 3-attempt limit</td>
+</tr>
+<tr>
+<td>AUTH-003</td>
+<td>User shall log in with email + password</td>
+<td>P0</td>
+<td>Valid credentials grant JWT access + refresh tokens</td>
+</tr>
+<tr>
+<td>AUTH-004</td>
+<td>User shall log in with phone + OTP</td>
+<td>P0</td>
+<td>Same as AUTH-002 for login flow</td>
+</tr>
+<tr>
+<td>AUTH-005</td>
+<td>User shall log in with Google OAuth2</td>
+<td>P1</td>
+<td>Google OAuth flow completes, profile auto-populated</td>
+</tr>
+<tr>
+<td>AUTH-006</td>
+<td>User shall log in with Apple Sign-In (iOS)</td>
+<td>P1</td>
+<td>Apple ID login completes, anonymous email option supported</td>
+</tr>
+<tr>
+<td>AUTH-007</td>
+<td>User shall reset password via email link</td>
+<td>P0</td>
+<td>Password reset email sent within 60s, link expires in 24h</td>
+</tr>
+<tr>
+<td>AUTH-008</td>
+<td>System shall enforce JWT refresh token rotation</td>
+<td>P0</td>
+<td>Access token expires in 15min, refresh token in 7 days, rotation on use</td>
+</tr>
+<tr>
+<td>AUTH-009</td>
+<td>User shall enable biometric authentication</td>
+<td>P1</td>
+<td>Face ID / fingerprint stored locally, used to skip PIN entry on reopen</td>
+</tr>
+<tr>
+<td>AUTH-010</td>
+<td>System shall lock account after 5 failed login attempts</td>
+<td>P0</td>
+<td>Account locked for 15 minutes, email notification sent</td>
+</tr>
+<tr>
+<td>AUTH-011</td>
+<td>Admin shall be able to terminate any user session</td>
+<td>P0</td>
+<td>Admin action invalidates all refresh tokens for target user</td>
+</tr>
+<tr>
+<td>AUTH-012</td>
+<td>System shall log all authentication events</td>
+<td>P0</td>
+<td>Timestamp, IP, device ID logged per login/logout/failed attempt</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-courses-course-discovery-management" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-courses-course-discovery-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module COURSES — Course Discovery &amp; Management</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRS-001</td>
+<td>User shall browse course catalog with categories</td>
+<td>P0</td>
+<td>Categories load in ≤500ms, at least 20 categories supported</td>
+</tr>
+<tr>
+<td>CRS-002</td>
+<td>User shall search courses with text + filters</td>
+<td>P0</td>
+<td>Search returns results in ≤300ms, filters: category, level, duration, rating, price</td>
+</tr>
+<tr>
+<td>CRS-003</td>
+<td>User shall view course detail page</td>
+<td>P0</td>
+<td>Shows title, description, syllabus, instructor, reviews, price, enroll CTA</td>
+</tr>
+<tr>
+<td>CRS-004</td>
+<td>User shall enroll in a free course instantly</td>
+<td>P0</td>
+<td>One click, enrollment confirmed, redirect to lesson player</td>
+</tr>
+<tr>
+<td>CRS-005</td>
+<td>User shall purchase a paid course</td>
+<td>P0</td>
+<td>Razorpay/Stripe checkout completes, enrollment activated on payment</td>
+</tr>
+<tr>
+<td>CRS-006</td>
+<td>User shall bookmark/save courses for later</td>
+<td>P1</td>
+<td>Saved courses appear in “My Wishlist” section</td>
+</tr>
+<tr>
+<td>CRS-007</td>
+<td>User shall rate and review a course</td>
+<td>P1</td>
+<td>Rating 1–5 stars + text review, submitted after completing ≥20% of course</td>
+</tr>
+<tr>
+<td>CRS-008</td>
+<td>System shall recommend courses based on AI</td>
+<td>P1</td>
+<td>AI recommendation appears on dashboard, based on enrolled courses + goals</td>
+</tr>
+<tr>
+<td>CRS-009</td>
+<td>Trainer shall create a new course with title and description</td>
+<td>P0</td>
+<td>Course saved as draft, visible only to trainer until published</td>
+</tr>
+<tr>
+<td>CRS-010</td>
+<td>Trainer shall publish/unpublish a course</td>
+<td>P0</td>
+<td>Published courses appear in catalog; unpublished are hidden but data retained</td>
+</tr>
+<tr>
+<td>CRS-011</td>
+<td>Admin shall feature or remove a course from homepage</td>
+<td>P1</td>
+<td>Featured flag toggled in admin panel, updates homepage within 5 minutes</td>
+</tr>
+<tr>
+<td>CRS-012</td>
+<td>System shall track and display course progress</td>
+<td>P0</td>
+<td>Progress bar shows % completion, auto-updated after each lesson</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-lessons-lesson-delivery-player" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-lessons-lesson-delivery-player" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module LESSONS — Lesson Delivery &amp; Player</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LSN-001</td>
+<td>User shall play video lessons with controls</td>
+<td>P0</td>
+<td>Play, pause, seek, fullscreen, playback speed (0.5x–2x), volume control</td>
+</tr>
+<tr>
+<td>LSN-002</td>
+<td>User shall view PDF/document lessons inline</td>
+<td>P0</td>
+<td>PDF renders inside app (no external app launch), zoom supported</td>
+</tr>
+<tr>
+<td>LSN-003</td>
+<td>User shall take and save lesson notes</td>
+<td>P1</td>
+<td>Notes editor opens as overlay, saved per lesson, exportable as PDF</td>
+</tr>
+<tr>
+<td>LSN-004</td>
+<td>User shall bookmark timestamps in video lessons</td>
+<td>P1</td>
+<td>Bookmarks stored per user-lesson, listed in “My Notes”</td>
+</tr>
+<tr>
+<td>LSN-005</td>
+<td>User shall download lesson for offline viewing</td>
+<td>P1</td>
+<td>Download queued, stored encrypted locally, accessible without internet</td>
+</tr>
+<tr>
+<td>LSN-006</td>
+<td>System shall auto-resume lesson from last position</td>
+<td>P0</td>
+<td>Playback resumes from last watched second across sessions and devices</td>
+</tr>
+<tr>
+<td>LSN-007</td>
+<td>System shall mark lesson complete on reaching end</td>
+<td>P0</td>
+<td>Lesson marked complete when 90%+ of content viewed/played</td>
+</tr>
+<tr>
+<td>LSN-008</td>
+<td>Trainer shall upload video files up to 2GB</td>
+<td>P0</td>
+<td>Multi-part upload to cloud storage, progress indicator, auto-transcoding</td>
+</tr>
+<tr>
+<td>LSN-009</td>
+<td>System shall generate auto-captions for videos</td>
+<td>P1</td>
+<td>AI-generated captions available in English, editable by trainer</td>
+</tr>
+<tr>
+<td>LSN-010</td>
+<td>System shall support lesson ordering via drag-and-drop</td>
+<td>P1</td>
+<td>Trainer can reorder lessons in course builder</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-quiz-quiz-assessment-engine" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-quiz-quiz-assessment-engine" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module QUIZ — Quiz &amp; Assessment Engine</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QUIZ-001</td>
+<td>System shall support multiple-choice questions (MCQ)</td>
+<td>P0</td>
+<td>Single correct answer, immediate feedback after submission</td>
+</tr>
+<tr>
+<td>QUIZ-002</td>
+<td>System shall support multiple-select questions</td>
+<td>P1</td>
+<td>Multiple correct answers, partial scoring supported</td>
+</tr>
+<tr>
+<td>QUIZ-003</td>
+<td>System shall support true/false questions</td>
+<td>P0</td>
+<td>Binary choice, scored 0 or 1</td>
+</tr>
+<tr>
+<td>QUIZ-004</td>
+<td>System shall support fill-in-the-blank questions</td>
+<td>P1</td>
+<td>Text input, case-insensitive matching with accepted variations</td>
+</tr>
+<tr>
+<td>QUIZ-005</td>
+<td>System shall support image-based questions</td>
+<td>P2</td>
+<td>Question includes image reference, MCQ answers</td>
+</tr>
+<tr>
+<td>QUIZ-006</td>
+<td>Quiz shall support countdown timer</td>
+<td>P0</td>
+<td>Timer visible, quiz auto-submits on timeout, time per question configurable</td>
+</tr>
+<tr>
+<td>QUIZ-007</td>
+<td>User shall see instant result with score and review</td>
+<td>P0</td>
+<td>Score shown immediately, correct answers shown for incorrect responses</td>
+</tr>
+<tr>
+<td>QUIZ-008</td>
+<td>User shall retry a failed quiz after cool-down period</td>
+<td>P0</td>
+<td>Configurable attempts (1–5), cool-down period (0–24h) set by trainer</td>
+</tr>
+<tr>
+<td>QUIZ-009</td>
+<td>AI shall generate quiz questions from lesson content</td>
+<td>P1</td>
+<td>AI generates 5–10 MCQ/fill-blank questions per lesson on trainer request</td>
+</tr>
+<tr>
+<td>QUIZ-010</td>
+<td>System shall record quiz attempt history</td>
+<td>P0</td>
+<td>All attempts stored with score, time taken, answers, date</td>
+</tr>
+<tr>
+<td>QUIZ-011</td>
+<td>Admin shall configure quiz passing threshold</td>
+<td>P0</td>
+<td>Pass score 50–100% configurable per quiz</td>
+</tr>
+<tr>
+<td>QUIZ-012</td>
+<td>System shall display leaderboard for timed quizzes</td>
+<td>P2</td>
+<td>Top 10 scores shown for course-level competitive quizzes</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-certificates-certificate-generation-management" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-certificates-certificate-generation-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module CERTIFICATES — Certificate Generation &amp; Management</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CERT-001</td>
+<td>System shall auto-generate certificate on course completion</td>
+<td>P0</td>
+<td>Certificate generated within 5 seconds of completion</td>
+</tr>
+<tr>
+<td>CERT-002</td>
+<td>Certificate shall include user name, course name, date, trainer name</td>
+<td>P0</td>
+<td>All fields populated from DB, visually verified</td>
+</tr>
+<tr>
+<td>CERT-003</td>
+<td>User shall download certificate as PDF</td>
+<td>P0</td>
+<td>High-quality PDF (A4 300dpi), branded template</td>
+</tr>
+<tr>
+<td>CERT-004</td>
+<td>User shall share certificate to LinkedIn</td>
+<td>P0</td>
+<td>LinkedIn Add-to-Profile URL pre-populated with title, org, date, URL</td>
+</tr>
+<tr>
+<td>CERT-005</td>
+<td>Certificate shall have a unique verification URL/QR code</td>
+<td>P0</td>
+<td>Public verification page shows certificate authenticity without login</td>
+</tr>
+<tr>
+<td>CERT-006</td>
+<td>System shall support multiple certificate templates</td>
+<td>P1</td>
+<td>Admin can select from 5+ templates per course/institution</td>
+</tr>
+<tr>
+<td>CERT-007</td>
+<td>Admin shall revoke a certificate with reason</td>
+<td>P0</td>
+<td>Revoked certificate shows “Invalid” on verification page</td>
+</tr>
+<tr>
+<td>CERT-008</td>
+<td>User shall view all earned certificates in profile</td>
+<td>P0</td>
+<td>Certificate gallery with search and filter</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-membership-subscription-management" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-membership-subscription-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module MEMBERSHIP — Subscription Management</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MEM-001</td>
+<td>User shall view all membership plan details</td>
+<td>P0</td>
+<td>Plans page shows features, price (monthly + annual), CTA</td>
+</tr>
+<tr>
+<td>MEM-002</td>
+<td>User shall subscribe to a plan</td>
+<td>P0</td>
+<td>Payment processed, plan activated immediately, receipt emailed</td>
+</tr>
+<tr>
+<td>MEM-003</td>
+<td>User shall upgrade or downgrade plan</td>
+<td>P0</td>
+<td>Prorated billing applied, effective immediately</td>
+</tr>
+<tr>
+<td>MEM-004</td>
+<td>User shall cancel subscription</td>
+<td>P0</td>
+<td>Cancellation effective at end of billing period, access retained until then</td>
+</tr>
+<tr>
+<td>MEM-005</td>
+<td>System shall send renewal reminder 7 days before expiry</td>
+<td>P0</td>
+<td>Push + email notification sent at 7 days and 1 day before expiry</td>
+</tr>
+<tr>
+<td>MEM-006</td>
+<td>System shall handle failed payment with retry logic</td>
+<td>P0</td>
+<td>3 retry attempts over 7 days, dunning email sent, grace period 3 days</td>
+</tr>
+<tr>
+<td>MEM-007</td>
+<td>Admin shall manually apply or remove a coupon/discount</td>
+<td>P1</td>
+<td>Discount applied to next invoice, tracked in payment records</td>
+</tr>
+<tr>
+<td>MEM-008</td>
+<td>Institution shall purchase bulk seats</td>
+<td>P0</td>
+<td>Minimum 10 seats, quote request flow, admin dashboard provisioned</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-payments-payment-processing" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-payments-payment-processing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module PAYMENTS — Payment Processing</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAY-001</td>
+<td>System shall process payments via Razorpay (India)</td>
+<td>P0</td>
+<td>UPI, Net Banking, Cards, Wallets supported</td>
+</tr>
+<tr>
+<td>PAY-002</td>
+<td>System shall process payments via Stripe (International)</td>
+<td>P0</td>
+<td>Visa, Mastercard, PayPal supported</td>
+</tr>
+<tr>
+<td>PAY-003</td>
+<td>System shall generate invoice for every transaction</td>
+<td>P0</td>
+<td>Invoice PDF generated, stored in user account, emailed</td>
+</tr>
+<tr>
+<td>PAY-004</td>
+<td>System shall process refunds within 7 business days</td>
+<td>P0</td>
+<td>Refund initiated via admin panel, timeline displayed to user</td>
+</tr>
+<tr>
+<td>PAY-005</td>
+<td>System shall handle multi-currency pricing</td>
+<td>P1</td>
+<td>INR for India, USD for international, auto-detected by IP</td>
+</tr>
+<tr>
+<td>PAY-006</td>
+<td>System shall maintain complete payment audit log</td>
+<td>P0</td>
+<td>All transactions with status, timestamps, gateway response logged</td>
+</tr>
+<tr>
+<td>PAY-007</td>
+<td>Trainer shall receive revenue share payouts monthly</td>
+<td>P1</td>
+<td>70% of course sale amount transferred to linked bank account</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-ai-assistant-ai-learning-companion" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-ai-assistant-ai-learning-companion" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module AI ASSISTANT — AI Learning Companion</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI-001</td>
+<td>User shall open AI chat assistant from any screen</td>
+<td>P0</td>
+<td>Floating button, slide-up drawer, responds in ≤2 seconds</td>
+</tr>
+<tr>
+<td>AI-002</td>
+<td>AI shall answer questions about lesson content</td>
+<td>P0</td>
+<td>RAG-powered responses using lesson transcript/PDF context</td>
+</tr>
+<tr>
+<td>AI-003</td>
+<td>AI shall recommend next course based on history</td>
+<td>P0</td>
+<td>Recommendation with rationale shown in sidebar and email digest</td>
+</tr>
+<tr>
+<td>AI-004</td>
+<td>AI shall generate a personalized study plan</td>
+<td>P1</td>
+<td>Input: goal, available hours/week → Output: week-by-week course plan</td>
+</tr>
+<tr>
+<td>AI-005</td>
+<td>AI shall explain quiz answers in detail</td>
+<td>P1</td>
+<td>After quiz submission, “Explain this answer” button triggers AI explanation</td>
+</tr>
+<tr>
+<td>AI-006</td>
+<td>AI shall support voice queries</td>
+<td>P2</td>
+<td>Speech-to-text input, AI responds in text (TTS optional in P2)</td>
+</tr>
+<tr>
+<td>AI-007</td>
+<td>AI shall refuse inappropriate/off-topic requests</td>
+<td>P0</td>
+<td>System prompt guardrails, refusal message with redirect to support</td>
+</tr>
+<tr>
+<td>AI-008</td>
+<td>System shall store conversation history per user</td>
+<td>P0</td>
+<td>Conversation history persisted, searchable, clearable by user</td>
+</tr>
+<tr>
+<td>AI-009</td>
+<td>System shall limit AI queries based on plan tier</td>
+<td>P0</td>
+<td>Free: 10/day, Basic: 50/day, Pro+: unlimited</td>
+</tr>
+<tr>
+<td>AI-010</td>
+<td>Admin shall review AI conversation logs for safety</td>
+<td>P1</td>
+<td>Admin view of flagged conversations, with redaction tools</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-gamification-engagement-engine" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-gamification-engagement-engine" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module GAMIFICATION — Engagement Engine</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GAM-001</td>
+<td>System shall award XP for learning actions</td>
+<td>P0</td>
+<td>XP awarded immediately, visible on profile and activity feed</td>
+</tr>
+<tr>
+<td>GAM-002</td>
+<td>System shall display user level and progress to next level</td>
+<td>P0</td>
+<td>Level badge visible in profile header, XP bar shows progress</td>
+</tr>
+<tr>
+<td>GAM-003</td>
+<td>System shall award badges for achievements</td>
+<td>P0</td>
+<td>Badge awarded instantly, trophy case visible in profile</td>
+</tr>
+<tr>
+<td>GAM-004</td>
+<td>System shall maintain daily learning streaks</td>
+<td>P0</td>
+<td>Streak incremented on first lesson/quiz per day, visible on dashboard</td>
+</tr>
+<tr>
+<td>GAM-005</td>
+<td>System shall show global and course leaderboards</td>
+<td>P1</td>
+<td>Weekly leaderboard, updated daily, opt-out option available</td>
+</tr>
+<tr>
+<td>GAM-006</td>
+<td>System shall present daily quests</td>
+<td>P1</td>
+<td>3 daily quests displayed on dashboard, expire at midnight</td>
+</tr>
+<tr>
+<td>GAM-007</td>
+<td>System shall display streak recovery (freeze) option</td>
+<td>P1</td>
+<td>Streak freeze purchasable with XP or real money, max 3 active</td>
+</tr>
+<tr>
+<td>GAM-008</td>
+<td>System shall animate level-up and badge events</td>
+<td>P0</td>
+<td>Celebratory animation plays on achievement, dismissible</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-notifications-notification-system" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-notifications-notification-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module NOTIFICATIONS — Notification System</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NOT-001</td>
+<td>System shall send push notifications (iOS + Android)</td>
+<td>P0</td>
+<td>FCM + APNs configured, delivery rate ≥98%</td>
+</tr>
+<tr>
+<td>NOT-002</td>
+<td>System shall send in-app notification bell</td>
+<td>P0</td>
+<td>Bell icon shows count, notifications list with read/unread state</td>
+</tr>
+<tr>
+<td>NOT-003</td>
+<td>System shall send transactional emails</td>
+<td>P0</td>
+<td>Welcome, receipt, OTP, password reset, certificate via SendGrid</td>
+</tr>
+<tr>
+<td>NOT-004</td>
+<td>System shall send re-engagement push after 3 days inactivity</td>
+<td>P1</td>
+<td>Personalized message with course progress CTA</td>
+</tr>
+<tr>
+<td>NOT-005</td>
+<td>User shall manage notification preferences</td>
+<td>P0</td>
+<td>Toggle by type: Learning reminders, streak alerts, offers, news</td>
+</tr>
+<tr>
+<td>NOT-006</td>
+<td>System shall schedule notifications for best engagement time</td>
+<td>P1</td>
+<td>ML model predicts optimal send time per user based on activity history</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-support-user-support-system" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-support-user-support-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module SUPPORT — User Support System</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SUP-001</td>
+<td>User shall access FAQ/help center via search</td>
+<td>P0</td>
+<td>Search returns relevant articles in ≤200ms, categorized</td>
+</tr>
+<tr>
+<td>SUP-002</td>
+<td>User shall submit a support ticket</td>
+<td>P0</td>
+<td>Form with category, priority, description; confirmation with ticket ID</td>
+</tr>
+<tr>
+<td>SUP-003</td>
+<td>User shall track ticket status</td>
+<td>P0</td>
+<td>Status: Open, In Progress, Resolved, Closed — visible in support center</td>
+</tr>
+<tr>
+<td>SUP-004</td>
+<td>AI chatbot shall handle first-line support</td>
+<td>P1</td>
+<td>Chatbot resolves ≥40% of queries without human agent</td>
+</tr>
+<tr>
+<td>SUP-005</td>
+<td>Support agent shall respond to tickets within SLA</td>
+<td>P0</td>
+<td>Free: 48h, Basic: 24h, Pro: 8h, Premium: 2h SLA</td>
+</tr>
+<tr>
+<td>SUP-006</td>
+<td>User shall rate support experience</td>
+<td>P0</td>
+<td>Post-resolution CSAT survey (1–5 stars + comment)</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-5-functional-requirements-by-module-module-admincrm-administration-operations" class="docmd-heading"><a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-admincrm-administration-operations" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Module ADMIN/CRM — Administration &amp; Operations</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADM-001</td>
+<td>Admin shall view real-time dashboard with key metrics</td>
+<td>P0</td>
+<td>Dashboard shows: DAU, MAU, MRR, enrollments, tickets, errors</td>
+</tr>
+<tr>
+<td>ADM-002</td>
+<td>Admin shall manage user accounts (view, edit, suspend, delete)</td>
+<td>P0</td>
+<td>CRUD operations with audit log</td>
+</tr>
+<tr>
+<td>ADM-003</td>
+<td>Admin shall manage all courses (approve, feature, remove)</td>
+<td>P0</td>
+<td>Course list with filters, approve/reject/feature controls</td>
+</tr>
+<tr>
+<td>ADM-004</td>
+<td>Admin shall create and manage promotional coupons</td>
+<td>P1</td>
+<td>Coupon with: code, discount type (%, fixed), usage limit, expiry date</td>
+</tr>
+<tr>
+<td>ADM-005</td>
+<td>Admin shall export user and revenue data as CSV</td>
+<td>P0</td>
+<td>Export triggers async job, download link emailed when ready</td>
+</tr>
+<tr>
+<td>ADM-006</td>
+<td>Admin shall view and manage support tickets</td>
+<td>P0</td>
+<td>Queue with filters, assignment, status update, response</td>
+</tr>
+<tr>
+<td>ADM-007</td>
+<td>Admin shall send broadcast notification to user segments</td>
+<td>P1</td>
+<td>Segment by plan, role, last active date, course enrollment</td>
+</tr>
+<tr>
+<td>ADM-008</td>
+<td>Admin shall view content analytics per course</td>
+<td>P0</td>
+<td>Enrollment, completion, drop-off point, average quiz score</td>
+</tr>
+<tr>
+<td>ADM-009</td>
+<td>Admin shall manage membership plan pricing</td>
+<td>P0</td>
+<td>Edit plan prices, features, billing cycle</td>
+</tr>
+<tr>
+<td>ADM-010</td>
+<td>Admin shall view AI usage statistics</td>
+<td>P1</td>
+<td>Queries per day, popular topics, failed responses</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="product-requirements-document-prd-6-non-functional-requirements" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Non-Functional Requirements</h2>
+<h3 id="product-requirements-document-prd-6-non-functional-requirements-61-performance" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-61-performance" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Performance</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API response time (p50)</td>
+<td>&lt; 100ms</td>
+</tr>
+<tr>
+<td>API response time (p95)</td>
+<td>&lt; 200ms</td>
+</tr>
+<tr>
+<td>App cold start time</td>
+<td>&lt; 2 seconds</td>
+</tr>
+<tr>
+<td>Video buffer-to-play time</td>
+<td>&lt; 1 second (on 4G)</td>
+</tr>
+<tr>
+<td>Dashboard page load (web)</td>
+<td>&lt; 1.5 seconds (LCP)</td>
+</tr>
+<tr>
+<td>Search results return</td>
+<td>&lt; 300ms</td>
+</tr>
+<tr>
+<td>Certificate generation</td>
+<td>&lt; 5 seconds</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="product-requirements-document-prd-6-non-functional-requirements-62-scalability" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-62-scalability" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 Scalability</h3>
+<ul>
+<li>Support 100,000 concurrent users at launch; horizontally scalable to 1M+</li>
+<li>Database must support 50M+ records with &lt; 100ms query times (indexed)</li>
+<li>CDN-delivered video and static assets, edge-cached globally</li>
+</ul>
+<h3 id="product-requirements-document-prd-6-non-functional-requirements-63-accessibility" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-63-accessibility" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Accessibility</h3>
+<ul>
+<li>WCAG 2.2 Level AA compliance across all screens</li>
+<li>Minimum contrast ratio: 4.5:1 for body text, 3:1 for large text</li>
+<li>All interactive elements keyboard accessible</li>
+<li>Screen reader compatible (ARIA labels, semantic HTML for web)</li>
+<li>Minimum touch target: 44×44pt (iOS), 48×48dp (Android)</li>
+<li>No color-only information encoding</li>
+<li>Captions for all video content</li>
+<li>Error messages must be descriptive and suggest correction</li>
+</ul>
+<h3 id="product-requirements-document-prd-6-non-functional-requirements-64-security" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-64-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.4 Security</h3>
+<ul>
+<li>OWASP Top 10 compliance</li>
+<li>All data encrypted at rest (AES-256) and in transit (TLS 1.3)</li>
+<li>JWT with short expiry and refresh rotation</li>
+<li>Rate limiting on all endpoints (per-IP and per-user)</li>
+<li>SQL injection and XSS protection via ORM + input sanitization</li>
+<li>File upload scanning for malware before storage</li>
+<li>VAPT (Vulnerability Assessment &amp; Pen Testing) before launch</li>
+</ul>
+<h3 id="product-requirements-document-prd-6-non-functional-requirements-65-reliability-uptime" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-65-reliability-uptime" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.5 Reliability &amp; Uptime</h3>
+<ul>
+<li>API uptime: ≥ 99.9% (excluding planned maintenance)</li>
+<li>Planned maintenance windows: Sunday 2–4 AM IST</li>
+<li>RTO (Recovery Time Objective): &lt; 1 hour</li>
+<li>RPO (Recovery Point Objective): &lt; 15 minutes</li>
+<li>Automated database backups: every 6 hours, retained 30 days</li>
+</ul>
+<h3 id="product-requirements-document-prd-6-non-functional-requirements-66-localization" class="docmd-heading"><a href="#product-requirements-document-prd-6-non-functional-requirements-66-localization" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.6 Localization</h3>
+<ul>
+<li><strong>Phase 1:</strong> English (default)</li>
+<li><strong>Phase 2:</strong> Hindi, Telugu</li>
+<li><strong>Phase 3:</strong> Tamil, Kannada, Bengali, Marathi</li>
+<li>RTL language support architecture in place from Day 1</li>
+</ul>
+<hr>
+<h2 id="product-requirements-document-prd-7-constraints-assumptions" class="docmd-heading"><a href="#product-requirements-document-prd-7-constraints-assumptions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Constraints &amp; Assumptions</h2>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>Development team size: 8–12 members</li>
+<li>Initial infrastructure budget: ₹3 Lakh/month (AWS/GCP)</li>
+<li>No hardware devices — software only</li>
+<li>Phase 1 must launch within 90 days of design approval</li>
+</ul>
+<p><strong>Assumptions:</strong></p>
+<ul>
+<li>Razorpay and Stripe will be used as primary payment gateways</li>
+<li>Video storage will use S3-compatible object storage (AWS S3 or Wasabi)</li>
+<li>AI assistant will be powered by Google Gemini API with RAG layer</li>
+<li>FCM/APNs are available for push notifications</li>
+<li>All trainers are vetted manually in Phase 1 (automated in Phase 2)</li>
+</ul>
+<hr>
+<h2 id="product-requirements-document-prd-8-out-of-scope-phase-1" class="docmd-heading"><a href="#product-requirements-document-prd-8-out-of-scope-phase-1" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Out of Scope (Phase 1)</h2>
+<ul>
+<li>Live streaming / webinar hosting (Phase 2)</li>
+<li>Discussion forums / community features (Phase 2)</li>
+<li>AI-generated course builder for trainers (Phase 3)</li>
+<li>Physical merchandise or vouchers</li>
+<li>Integration with external LMS (Moodle, Canvas)</li>
+<li>Native smart TV app</li>
+<li>AR/VR learning experiences</li>
+</ul>
+<hr>
+<h2 id="product-requirements-document-prd-9-glossary" class="docmd-heading"><a href="#product-requirements-document-prd-9-glossary" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Glossary</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Learner</td>
+<td>Any user who enrolls in and studies courses</td>
+</tr>
+<tr>
+<td>Trainer</td>
+<td>A verified content creator who publishes courses on the platform</td>
+</tr>
+<tr>
+<td>Institution</td>
+<td>A corporate or educational organization purchasing group access</td>
+</tr>
+<tr>
+<td>XP</td>
+<td>Experience Points, the platform’s gamification currency</td>
+</tr>
+<tr>
+<td>RAG</td>
+<td>Retrieval-Augmented Generation — AI technique combining a knowledge base with an LLM</td>
+</tr>
+<tr>
+<td>LTV</td>
+<td>Lifetime Value — total revenue expected from a single customer</td>
+</tr>
+<tr>
+<td>CAC</td>
+<td>Customer Acquisition Cost — total cost to acquire one paying customer</td>
+</tr>
+<tr>
+<td>DAU/MAU</td>
+<td>Daily/Monthly Active Users — core engagement metric</td>
+</tr>
+<tr>
+<td>p95 latency</td>
+<td>The response time that 95% of all requests fall below</td>
+</tr>
+<tr>
+<td>WCAG 2.2</td>
+<td>Web Content Accessibility Guidelines version 2.2</td>
+</tr>
+<tr>
+<td>OTP</td>
+<td>One-Time Password — used for phone/email verification</td>
+</tr>
+<tr>
+<td>JWT</td>
+<td>JSON Web Token — used for stateless authentication</td>
+</tr>
+<tr>
+<td>FCM</td>
+<td>Firebase Cloud Messaging — push notification service</td>
+</tr>
+<tr>
+<td>SLA</td>
+<td>Service Level Agreement — guaranteed support response time</td>
+</tr>
+</tbody>
+</table>
+</div>
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../01_business_and_prd/product_vision_and_business_goals/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Product Vision &amp; Business Goals
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#product-requirements-document-prd" class="toc-link">Product Requirements Document (PRD)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-1-document-purpose-scope" class="toc-link">1. Document Purpose &amp; Scope</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-2-product-summary" class="toc-link">2. Product Summary</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-3-stakeholders" class="toc-link">3. Stakeholders</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-4-platform-device-requirements" class="toc-link">4. Platform &amp; Device Requirements</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module" class="toc-link">5. Functional Requirements by Module</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-auth-authentication-identity" class="toc-link">Module AUTH — Authentication &amp; Identity</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-courses-course-discovery-management" class="toc-link">Module COURSES — Course Discovery &amp; Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-lessons-lesson-delivery-player" class="toc-link">Module LESSONS — Lesson Delivery &amp; Player</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-quiz-quiz-assessment-engine" class="toc-link">Module QUIZ — Quiz &amp; Assessment Engine</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-certificates-certificate-generation-management" class="toc-link">Module CERTIFICATES — Certificate Generation &amp; Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-membership-subscription-management" class="toc-link">Module MEMBERSHIP — Subscription Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-payments-payment-processing" class="toc-link">Module PAYMENTS — Payment Processing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-ai-assistant-ai-learning-companion" class="toc-link">Module AI ASSISTANT — AI Learning Companion</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-gamification-engagement-engine" class="toc-link">Module GAMIFICATION — Engagement Engine</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-notifications-notification-system" class="toc-link">Module NOTIFICATIONS — Notification System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-support-user-support-system" class="toc-link">Module SUPPORT — User Support System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-5-functional-requirements-by-module-module-admincrm-administration-operations" class="toc-link">Module ADMIN/CRM — Administration &amp; Operations</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements" class="toc-link">6. Non-Functional Requirements</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-61-performance" class="toc-link">6.1 Performance</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-62-scalability" class="toc-link">6.2 Scalability</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-63-accessibility" class="toc-link">6.3 Accessibility</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-64-security" class="toc-link">6.4 Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-65-reliability-uptime" class="toc-link">6.5 Reliability &amp; Uptime</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#product-requirements-document-prd-6-non-functional-requirements-66-localization" class="toc-link">6.6 Localization</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-7-constraints-assumptions" class="toc-link">7. Constraints &amp; Assumptions</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-8-out-of-scope-phase-1" class="toc-link">8. Out of Scope (Phase 1)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#product-requirements-document-prd-9-glossary" class="toc-link">9. Glossary</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

@@ -4,7 +4,7 @@ import { DashboardContent } from './components/DashboardContent';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
-  description: 'Your LearnFlow AI learning dashboard — track progress, courses, streaks, and AI recommendations.',
+  description: 'Your GUIDESOFT IT SOLUTIONS learning dashboard — track progress, courses, streaks, and AI recommendations.',
 };
 
 export default function DashboardPage() {

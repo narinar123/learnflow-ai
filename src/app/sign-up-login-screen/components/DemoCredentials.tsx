@@ -18,6 +18,7 @@ export function DemoCredentials() {
       { role: 'Learner', email: 'demo@learnflow.ai', password: 'Demo@1234' },
       { role: 'Trainer', email: 'trainer@learnflow.ai', password: 'Trainer@1234' },
       { role: 'Admin', email: 'admin@learnflow.ai', password: 'Admin@1234' },
+      { role: 'Recruiter', email: 'recruiter@learnflow.ai', password: 'Recruiter@1234' },
     ],
   };
 

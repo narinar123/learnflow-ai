@@ -87,11 +87,27 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with real API call
-      await new Promise((resolve) => setTimeout(resolve, 1800));
+      const res = await fetch('/api/v1/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, displayName: name }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        const code = data?.error?.code;
+        if (code === 'USER_EXISTS') {
+          setErrors({ general: 'An account with this email already exists. Try logging in.' });
+        } else {
+          setErrors({ general: data?.error?.message || 'Registration failed. Please try again.' });
+        }
+        return;
+      }
+
+      // Registration successful – redirect to dashboard (OTP verification can be added as a next step)
       router.push('/dashboard');
     } catch {
-      setErrors({ general: 'An account with this email already exists. Try logging in.' });
+      setErrors({ general: 'Network error. Please check your connection and try again.' });
     } finally {
       setIsLoading(false);
     }

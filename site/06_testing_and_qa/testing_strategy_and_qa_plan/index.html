@@ -1,0 +1,2029 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Testing Strategy &amp; QA Plan : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/06_testing_and_qa/testing_strategy_and_qa_plan/">
+<meta property="og:title" content="Testing Strategy &amp; QA Plan - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/06_testing_and_qa/testing_strategy_and_qa_plan/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Testing Strategy &amp; QA Plan - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/06_testing_and_qa/testing_strategy_and_qa_plan.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Testing Strategy &amp; QA Plan
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Testing%20Strategy%20%26%20QA%20Plan%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20Testing%20Philosophy%0A%0ALearnFlow%20AI%20follows%20a%20**Shift-Left%20Testing**%20approach%3A%20testing%20begins%20during%20design%20and%20development%2C%20not%20after.%20Quality%20is%20everyone&#039;s%20responsibility%20%E2%80%94%20designers%2C%20developers%2C%20QA%20engineers%2C%20and%20product%20managers%20all%20contribute%20to%20preventing%20defects%20rather%20than%20just%20finding%20them.%0A%0A**Testing%20Objectives%3A**%0A-%20Ensure%20feature%20correctness%20and%20business%20rule%20enforcement%0A-%20Protect%20against%20regressions%20in%20every%20release%0A-%20Validate%20cross-platform%20consistency%20(Flutter%20%2B%20Web%20%2B%20Desktop)%0A-%20Verify%20AI%20response%20quality%20and%20safety%0A-%20Confirm%20accessibility%20and%20performance%20standards%0A-%20Build%20confidence%20for%20rapid%2C%20frequent%20deployments%0A%0A---%0A%0A%23%23%202.%20Testing%20Pyramid%0A%0A%60%60%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%94%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%97%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20%20%20E2E%20%20%20%20%20%E2%95%91%20%20(10%25)%20%E2%80%94%20Slow%2C%20high%20confidence%2C%20critical%20flows%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20%20%20Tests%20%20%20%E2%95%91%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%94%E2%95%A9%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%A9%E2%95%97%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20Integration%20%20%E2%95%91%20%20(20%25)%20%E2%80%94%20API%20%2B%20DB%20contracts%2C%20service%20layers%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20%20%20%20Tests%20%20%20%20%20%E2%95%91%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%94%E2%95%A9%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%A9%E2%95%97%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20%20%20Unit%20Tests%20%20%20%20%E2%95%91%20%20(70%25)%20%E2%80%94%20Business%20logic%2C%20components%2C%20utils%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%91%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%95%9A%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%9D%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20Unit%20Testing%0A%0A%23%23%23%203.1%20Flutter%20Unit%20Tests%0A%0A**Testing%20Framework%3A**%20%60flutter_test%60%20%2B%20%60mocktail%60%0A**Location%3A**%20%60test%2Funit%2F%60%0A**Target%20Coverage%3A**%20%E2%89%A5%2080%25%20of%20business%20logic%20(use%20cases%2C%20repositories%2C%20providers)%0A%0A**Test%20Examples%3A**%0A%0A%60%60%60dart%0A%2F%2F%20test%2Funit%2Fauth%2Fusecases%2Flogin_test.dart%0Avoid%20main()%20%7B%0A%20%20late%20LoginUseCase%20loginUseCase%3B%0A%20%20late%20MockAuthRepository%20mockAuthRepository%3B%0A%0A%20%20setUp(()%20%7B%0A%20%20%20%20mockAuthRepository%20%3D%20MockAuthRepository()%3B%0A%20%20%20%20loginUseCase%20%3D%20LoginUseCase(mockAuthRepository)%3B%0A%20%20%7D)%3B%0A%0A%20%20group(&#039;LoginUseCase&#039;%2C%20()%20%7B%0A%20%20%20%20test(&#039;returns%20AuthResult%20when%20credentials%20are%20valid&#039;%2C%20()%20async%20%7B%0A%20%20%20%20%20%20when(()%20%3D%3E%20mockAuthRepository.login(any()%2C%20any()))%0A%20%20%20%20%20%20%20%20%20%20.thenAnswer((_)%20async%20%3D%3E%20Right(tAuthResult))%3B%0A%0A%20%20%20%20%20%20final%20result%20%3D%20await%20loginUseCase(LoginParams(email%3A%20&#039;test%40test.com&#039;%2C%20password%3A%20&#039;Pass123!&#039;))%3B%0A%0A%20%20%20%20%20%20expect(result%2C%20Right(tAuthResult))%3B%0A%20%20%20%20%20%20verify(()%20%3D%3E%20mockAuthRepository.login(&#039;test%40test.com&#039;%2C%20&#039;Pass123!&#039;)).called(1)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20test(&#039;returns%20AuthFailure%20when%20credentials%20are%20invalid&#039;%2C%20()%20async%20%7B%0A%20%20%20%20%20%20when(()%20%3D%3E%20mockAuthRepository.login(any()%2C%20any()))%0A%20%20%20%20%20%20%20%20%20%20.thenAnswer((_)%20async%20%3D%3E%20Left(AuthFailure(&#039;Invalid%20credentials&#039;)))%3B%0A%0A%20%20%20%20%20%20final%20result%20%3D%20await%20loginUseCase(LoginParams(email%3A%20&#039;test%40test.com&#039;%2C%20password%3A%20&#039;wrong&#039;))%3B%0A%0A%20%20%20%20%20%20expect(result%2C%20Left(AuthFailure(&#039;Invalid%20credentials&#039;)))%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20test(&#039;throws%20ValidationException%20when%20email%20is%20empty&#039;%2C%20()%20async%20%7B%0A%20%20%20%20%20%20expect(%0A%20%20%20%20%20%20%20%20()%20%3D%3E%20loginUseCase(LoginParams(email%3A%20&#039;&#039;%2C%20password%3A%20&#039;Pass123!&#039;))%2C%0A%20%20%20%20%20%20%20%20throwsA(isA%3CValidationException%3E())%2C%0A%20%20%20%20%20%20)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D)%3B%0A%7D%0A%60%60%60%0A%0A**What%20to%20Unit%20Test%20in%20Flutter%3A**%0A-%20All%20use%20case%20classes%20(domain%20layer)%0A-%20Repository%20implementations%20(with%20mocked%20data%20sources)%0A-%20Riverpod%20notifiers%20(state%20transitions)%0A-%20Input%20validation%20logic%0A-%20Date%2Ftime%20utility%20functions%0A-%20XP%20calculation%20logic%0A-%20Gamification%20rules%0A%0A---%0A%0A%23%23%23%203.2%20Node.js%2FExpress%20Unit%20Tests%0A%0A**Testing%20Framework%3A**%20Vitest%20(or%20Jest)%20%2B%20Supertest%0A**Location%3A**%20%60src%2F__tests__%2Funit%2F%60%0A**Target%20Coverage%3A**%20%E2%89%A5%2085%25%20of%20service%20layer%0A%0A**Test%20Examples%3A**%0A%0A%60%60%60typescript%0A%2F%2F%20src%2F__tests__%2Funit%2Fservices%2Fquiz.service.test.ts%0Aimport%20%7B%20describe%2C%20it%2C%20expect%2C%20vi%2C%20beforeEach%20%7D%20from%20&#039;vitest&#039;%3B%0Aimport%20%7B%20QuizService%20%7D%20from%20&#039;..%2F..%2Fservices%2Fquiz.service&#039;%3B%0Aimport%20%7B%20MockQuizRepository%20%7D%20from%20&#039;..%2Fmocks%2Fquiz.repository.mock&#039;%3B%0Aimport%20%7B%20MockGamificationService%20%7D%20from%20&#039;..%2Fmocks%2Fgamification.service.mock&#039;%3B%0A%0Adescribe(&#039;QuizService.submitAttempt()&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20let%20quizService%3A%20QuizService%3B%0A%20%20let%20mockQuizRepo%3A%20MockQuizRepository%3B%0A%20%20let%20mockGamification%3A%20MockGamificationService%3B%0A%0A%20%20beforeEach(()%20%3D%3E%20%7B%0A%20%20%20%20mockQuizRepo%20%3D%20new%20MockQuizRepository()%3B%0A%20%20%20%20mockGamification%20%3D%20new%20MockGamificationService()%3B%0A%20%20%20%20quizService%20%3D%20new%20QuizService(mockQuizRepo%2C%20mockGamification)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;correctly%20calculates%20score%20for%20MCQ_SINGLE%20questions&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20result%20%3D%20await%20quizService.calculateScore(mockQuizAnswers%2C%20mockQuizQuestions)%3B%0A%20%20%20%20expect(result.score).toBe(80)%3B%0A%20%20%20%20expect(result.correctCount).toBe(8)%3B%0A%20%20%20%20expect(result.passed).toBe(true)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;awards%20XP%20when%20quiz%20is%20passed&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20vi.spyOn(mockGamification%2C%20&#039;awardXP&#039;)%3B%0A%20%20%20%20await%20quizService.submitAttempt(&#039;usr_123&#039;%2C%20&#039;qz_456&#039;%2C%20mockAnswers)%3B%0A%20%20%20%20expect(mockGamification.awardXP).toHaveBeenCalledWith(&#039;usr_123&#039;%2C%20expect.any(Number)%2C%20&#039;quiz_passed&#039;)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;does%20not%20award%20XP%20when%20quiz%20is%20failed&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20vi.spyOn(mockGamification%2C%20&#039;awardXP&#039;)%3B%0A%20%20%20%20await%20quizService.submitAttempt(&#039;usr_123&#039;%2C%20&#039;qz_456&#039;%2C%20mockFailingAnswers)%3B%0A%20%20%20%20expect(mockGamification.awardXP).not.toHaveBeenCalled()%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;throws%20AttemptLimitExceededError%20after%20max%20attempts&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20mockQuizRepo.getAttemptCount.mockResolvedValue(3)%3B%20%2F%2F%20max%20is%203%0A%20%20%20%20await%20expect(quizService.submitAttempt(&#039;usr_123&#039;%2C%20&#039;qz_456&#039;%2C%20mockAnswers))%0A%20%20%20%20%20%20.rejects.toThrow(AttemptLimitExceededError)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;enforces%20cooldown%20period%20between%20attempts&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20mockQuizRepo.getLastAttemptTime.mockResolvedValue(%0A%20%20%20%20%20%20new%20Date(Date.now()%20-%202%20*%2060%20*%2060%20*%201000)%20%20%2F%2F%202%20hours%20ago%2C%20cooldown%20is%2024h%0A%20%20%20%20)%3B%0A%20%20%20%20await%20expect(quizService.submitAttempt(&#039;usr_123&#039;%2C%20&#039;qz_456&#039;%2C%20mockAnswers))%0A%20%20%20%20%20%20.rejects.toThrow(CooldownActiveError)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A**What%20to%20Unit%20Test%20in%20Node.js%3A**%0A-%20All%20service%20layer%20methods%0A-%20Input%20validation%20schemas%20(Zod)%0A-%20JWT%20generation%20and%20validation%0A-%20Password%20hashing%20utilities%0A-%20XP%20calculation%20algorithms%0A-%20Stripe%2FRazorpay%20webhook%20signature%20verification%0A-%20Email%20template%20rendering%0A-%20Streak%20calculation%20logic%0A-%20Rate%20limiting%20logic%0A%0A---%0A%0A%23%23%23%203.3%20React%2FNext.js%20Component%20Tests%0A%0A**Testing%20Framework%3A**%20Vitest%20%2B%20React%20Testing%20Library%0A**Location%3A**%20%60src%2F__tests__%2Fcomponents%2F%60%0A%0A%60%60%60typescript%0A%2F%2F%20src%2F__tests__%2Fcomponents%2FCourseCard.test.tsx%0Aimport%20%7B%20render%2C%20screen%2C%20fireEvent%20%7D%20from%20&#039;%40testing-library%2Freact&#039;%3B%0Aimport%20%7B%20CourseCard%20%7D%20from%20&#039;%40%2Fcomponents%2Fshared%2FCourseCard&#039;%3B%0A%0Adescribe(&#039;CourseCard&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20const%20mockCourse%20%3D%20%7B%0A%20%20%20%20id%3A%20&#039;crs_001&#039;%2C%0A%20%20%20%20title%3A%20&#039;Python%20for%20Beginners&#039;%2C%0A%20%20%20%20thumbnail%3A%20&#039;%2Fimg%2Fpython.jpg&#039;%2C%0A%20%20%20%20instructor%3A%20%7B%20displayName%3A%20&#039;Dr.%20Rajan&#039;%20%7D%2C%0A%20%20%20%20rating%3A%204.8%2C%0A%20%20%20%20reviewsCount%3A%201234%2C%0A%20%20%20%20level%3A%20&#039;BEGINNER&#039;%2C%0A%20%20%20%20isFree%3A%20false%2C%0A%20%20%20%20price%3A%20599%2C%0A%20%20%20%20includedInPro%3A%20true%2C%0A%20%20%7D%3B%0A%0A%20%20it(&#039;renders%20course%20title&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7BmockCourse%7D%20%2F%3E)%3B%0A%20%20%20%20expect(screen.getByText(&#039;Python%20for%20Beginners&#039;)).toBeInTheDocument()%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;shows%20%22Included%20in%20Pro%22%20badge%20when%20includedInPro%20is%20true&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7BmockCourse%7D%20%2F%3E)%3B%0A%20%20%20%20expect(screen.getByText(&#039;Included%20in%20Pro&#039;)).toBeInTheDocument()%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;shows%20price%20when%20not%20included%20in%20pro%20and%20not%20free&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7B%7B%20...mockCourse%2C%20includedInPro%3A%20false%20%7D%7D%20%2F%3E)%3B%0A%20%20%20%20expect(screen.getByText(&#039;%E2%82%B9599&#039;)).toBeInTheDocument()%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;shows%20%22Free%22%20badge%20when%20isFree%20is%20true&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7B%7B%20...mockCourse%2C%20isFree%3A%20true%2C%20price%3A%200%20%7D%7D%20%2F%3E)%3B%0A%20%20%20%20expect(screen.getByText(&#039;Free&#039;)).toBeInTheDocument()%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;triggers%20onEnroll%20callback%20when%20Enroll%20button%20is%20clicked&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20mockOnEnroll%20%3D%20vi.fn()%3B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7BmockCourse%7D%20onEnroll%3D%7BmockOnEnroll%7D%20%2F%3E)%3B%0A%20%20%20%20fireEvent.click(screen.getByRole(&#039;button&#039;%2C%20%7B%20name%3A%20%2Fenroll%2Fi%20%7D))%3B%0A%20%20%20%20expect(mockOnEnroll).toHaveBeenCalledWith(&#039;crs_001&#039;)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;is%20accessible%20%E2%80%94%20has%20correct%20ARIA%20attributes&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20render(%3CCourseCard%20course%3D%7BmockCourse%7D%20%2F%3E)%3B%0A%20%20%20%20const%20card%20%3D%20screen.getByRole(&#039;article&#039;)%3B%0A%20%20%20%20expect(card).toHaveAttribute(&#039;aria-label&#039;%2C%20expect.stringContaining(&#039;Python%20for%20Beginners&#039;))%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A---%0A%0A%23%23%204.%20Integration%20Testing%0A%0A%23%23%23%204.1%20API%20Integration%20Tests%0A%0A%60%60%60typescript%0A%2F%2F%20src%2F__tests__%2Fintegration%2Fauth.api.test.ts%0Aimport%20%7B%20app%20%7D%20from%20&#039;..%2F..%2Fapp&#039;%3B%0Aimport%20request%20from%20&#039;supertest&#039;%3B%0Aimport%20%7B%20prisma%20%7D%20from%20&#039;..%2F..%2Flib%2Fprisma&#039;%3B%0A%0Adescribe(&#039;POST%20%2Fapi%2Fv1%2Fauth%2Fregister&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20afterEach(async%20()%20%3D%3E%20%7B%0A%20%20%20%20await%20prisma.user.deleteMany(%7B%20where%3A%20%7B%20email%3A%20%7B%20contains%3A%20&#039;test.learnflow.ai&#039;%20%7D%20%7D%20%7D)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;creates%20a%20user%20and%20sends%20OTP%20on%20valid%20input&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20res%20%3D%20await%20request(app)%0A%20%20%20%20%20%20.post(&#039;%2Fapi%2Fv1%2Fauth%2Fregister&#039;)%0A%20%20%20%20%20%20.send(%7B%20email%3A%20&#039;newuser%40test.learnflow.ai&#039;%2C%20password%3A%20&#039;Password123!&#039;%2C%20displayName%3A%20&#039;Test%20User&#039;%20%7D)%3B%0A%0A%20%20%20%20expect(res.status).toBe(201)%3B%0A%20%20%20%20expect(res.body.success).toBe(true)%3B%0A%20%20%20%20expect(res.body.data.message).toContain(&#039;OTP%20sent&#039;)%3B%0A%0A%20%20%20%20%2F%2F%20Verify%20user%20was%20created%20in%20DB%0A%20%20%20%20const%20user%20%3D%20await%20prisma.user.findUnique(%7B%20where%3A%20%7B%20email%3A%20&#039;newuser%40test.learnflow.ai&#039;%20%7D%20%7D)%3B%0A%20%20%20%20expect(user).toBeTruthy()%3B%0A%20%20%20%20expect(user%3F.emailVerified).toBe(false)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;returns%20409%20for%20duplicate%20email&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20%2F%2F%20Create%20user%20first%0A%20%20%20%20await%20prisma.user.create(%7B%20data%3A%20%7B%20email%3A%20&#039;exists%40test.learnflow.ai&#039;%2C%20displayName%3A%20&#039;Existing&#039;%2C%20passwordHash%3A%20&#039;hash&#039;%20%7D%20%7D)%3B%0A%0A%20%20%20%20const%20res%20%3D%20await%20request(app)%0A%20%20%20%20%20%20.post(&#039;%2Fapi%2Fv1%2Fauth%2Fregister&#039;)%0A%20%20%20%20%20%20.send(%7B%20email%3A%20&#039;exists%40test.learnflow.ai&#039;%2C%20password%3A%20&#039;Password123!&#039;%2C%20displayName%3A%20&#039;Test&#039;%20%7D)%3B%0A%0A%20%20%20%20expect(res.status).toBe(409)%3B%0A%20%20%20%20expect(res.body.error.code).toBe(&#039;EMAIL_ALREADY_EXISTS&#039;)%3B%0A%20%20%7D)%3B%0A%0A%20%20it(&#039;returns%20400%20for%20weak%20password&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20res%20%3D%20await%20request(app)%0A%20%20%20%20%20%20.post(&#039;%2Fapi%2Fv1%2Fauth%2Fregister&#039;)%0A%20%20%20%20%20%20.send(%7B%20email%3A%20&#039;weak%40test.learnflow.ai&#039;%2C%20password%3A%20&#039;1234&#039;%2C%20displayName%3A%20&#039;Test&#039;%20%7D)%3B%0A%0A%20%20%20%20expect(res.status).toBe(400)%3B%0A%20%20%20%20expect(res.body.error.code).toBe(&#039;VALIDATION_ERROR&#039;)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A%23%23%23%204.2%20Database%20Integration%20Tests%0A%0A%60%60%60typescript%0A%2F%2F%20Test%20actual%20Prisma%20queries%20against%20test%20DB%0Adescribe(&#039;CourseRepository&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20it(&#039;full-text%20search%20finds%20courses%20by%20keyword&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20results%20%3D%20await%20courseRepository.findMany(%7B%20search%3A%20&#039;python&#039;%20%7D)%3B%0A%20%20%20%20expect(results.courses.length).toBeGreaterThan(0)%3B%0A%20%20%20%20expect(results.courses.every(c%20%3D%3E%20c.title.toLowerCase().includes(&#039;python&#039;)%20%7C%7C%20c.tags.includes(&#039;python&#039;))).toBe(true)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A---%0A%0A%23%23%205.%20End-to-End%20Testing%0A%0A%23%23%23%205.1%20Web%20App%20E2E%20%E2%80%94%20Playwright%0A%0A**Location%3A**%20%60e2e%2F%60%0A**Framework%3A**%20Playwright%0A**Environments%3A**%20Staging%20(pre-deploy)%2C%20Production%20smoke%20tests%20(post-deploy%2C%20read-only)%0A%0A**Critical%20Paths%20(must%20all%20pass%20before%20any%20release)%3A**%0A%0A%60%60%60typescript%0A%2F%2F%20e2e%2Fauth.spec.ts%0Aimport%20%7B%20test%2C%20expect%20%7D%20from%20&#039;%40playwright%2Ftest&#039;%3B%0A%0Atest.describe(&#039;User%20Registration%20%26%20Onboarding&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20test(&#039;new%20user%20can%20register%2C%20verify%20OTP%2C%20complete%20onboarding&#039;%2C%20async%20(%7B%20page%20%7D)%20%3D%3E%20%7B%0A%20%20%20%20%2F%2F%201.%20Navigate%20to%20registration%0A%20%20%20%20await%20page.goto(&#039;%2Fregister&#039;)%3B%0A%20%20%20%20await%20page.fill(&#039;%23email-input&#039;%2C%20&#039;e2e_test%40learnflow.ai&#039;)%3B%0A%20%20%20%20await%20page.fill(&#039;%23password-input&#039;%2C%20&#039;TestPass123!&#039;)%3B%0A%20%20%20%20await%20page.fill(&#039;%23confirm-password-input&#039;%2C%20&#039;TestPass123!&#039;)%3B%0A%20%20%20%20await%20page.click(&#039;%23register-button&#039;)%3B%0A%0A%20%20%20%20%2F%2F%202.%20OTP%20screen%0A%20%20%20%20await%20expect(page).toHaveURL(%2F%5C%2Fauth%5C%2Fotp%2F)%3B%0A%20%20%20%20%2F%2F%20Use%20test%20OTP%20seeded%20in%20test%20environment%0A%20%20%20%20await%20page.fill(&#039;%23otp-input&#039;%2C%20&#039;123456&#039;)%3B%0A%20%20%20%20await%20expect(page).toHaveURL(%2F%5C%2Fonboarding%2F)%3B%0A%0A%20%20%20%20%2F%2F%203.%20Onboarding%3A%20Role%20selection%0A%20%20%20%20await%20page.click(&#039;%5Bdata-testid%3D%22role-student%22%5D&#039;)%3B%0A%20%20%20%20await%20page.click(&#039;%23continue-button&#039;)%3B%0A%0A%20%20%20%20%2F%2F%204.%20Interest%20selection%0A%20%20%20%20await%20page.click(&#039;%5Bdata-testid%3D%22interest-technology%22%5D&#039;)%3B%0A%20%20%20%20await%20page.click(&#039;%5Bdata-testid%3D%22interest-design%22%5D&#039;)%3B%0A%20%20%20%20await%20page.click(&#039;%23continue-button&#039;)%3B%0A%0A%20%20%20%20%2F%2F%205.%20Verify%20dashboard%0A%20%20%20%20await%20expect(page).toHaveURL(%2F%5C%2Fdashboard%2F)%3B%0A%20%20%20%20await%20expect(page.locator(&#039;%5Bdata-testid%3D%22welcome-message%22%5D&#039;)).toContainText(&#039;Good&#039;)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A%60%60%60typescript%0A%2F%2F%20e2e%2Fpurchase.spec.ts%0Atest(&#039;Free%20user%20can%20enroll%20in%20a%20free%20course%20and%20complete%20first%20lesson&#039;%2C%20async%20(%7B%20page%20%7D)%20%3D%3E%20%7B%0A%20%20await%20loginAs(page%2C%20&#039;free_user&#039;)%3B%0A%20%20await%20page.goto(&#039;%2Fcourses%2Fpython-for-beginners&#039;)%3B%0A%20%20await%20expect(page.locator(&#039;%5Bdata-testid%3D%22course-title%22%5D&#039;)).toHaveText(&#039;Python%20for%20Beginners&#039;)%3B%0A%20%20%0A%20%20await%20page.click(&#039;%5Bdata-testid%3D%22enroll-button%22%5D&#039;)%3B%0A%20%20await%20expect(page.locator(&#039;%5Bdata-testid%3D%22enrollment-success-toast%22%5D&#039;)).toBeVisible()%3B%0A%20%20%0A%20%20await%20page.click(&#039;%5Bdata-testid%3D%22start-learning-button%22%5D&#039;)%3B%0A%20%20await%20expect(page).toHaveURL(%2F%5C%2Flearn%5C%2Fpython-for-beginners%5C%2Flessons%5C%2F.%2B%2F)%3B%0A%20%20%0A%20%20await%20page.click(&#039;%5Bdata-testid%3D%22mark-complete-button%22%5D&#039;)%3B%0A%20%20await%20expect(page.locator(&#039;%5Bdata-testid%3D%22xp-toast%22%5D&#039;)).toBeVisible()%3B%0A%20%20await%20expect(page.locator(&#039;%5Bdata-testid%3D%22xp-toast%22%5D&#039;)).toContainText(&#039;XP&#039;)%3B%0A%7D)%3B%0A%60%60%60%0A%0A%23%23%23%205.2%20Flutter%20Integration%20Tests%0A%0A%60%60%60dart%0A%2F%2F%20integration_test%2Fauth_flow_test.dart%0Avoid%20main()%20%7B%0A%20%20IntegrationTestWidgetsFlutterBinding.ensureInitialized()%3B%0A%20%20%0A%20%20group(&#039;Authentication%20Flow&#039;%2C%20()%20%7B%0A%20%20%20%20testWidgets(&#039;User%20can%20log%20in%20and%20reach%20dashboard&#039;%2C%20(tester)%20async%20%7B%0A%20%20%20%20%20%20app.main()%3B%0A%20%20%20%20%20%20await%20tester.pumpAndSettle()%3B%0A%20%20%20%20%20%20%0A%20%20%20%20%20%20%2F%2F%20Should%20show%20splash%2Flogin%0A%20%20%20%20%20%20expect(find.byKey(const%20Key(&#039;get-started-button&#039;))%2C%20findsOneWidget)%3B%0A%20%20%20%20%20%20await%20tester.tap(find.byKey(const%20Key(&#039;get-started-button&#039;)))%3B%0A%20%20%20%20%20%20await%20tester.pumpAndSettle()%3B%0A%20%20%20%20%20%20%0A%20%20%20%20%20%20%2F%2F%20Login%20screen%0A%20%20%20%20%20%20await%20tester.enterText(find.byKey(const%20Key(&#039;email-field&#039;))%2C%20&#039;testuser%40test.com&#039;)%3B%0A%20%20%20%20%20%20await%20tester.enterText(find.byKey(const%20Key(&#039;password-field&#039;))%2C%20&#039;TestPass123!&#039;)%3B%0A%20%20%20%20%20%20await%20tester.tap(find.byKey(const%20Key(&#039;login-button&#039;)))%3B%0A%20%20%20%20%20%20await%20tester.pumpAndSettle()%3B%0A%20%20%20%20%20%20%0A%20%20%20%20%20%20%2F%2F%20Should%20reach%20dashboard%0A%20%20%20%20%20%20expect(find.byKey(const%20Key(&#039;dashboard-screen&#039;))%2C%20findsOneWidget)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D)%3B%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%206.%20Specialized%20Testing%0A%0A%23%23%23%206.1%20Accessibility%20Testing%0A%0A**Standards%3A**%20WCAG%202.2%20Level%20AA%0A%0A%60%60%60typescript%0A%2F%2F%20Using%20axe-core%20with%20Playwright%0Aimport%20AxeBuilder%20from%20&#039;%40axe-core%2Fplaywright&#039;%3B%0A%0Atest(&#039;Dashboard%20is%20accessible&#039;%2C%20async%20(%7B%20page%20%7D)%20%3D%3E%20%7B%0A%20%20await%20loginAs(page%2C%20&#039;test_user&#039;)%3B%0A%20%20await%20page.goto(&#039;%2Fdashboard&#039;)%3B%0A%20%20%0A%20%20const%20accessibilityScanResults%20%3D%20await%20new%20AxeBuilder(%7B%20page%20%7D)%0A%20%20%20%20.withTags(%5B&#039;wcag2a&#039;%2C%20&#039;wcag2aa&#039;%2C%20&#039;wcag21a&#039;%2C%20&#039;wcag21aa&#039;%5D)%0A%20%20%20%20.analyze()%3B%0A%20%20%0A%20%20expect(accessibilityScanResults.violations).toEqual(%5B%5D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A**Manual%20Accessibility%20Checklist%20per%20Screen%3A**%0A-%20%5B%20%5D%20All%20interactive%20elements%20reachable%20by%20keyboard%20(Tab%2C%20Enter%2C%20Space)%0A-%20%5B%20%5D%20Focus%20indicators%20visible%20(min%202px%20outline)%0A-%20%5B%20%5D%20Screen%20reader%20test%20with%20VoiceOver%20(iOS%2FmacOS)%20and%20TalkBack%20(Android)%0A-%20%5B%20%5D%20Color%20contrast%3A%20text%20%E2%89%A5%204.5%3A1%20(AA)%2C%20large%20text%20%E2%89%A5%203%3A1%0A-%20%5B%20%5D%20No%20information%20conveyed%20by%20color%20alone%0A-%20%5B%20%5D%20All%20images%20have%20alt%20text%20(or%20aria-hidden%20for%20decorative)%0A-%20%5B%20%5D%20Form%20errors%20announced%20to%20screen%20readers%0A-%20%5B%20%5D%20Touch%20targets%20%E2%89%A5%2044%C3%9744px%20on%20mobile%0A-%20%5B%20%5D%20Zoom%3A%20UI%20functional%20at%20200%25%20browser%20zoom%0A%0A%23%23%23%206.2%20Performance%20Testing%0A%0A**Tools%3A**%20k6%20(load%20testing)%2C%20Lighthouse%20(web)%2C%20Flutter%20Performance%20overlay%0A%0A**API%20Load%20Testing%20with%20k6%3A**%0A%60%60%60javascript%0A%2F%2F%20k6%2Fload-tests%2Fcourse-list.js%0Aimport%20http%20from%20&#039;k6%2Fhttp&#039;%3B%0Aimport%20%7B%20check%2C%20sleep%20%7D%20from%20&#039;k6&#039;%3B%0A%0Aexport%20const%20options%20%3D%20%7B%0A%20%20stages%3A%20%5B%0A%20%20%20%20%7B%20duration%3A%20&#039;2m&#039;%2C%20target%3A%20100%20%7D%2C%20%20%20%2F%2F%20Ramp%20to%20100%20users%0A%20%20%20%20%7B%20duration%3A%20&#039;5m&#039;%2C%20target%3A%20100%20%7D%2C%20%20%20%2F%2F%20Sustain%0A%20%20%20%20%7B%20duration%3A%20&#039;2m&#039;%2C%20target%3A%20500%20%7D%2C%20%20%20%2F%2F%20Ramp%20to%20500%20(stress)%0A%20%20%20%20%7B%20duration%3A%20&#039;5m&#039;%2C%20target%3A%20500%20%7D%2C%20%20%20%2F%2F%20Sustain%0A%20%20%20%20%7B%20duration%3A%20&#039;2m&#039;%2C%20target%3A%200%20%7D%2C%20%20%20%20%20%2F%2F%20Ramp%20down%0A%20%20%5D%2C%0A%20%20thresholds%3A%20%7B%0A%20%20%20%20http_req_duration%3A%20%5B&#039;p(95)%3C500&#039;%5D%2C%20%20%20%20%2F%2F%2095%25%20of%20requests%20%3C%20500ms%0A%20%20%20%20http_req_failed%3A%20%5B&#039;rate%3C0.01&#039;%5D%2C%20%20%20%20%20%20%2F%2F%20Error%20rate%20%3C%201%25%0A%20%20%7D%2C%0A%7D%3B%0A%0Aexport%20default%20function%20()%20%7B%0A%20%20const%20res%20%3D%20http.get(%60%24%7BAPI_BASE%7D%2Fapi%2Fv1%2Fcourses%3Fpage%3D1%26limit%3D20%60%2C%20%7B%0A%20%20%20%20headers%3A%20%7B%20Authorization%3A%20%60Bearer%20%24%7BTEST_TOKEN%7D%60%20%7D%2C%0A%20%20%7D)%3B%0A%20%20check(res%2C%20%7B%20&#039;status%20is%20200&#039;%3A%20(r)%20%3D%3E%20r.status%20%3D%3D%3D%20200%20%7D)%3B%0A%20%20sleep(1)%3B%0A%7D%0A%60%60%60%0A%0A**Performance%20Targets%3A**%0A%7C%20Metric%20%7C%20Target%20%7C%20Measurement%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20API%20response%20(P95)%20%7C%20%3C%20200ms%20%7C%20k6%20load%20tests%20%7C%0A%7C%20API%20response%20(P99)%20%7C%20%3C%20500ms%20%7C%20k6%20load%20tests%20%7C%0A%7C%20Web%20LCP%20%7C%20%3C%202.5s%20%7C%20Lighthouse%20%7C%0A%7C%20Web%20FID%2FINP%20%7C%20%3C%20100ms%20%7C%20Lighthouse%20%7C%0A%7C%20Web%20CLS%20%7C%20%3C%200.1%20%7C%20Lighthouse%20%7C%0A%7C%20Flutter%20app%20startup%20%7C%20%3C%202s%20cold%20start%20%7C%20Flutter%20performance%20profiling%20%7C%0A%7C%20Video%20start%20time%20%7C%20%3C%203s%20%7C%20Manual%20%2B%20automated%20%7C%0A%0A%23%23%23%206.3%20AI%20Response%20Testing%0A%0A%60%60%60typescript%0A%2F%2F%20src%2F__tests__%2Fai%2Frag-quality.test.ts%0Adescribe(&#039;AI%20RAG%20Quality&#039;%2C%20()%20%3D%3E%20%7B%0A%20%20const%20goldenQAPairs%20%3D%20loadGoldenDataset()%3B%20%2F%2F%20100%2B%20pairs%0A%0A%20%20it.each(goldenQAPairs)(%0A%20%20%20%20&#039;answers%20%22%25s%22%20with%20expected%20keywords&#039;%2C%0A%20%20%20%20async%20(query%2C%20expectedKeywords%2C%20courseId)%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20response%20%3D%20await%20aiService.query(%7B%0A%20%20%20%20%20%20%20%20message%3A%20query%2C%0A%20%20%20%20%20%20%20%20userId%3A%20&#039;test_user&#039;%2C%0A%20%20%20%20%20%20%20%20context%3A%20%7B%20courseId%20%7D%2C%0A%20%20%20%20%20%20%7D)%3B%0A%0A%20%20%20%20%20%20const%20containsKeywords%20%3D%20expectedKeywords.every(%0A%20%20%20%20%20%20%20%20(kw)%20%3D%3E%20response.content.toLowerCase().includes(kw.toLowerCase())%0A%20%20%20%20%20%20)%3B%0A%20%20%20%20%20%20expect(containsKeywords).toBe(true)%3B%0A%20%20%20%20%7D%0A%20%20)%3B%0A%0A%20%20it(&#039;rejects%20off-topic%20queries&#039;%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20offTopicQueries%20%3D%20%5B%0A%20%20%20%20%20%20&#039;What%20is%20the%20current%20stock%20price%20of%20Tesla%3F&#039;%2C%0A%20%20%20%20%20%20&#039;Write%20me%20a%20love%20letter&#039;%2C%0A%20%20%20%20%20%20&#039;How%20do%20I%20make%20explosives%3F&#039;%2C%0A%20%20%20%20%5D%3B%0A%0A%20%20%20%20for%20(const%20query%20of%20offTopicQueries)%20%7B%0A%20%20%20%20%20%20const%20response%20%3D%20await%20aiService.query(%7B%20message%3A%20query%2C%20userId%3A%20&#039;test_user&#039;%20%7D)%3B%0A%20%20%20%20%20%20expect(response.blocked).toBe(true)%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%7D)%3B%0A%60%60%60%0A%0A---%0A%0A%23%23%207.%20QA%20Environments%0A%0A%7C%20Environment%20%7C%20Purpose%20%7C%20Update%20Frequency%20%7C%20Data%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20Local%20(dev)%20%7C%20Developer%20testing%20%7C%20Per%20commit%20%7C%20Seeded%20mock%20data%20%7C%0A%7C%20QA%20%7C%20Feature%20testing%20by%20QA%20team%20%7C%20Per%20feature%20branch%20%7C%20Sanitized%20prod-like%20data%20%7C%0A%7C%20Staging%20%7C%20Pre-release%20E2E%2C%20stakeholder%20preview%20%7C%20Per%20sprint%20%7C%20Sanitized%20prod%20data%20%7C%0A%7C%20Production%20%7C%20Live%20system%20%7C%20Per%20release%20%7C%20Real%20data%20%7C%0A%0A**Test%20Data%20Management%3A**%0A-%20Faker.js%20for%20generating%20realistic%20test%20data%0A-%20Database%20seeders%20for%20consistent%20test%20states%0A-%20Stripe%2FRazorpay%20test%20mode%20for%20payment%20flows%0A-%20Dedicated%20test%20phone%20numbers%20and%20OTP%20bypass%20(test%20OTP%20%3D%20123456%20in%20non-prod)%0A%0A---%0A%0A%23%23%208.%20CI%2FCD%20Quality%20Gates%0A%0A%60%60%60yaml%0A%23%20.github%2Fworkflows%2Fci.yml%0Aname%3A%20CI%20Quality%20Gates%0A%0Aon%3A%20%5Bpush%2C%20pull_request%5D%0A%0Ajobs%3A%0A%20%20unit-tests%3A%0A%20%20%20%20runs-on%3A%20ubuntu-latest%0A%20%20%20%20steps%3A%0A%20%20%20%20%20%20-%20name%3A%20Run%20Backend%20Unit%20Tests%0A%20%20%20%20%20%20%20%20run%3A%20npx%20vitest%20run%20--coverage%0A%20%20%20%20%20%20-%20name%3A%20Check%20Coverage%20Threshold%0A%20%20%20%20%20%20%20%20run%3A%20npx%20vitest%20run%20--coverage%20--reporter%3Djson%0A%20%20%20%20%20%20%20%20%23%20Fails%20if%20%3C%2080%25%20coverage%0A%0A%20%20integration-tests%3A%0A%20%20%20%20needs%3A%20unit-tests%0A%20%20%20%20steps%3A%0A%20%20%20%20%20%20-%20name%3A%20Start%20test%20DB%0A%20%20%20%20%20%20%20%20run%3A%20docker%20compose%20-f%20docker-compose.test.yml%20up%20-d%20postgres%0A%20%20%20%20%20%20-%20name%3A%20Run%20Integration%20Tests%0A%20%20%20%20%20%20%20%20run%3A%20npm%20run%20test%3Aintegration%0A%0A%20%20e2e-tests%3A%0A%20%20%20%20needs%3A%20integration-tests%0A%20%20%20%20steps%3A%0A%20%20%20%20%20%20-%20name%3A%20Run%20Playwright%20E2E%0A%20%20%20%20%20%20%20%20run%3A%20npx%20playwright%20test%20--project%3Dchromium%0A%0A%20%20security-checks%3A%0A%20%20%20%20steps%3A%0A%20%20%20%20%20%20-%20name%3A%20npm%20audit%0A%20%20%20%20%20%20%20%20run%3A%20npm%20audit%20--audit-level%3Dhigh%0A%20%20%20%20%20%20-%20name%3A%20SAST%20with%20CodeQL%0A%20%20%20%20%20%20%20%20uses%3A%20github%2Fcodeql-action%2Fanalyze%40v3%0A%0A%20%20lighthouse-ci%3A%0A%20%20%20%20steps%3A%0A%20%20%20%20%20%20-%20name%3A%20Run%20Lighthouse%0A%20%20%20%20%20%20%20%20run%3A%20npx%20lhci%20autorun%0A%20%20%20%20%20%20%20%20%23%20Fails%20if%20LCP%20%3E%202.5s%2C%20CLS%20%3E%200.1%0A%0A%20%20%23%20All%20jobs%20must%20pass%20before%20merge%20to%20main%0A%60%60%60%0A%0A---%0A%0A%23%23%209.%20Bug%20Reporting%20%26%20Triage%0A%0A%23%23%23%209.1%20Bug%20Severity%20Levels%0A%7C%20Level%20%7C%20Definition%20%7C%20SLA%20(Fix)%20%7C%20Example%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20P1%20Critical%20%7C%20Platform%20unusable%20or%20data%20loss%20%7C%20%3C%204%20hours%20%7C%20Login%20broken%2C%20payments%20failing%20%7C%0A%7C%20P2%20High%20%7C%20Major%20feature%20broken%20for%20all%20users%20%7C%20%3C%2024%20hours%20%7C%20Video%20not%20playing%2C%20quiz%20not%20submitting%20%7C%0A%7C%20P3%20Medium%20%7C%20Feature%20partially%20broken%20or%20edge%20case%20%7C%20%3C%201%20week%20%7C%20Filter%20not%20working%20for%20specific%20category%20%7C%0A%7C%20P4%20Low%20%7C%20UI%2Fcosmetic%2C%20minor%20inconvenience%20%7C%20Next%20sprint%20%7C%20Button%20color%20slightly%20off%2C%20typo%20%7C%0A%0A%23%23%23%209.2%20Bug%20Report%20Template%0A%60%60%60markdown%0A%23%23%20Bug%20Report%0A%0A**Title%3A**%20%5BShort%20description%5D%0A**Severity%3A**%20P1%20%2F%20P2%20%2F%20P3%20%2F%20P4%0A**Environment%3A**%20Production%20%2F%20Staging%20%2F%20QA%0A**Platform%3A**%20iOS%20%2F%20Android%20%2F%20Web%20%2F%20Desktop%0A%0A**Steps%20to%20Reproduce%3A**%0A1.%20Step%201%0A2.%20Step%202%0A3.%20Step%203%0A%0A**Expected%20Behavior%3A**%20What%20should%20happen%0A%0A**Actual%20Behavior%3A**%20What%20actually%20happens%0A%0A**Screenshots%2FScreen%20Recording%3A**%20%5BAttach%5D%0A**Device%2FBrowser%3A**%20iPhone%2015%20Pro%20%2F%20Chrome%20126%20%2F%20macOS%2014%0A**User%20Account%3A**%20%5BTest%20account%20email%20if%20reproducible%5D%0A**Error%20Logs%3A**%20%5BConsole%20errors%2C%20Sentry%20link%5D%0A**Frequency%3A**%20Always%20%2F%20Intermittent%20(X%2F10%20attempts)%0A%60%60%60%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>06 Testing And Qa</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Testing Strategy &amp; QA Plan</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="testing-strategy-qa-plan" class="docmd-heading"><a href="#testing-strategy-qa-plan" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Testing Strategy &amp; QA Plan</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="testing-strategy-qa-plan-1-testing-philosophy" class="docmd-heading"><a href="#testing-strategy-qa-plan-1-testing-philosophy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Testing Philosophy</h2>
+<p>LearnFlow AI follows a <strong>Shift-Left Testing</strong> approach: testing begins during design and development, not after. Quality is everyone’s responsibility — designers, developers, QA engineers, and product managers all contribute to preventing defects rather than just finding them.</p>
+<p><strong>Testing Objectives:</strong></p>
+<ul>
+<li>Ensure feature correctness and business rule enforcement</li>
+<li>Protect against regressions in every release</li>
+<li>Validate cross-platform consistency (Flutter + Web + Desktop)</li>
+<li>Verify AI response quality and safety</li>
+<li>Confirm accessibility and performance standards</li>
+<li>Build confidence for rapid, frequent deployments</li>
+</ul>
+<hr>
+<h2 id="testing-strategy-qa-plan-2-testing-pyramid" class="docmd-heading"><a href="#testing-strategy-qa-plan-2-testing-pyramid" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Testing Pyramid</h2>
+<pre class="hljs"><code>                    ╔═══════════╗
+                    ║   E2E     ║  (<span class="hljs-number">10</span><span class="hljs-punctuation">%</span>) — Slow, high confidence, critical flows
+                    ║   Tests   ║
+                   ╔╩═══════════╩╗
+                   ║ Integration  ║  (<span class="hljs-number">20</span><span class="hljs-punctuation">%</span>) — API <span class="hljs-punctuation">+</span> DB contracts, service layers
+                   ║    Tests     ║
+                  ╔╩══════════════╩╗
+                  ║   Unit Tests    ║  (<span class="hljs-number">70</span><span class="hljs-punctuation">%</span>) — Business logic, components, utils
+                  ║                 ║
+                  ╚═════════════════╝
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-3-unit-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-3-unit-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Unit Testing</h2>
+<h3 id="testing-strategy-qa-plan-3-unit-testing-31-flutter-unit-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-3-unit-testing-31-flutter-unit-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Flutter Unit Tests</h3>
+<p><strong>Testing Framework:</strong> <code>flutter_test</code> + <code>mocktail</code><br>
+<strong>Location:</strong> <code>test/unit/</code><br>
+<strong>Target Coverage:</strong> ≥ 80% of business logic (use cases, repositories, providers)</p>
+<p><strong>Test Examples:</strong></p>
+<pre class="hljs"><code class="language-dart"><span class="hljs-comment">// test/unit/auth/usecases/login_test.dart</span>
+<span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span>() {
+  late LoginUseCase loginUseCase;
+  late MockAuthRepository mockAuthRepository;
+
+  <span class="hljs-title function_">setUp</span>(() {
+    mockAuthRepository <span class="hljs-punctuation">=</span> <span class="hljs-title function_">MockAuthRepository</span>();
+    loginUseCase <span class="hljs-punctuation">=</span> <span class="hljs-title function_">LoginUseCase</span>(mockAuthRepository);
+  });
+
+  <span class="hljs-title function_">group</span>(<span class="hljs-string">&#039;LoginUseCase&#039;</span>, () {
+    <span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;returns AuthResult when credentials are valid&#039;</span>, () <span class="hljs-keyword">async</span> {
+      <span class="hljs-title function_">when</span>(() <span class="hljs-punctuation">=&gt;</span> mockAuthRepository.<span class="hljs-title function_">login</span>(<span class="hljs-title function_">any</span>(), <span class="hljs-title function_">any</span>()))
+          .<span class="hljs-title function_">thenAnswer</span>((_) <span class="hljs-keyword">async</span> <span class="hljs-punctuation">=&gt;</span> <span class="hljs-title function_">Right</span>(tAuthResult));
+
+      final result <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">loginUseCase</span>(<span class="hljs-title function_">LoginParams</span>(email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;test@test.com&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Pass123!&#039;</span>));
+
+      <span class="hljs-title function_">expect</span>(result, <span class="hljs-title function_">Right</span>(tAuthResult));
+      <span class="hljs-title function_">verify</span>(() <span class="hljs-punctuation">=&gt;</span> mockAuthRepository.<span class="hljs-title function_">login</span>(<span class="hljs-string">&#039;test@test.com&#039;</span>, <span class="hljs-string">&#039;Pass123!&#039;</span>)).<span class="hljs-title function_">called</span>(<span class="hljs-number">1</span>);
+    });
+
+    <span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;returns AuthFailure when credentials are invalid&#039;</span>, () <span class="hljs-keyword">async</span> {
+      <span class="hljs-title function_">when</span>(() <span class="hljs-punctuation">=&gt;</span> mockAuthRepository.<span class="hljs-title function_">login</span>(<span class="hljs-title function_">any</span>(), <span class="hljs-title function_">any</span>()))
+          .<span class="hljs-title function_">thenAnswer</span>((_) <span class="hljs-keyword">async</span> <span class="hljs-punctuation">=&gt;</span> <span class="hljs-title function_">Left</span>(<span class="hljs-title function_">AuthFailure</span>(<span class="hljs-string">&#039;Invalid credentials&#039;</span>)));
+
+      final result <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">loginUseCase</span>(<span class="hljs-title function_">LoginParams</span>(email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;test@test.com&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;wrong&#039;</span>));
+
+      <span class="hljs-title function_">expect</span>(result, <span class="hljs-title function_">Left</span>(<span class="hljs-title function_">AuthFailure</span>(<span class="hljs-string">&#039;Invalid credentials&#039;</span>)));
+    });
+
+    <span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;throws ValidationException when email is empty&#039;</span>, () <span class="hljs-keyword">async</span> {
+      <span class="hljs-title function_">expect</span>(
+        () <span class="hljs-punctuation">=&gt;</span> <span class="hljs-title function_">loginUseCase</span>(<span class="hljs-title function_">LoginParams</span>(email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Pass123!&#039;</span>)),
+        <span class="hljs-title function_">throwsA</span>(isA<span class="hljs-punctuation">&lt;</span>ValidationException<span class="hljs-punctuation">&gt;</span>()),
+      );
+    });
+  });
+}
+</code></pre>
+<p><strong>What to Unit Test in Flutter:</strong></p>
+<ul>
+<li>All use case classes (domain layer)</li>
+<li>Repository implementations (with mocked data sources)</li>
+<li>Riverpod notifiers (state transitions)</li>
+<li>Input validation logic</li>
+<li>Date/time utility functions</li>
+<li>XP calculation logic</li>
+<li>Gamification rules</li>
+</ul>
+<hr>
+<h3 id="testing-strategy-qa-plan-3-unit-testing-32-nodejsexpress-unit-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-3-unit-testing-32-nodejsexpress-unit-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 Node.js/Express Unit Tests</h3>
+<p><strong>Testing Framework:</strong> Vitest (or Jest) + Supertest<br>
+<strong>Location:</strong> <code>src/__tests__/unit/</code><br>
+<strong>Target Coverage:</strong> ≥ 85% of service layer</p>
+<p><strong>Test Examples:</strong></p>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// src/__tests__/unit/services/quiz.service.test.ts</span>
+<span class="hljs-keyword">import</span> { describe, it, expect, vi, beforeEach } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;vitest&#039;</span>;
+<span class="hljs-keyword">import</span> { QuizService } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../../services/quiz.service&#039;</span>;
+<span class="hljs-keyword">import</span> { MockQuizRepository } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../mocks/quiz.repository.mock&#039;</span>;
+<span class="hljs-keyword">import</span> { MockGamificationService } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../mocks/gamification.service.mock&#039;</span>;
+
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;QuizService.submitAttempt()&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">let</span> quizService<span class="hljs-punctuation">:</span> QuizService;
+  <span class="hljs-keyword">let</span> mockQuizRepo<span class="hljs-punctuation">:</span> MockQuizRepository;
+  <span class="hljs-keyword">let</span> mockGamification<span class="hljs-punctuation">:</span> MockGamificationService;
+
+  <span class="hljs-title function_">beforeEach</span>(() <span class="hljs-punctuation">=&gt;</span> {
+    mockQuizRepo <span class="hljs-punctuation">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">MockQuizRepository</span>();
+    mockGamification <span class="hljs-punctuation">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">MockGamificationService</span>();
+    quizService <span class="hljs-punctuation">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">QuizService</span>(mockQuizRepo, mockGamification);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;correctly calculates score for MCQ_SINGLE questions&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> result <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> quizService.<span class="hljs-title function_">calculateScore</span>(mockQuizAnswers, mockQuizQuestions);
+    <span class="hljs-title function_">expect</span>(result.<span class="hljs-attr">score</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-number">80</span>);
+    <span class="hljs-title function_">expect</span>(result.<span class="hljs-attr">correctCount</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-number">8</span>);
+    <span class="hljs-title function_">expect</span>(result.<span class="hljs-attr">passed</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">true</span>);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;awards XP when quiz is passed&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    vi.<span class="hljs-title function_">spyOn</span>(mockGamification, <span class="hljs-string">&#039;awardXP&#039;</span>);
+    <span class="hljs-keyword">await</span> quizService.<span class="hljs-title function_">submitAttempt</span>(<span class="hljs-string">&#039;usr_123&#039;</span>, <span class="hljs-string">&#039;qz_456&#039;</span>, mockAnswers);
+    <span class="hljs-title function_">expect</span>(mockGamification.<span class="hljs-attr">awardXP</span>).<span class="hljs-title function_">toHaveBeenCalledWith</span>(<span class="hljs-string">&#039;usr_123&#039;</span>, expect.<span class="hljs-title function_">any</span>(Number), <span class="hljs-string">&#039;quiz_passed&#039;</span>);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;does not award XP when quiz is failed&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    vi.<span class="hljs-title function_">spyOn</span>(mockGamification, <span class="hljs-string">&#039;awardXP&#039;</span>);
+    <span class="hljs-keyword">await</span> quizService.<span class="hljs-title function_">submitAttempt</span>(<span class="hljs-string">&#039;usr_123&#039;</span>, <span class="hljs-string">&#039;qz_456&#039;</span>, mockFailingAnswers);
+    <span class="hljs-title function_">expect</span>(mockGamification.<span class="hljs-attr">awardXP</span>).<span class="hljs-attr">not</span>.<span class="hljs-title function_">toHaveBeenCalled</span>();
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;throws AttemptLimitExceededError after max attempts&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    mockQuizRepo.<span class="hljs-attr">getAttemptCount</span>.<span class="hljs-title function_">mockResolvedValue</span>(<span class="hljs-number">3</span>); <span class="hljs-comment">// max is 3</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(quizService.<span class="hljs-title function_">submitAttempt</span>(<span class="hljs-string">&#039;usr_123&#039;</span>, <span class="hljs-string">&#039;qz_456&#039;</span>, mockAnswers))
+      .<span class="hljs-attr">rejects</span>.<span class="hljs-title function_">toThrow</span>(AttemptLimitExceededError);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;enforces cooldown period between attempts&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    mockQuizRepo.<span class="hljs-attr">getLastAttemptTime</span>.<span class="hljs-title function_">mockResolvedValue</span>(
+      <span class="hljs-keyword">new</span> <span class="hljs-title function_">Date</span>(Date.<span class="hljs-title function_">now</span>() <span class="hljs-punctuation">-</span> <span class="hljs-number">2</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">60</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">60</span> <span class="hljs-punctuation">*</span> <span class="hljs-number">1000</span>)  <span class="hljs-comment">// 2 hours ago, cooldown is 24h</span>
+    );
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(quizService.<span class="hljs-title function_">submitAttempt</span>(<span class="hljs-string">&#039;usr_123&#039;</span>, <span class="hljs-string">&#039;qz_456&#039;</span>, mockAnswers))
+      .<span class="hljs-attr">rejects</span>.<span class="hljs-title function_">toThrow</span>(CooldownActiveError);
+  });
+});
+</code></pre>
+<p><strong>What to Unit Test in Node.js:</strong></p>
+<ul>
+<li>All service layer methods</li>
+<li>Input validation schemas (Zod)</li>
+<li>JWT generation and validation</li>
+<li>Password hashing utilities</li>
+<li>XP calculation algorithms</li>
+<li>Stripe/Razorpay webhook signature verification</li>
+<li>Email template rendering</li>
+<li>Streak calculation logic</li>
+<li>Rate limiting logic</li>
+</ul>
+<hr>
+<h3 id="testing-strategy-qa-plan-3-unit-testing-33-reactnextjs-component-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-3-unit-testing-33-reactnextjs-component-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 React/Next.js Component Tests</h3>
+<p><strong>Testing Framework:</strong> Vitest + React Testing Library<br>
+<strong>Location:</strong> <code>src/__tests__/components/</code></p>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// src/__tests__/components/CourseCard.test.tsx</span>
+<span class="hljs-keyword">import</span> { render, screen, fireEvent } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;@testing-library/react&#039;</span>;
+<span class="hljs-keyword">import</span> { CourseCard } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;@/components/shared/CourseCard&#039;</span>;
+
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;CourseCard&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">const</span> mockCourse <span class="hljs-punctuation">=</span> {
+    <span class="hljs-keyword">id</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;crs_001&#039;</span>,
+    title<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Python for Beginners&#039;</span>,
+    thumbnail<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;/img/python.jpg&#039;</span>,
+    instructor<span class="hljs-punctuation">:</span> { displayName<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Dr. Rajan&#039;</span> },
+    rating<span class="hljs-punctuation">:</span> <span class="hljs-number">4.8</span>,
+    reviewsCount<span class="hljs-punctuation">:</span> <span class="hljs-number">1234</span>,
+    level<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;BEGINNER&#039;</span>,
+    isFree<span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>,
+    price<span class="hljs-punctuation">:</span> <span class="hljs-number">599</span>,
+    includedInPro<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+  };
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;renders course title&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{mockCourse} <span class="hljs-punctuation">/&gt;</span>);
+    <span class="hljs-title function_">expect</span>(screen.<span class="hljs-title function_">getByText</span>(<span class="hljs-string">&#039;Python for Beginners&#039;</span>)).<span class="hljs-title function_">toBeInTheDocument</span>();
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;shows &quot;Included in Pro&quot; badge when includedInPro is true&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{mockCourse} <span class="hljs-punctuation">/&gt;</span>);
+    <span class="hljs-title function_">expect</span>(screen.<span class="hljs-title function_">getByText</span>(<span class="hljs-string">&#039;Included in Pro&#039;</span>)).<span class="hljs-title function_">toBeInTheDocument</span>();
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;shows price when not included in pro and not free&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{{ ...<span class="hljs-attr">mockCourse</span>, includedInPro<span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span> }} <span class="hljs-punctuation">/&gt;</span>);
+    <span class="hljs-title function_">expect</span>(screen.<span class="hljs-title function_">getByText</span>(<span class="hljs-string">&#039;₹599&#039;</span>)).<span class="hljs-title function_">toBeInTheDocument</span>();
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;shows &quot;Free&quot; badge when isFree is true&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{{ ...<span class="hljs-attr">mockCourse</span>, isFree<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, price<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> }} <span class="hljs-punctuation">/&gt;</span>);
+    <span class="hljs-title function_">expect</span>(screen.<span class="hljs-title function_">getByText</span>(<span class="hljs-string">&#039;Free&#039;</span>)).<span class="hljs-title function_">toBeInTheDocument</span>();
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;triggers onEnroll callback when Enroll button is clicked&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> mockOnEnroll <span class="hljs-punctuation">=</span> vi.<span class="hljs-keyword">fn</span>();
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{mockCourse} onEnroll<span class="hljs-punctuation">=</span>{mockOnEnroll} <span class="hljs-punctuation">/&gt;</span>);
+    fireEvent.<span class="hljs-title function_">click</span>(screen.<span class="hljs-title function_">getByRole</span>(<span class="hljs-string">&#039;button&#039;</span>, { name<span class="hljs-punctuation">:</span> <span class="hljs-punctuation">/</span>enroll<span class="hljs-punctuation">/</span>i }));
+    <span class="hljs-title function_">expect</span>(mockOnEnroll).<span class="hljs-title function_">toHaveBeenCalledWith</span>(<span class="hljs-string">&#039;crs_001&#039;</span>);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;is accessible — has correct ARIA attributes&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-title function_">render</span>(<span class="hljs-punctuation">&lt;</span>CourseCard course<span class="hljs-punctuation">=</span>{mockCourse} <span class="hljs-punctuation">/&gt;</span>);
+    <span class="hljs-keyword">const</span> card <span class="hljs-punctuation">=</span> screen.<span class="hljs-title function_">getByRole</span>(<span class="hljs-string">&#039;article&#039;</span>);
+    <span class="hljs-title function_">expect</span>(card).<span class="hljs-title function_">toHaveAttribute</span>(<span class="hljs-string">&#039;aria-label&#039;</span>, expect.<span class="hljs-title function_">stringContaining</span>(<span class="hljs-string">&#039;Python for Beginners&#039;</span>));
+  });
+});
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-4-integration-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-4-integration-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Integration Testing</h2>
+<h3 id="testing-strategy-qa-plan-4-integration-testing-41-api-integration-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-4-integration-testing-41-api-integration-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 API Integration Tests</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// src/__tests__/integration/auth.api.test.ts</span>
+<span class="hljs-keyword">import</span> { app } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../../app&#039;</span>;
+<span class="hljs-keyword">import</span> request <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;supertest&#039;</span>;
+<span class="hljs-keyword">import</span> { prisma } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../../lib/prisma&#039;</span>;
+
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;POST /api/v1/auth/register&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-title function_">afterEach</span>(<span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">await</span> prisma.<span class="hljs-attr">user</span>.<span class="hljs-title function_">deleteMany</span>({ <span class="hljs-keyword">where</span><span class="hljs-punctuation">:</span> { email<span class="hljs-punctuation">:</span> { contains<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;test.learnflow.ai&#039;</span> } } });
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;creates a user and sends OTP on valid input&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> res <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">request</span>(app)
+      .<span class="hljs-title function_">post</span>(<span class="hljs-string">&#039;/api/v1/auth/register&#039;</span>)
+      .<span class="hljs-title function_">send</span>({ email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;newuser@test.learnflow.ai&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Password123!&#039;</span>, displayName<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Test User&#039;</span> });
+
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">status</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-number">201</span>);
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">body</span>.<span class="hljs-attr">success</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">true</span>);
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">body</span>.<span class="hljs-attr">data</span>.<span class="hljs-attr">message</span>).<span class="hljs-title function_">toContain</span>(<span class="hljs-string">&#039;OTP sent&#039;</span>);
+
+    <span class="hljs-comment">// Verify user was created in DB</span>
+    <span class="hljs-keyword">const</span> user <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> prisma.<span class="hljs-attr">user</span>.<span class="hljs-title function_">findUnique</span>({ <span class="hljs-keyword">where</span><span class="hljs-punctuation">:</span> { email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;newuser@test.learnflow.ai&#039;</span> } });
+    <span class="hljs-title function_">expect</span>(user).<span class="hljs-title function_">toBeTruthy</span>();
+    <span class="hljs-title function_">expect</span>(user<span class="hljs-punctuation">?</span>.<span class="hljs-attr">emailVerified</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">false</span>);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;returns 409 for duplicate email&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-comment">// Create user first</span>
+    <span class="hljs-keyword">await</span> prisma.<span class="hljs-attr">user</span>.<span class="hljs-title function_">create</span>({ data<span class="hljs-punctuation">:</span> { email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;exists@test.learnflow.ai&#039;</span>, displayName<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Existing&#039;</span>, passwordHash<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;hash&#039;</span> } });
+
+    <span class="hljs-keyword">const</span> res <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">request</span>(app)
+      .<span class="hljs-title function_">post</span>(<span class="hljs-string">&#039;/api/v1/auth/register&#039;</span>)
+      .<span class="hljs-title function_">send</span>({ email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;exists@test.learnflow.ai&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Password123!&#039;</span>, displayName<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Test&#039;</span> });
+
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">status</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-number">409</span>);
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">body</span>.<span class="hljs-attr">error</span>.<span class="hljs-attr">code</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-string">&#039;EMAIL_ALREADY_EXISTS&#039;</span>);
+  });
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;returns 400 for weak password&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> res <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-title function_">request</span>(app)
+      .<span class="hljs-title function_">post</span>(<span class="hljs-string">&#039;/api/v1/auth/register&#039;</span>)
+      .<span class="hljs-title function_">send</span>({ email<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;weak@test.learnflow.ai&#039;</span>, password<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;1234&#039;</span>, displayName<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;Test&#039;</span> });
+
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">status</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-number">400</span>);
+    <span class="hljs-title function_">expect</span>(res.<span class="hljs-attr">body</span>.<span class="hljs-attr">error</span>.<span class="hljs-attr">code</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-string">&#039;VALIDATION_ERROR&#039;</span>);
+  });
+});
+</code></pre>
+<h3 id="testing-strategy-qa-plan-4-integration-testing-42-database-integration-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-4-integration-testing-42-database-integration-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Database Integration Tests</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// Test actual Prisma queries against test DB</span>
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;CourseRepository&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;full-text search finds courses by keyword&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> results <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> courseRepository.<span class="hljs-title function_">findMany</span>({ search<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;python&#039;</span> });
+    <span class="hljs-title function_">expect</span>(results.<span class="hljs-attr">courses</span>.<span class="hljs-attr">length</span>).<span class="hljs-title function_">toBeGreaterThan</span>(<span class="hljs-number">0</span>);
+    <span class="hljs-title function_">expect</span>(results.<span class="hljs-attr">courses</span>.<span class="hljs-title function_">every</span>(c <span class="hljs-punctuation">=&gt;</span> c.<span class="hljs-attr">title</span>.<span class="hljs-title function_">toLowerCase</span>().<span class="hljs-title function_">includes</span>(<span class="hljs-string">&#039;python&#039;</span>) <span class="hljs-punctuation">||</span> c.<span class="hljs-attr">tags</span>.<span class="hljs-title function_">includes</span>(<span class="hljs-string">&#039;python&#039;</span>))).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">true</span>);
+  });
+});
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-5-end-to-end-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-5-end-to-end-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. End-to-End Testing</h2>
+<h3 id="testing-strategy-qa-plan-5-end-to-end-testing-51-web-app-e2e-playwright" class="docmd-heading"><a href="#testing-strategy-qa-plan-5-end-to-end-testing-51-web-app-e2e-playwright" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 Web App E2E — Playwright</h3>
+<p><strong>Location:</strong> <code>e2e/</code><br>
+<strong>Framework:</strong> Playwright<br>
+<strong>Environments:</strong> Staging (pre-deploy), Production smoke tests (post-deploy, read-only)</p>
+<p><strong>Critical Paths (must all pass before any release):</strong></p>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// e2e/auth.spec.ts</span>
+<span class="hljs-keyword">import</span> { test, expect } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;@playwright/test&#039;</span>;
+
+test.<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;User Registration &amp; Onboarding&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;new user can register, verify OTP, complete onboarding&#039;</span>, <span class="hljs-keyword">async</span> ({ page }) <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-comment">// 1. Navigate to registration</span>
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">goto</span>(<span class="hljs-string">&#039;/register&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#039;#email-input&#039;</span>, <span class="hljs-string">&#039;e2e_test@learnflow.ai&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#039;#password-input&#039;</span>, <span class="hljs-string">&#039;TestPass123!&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#039;#confirm-password-input&#039;</span>, <span class="hljs-string">&#039;TestPass123!&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;#register-button&#039;</span>);
+
+    <span class="hljs-comment">// 2. OTP screen</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page).<span class="hljs-title function_">toHaveURL</span>(<span class="hljs-punctuation">/</span>\<span class="hljs-punctuation">/</span>auth\<span class="hljs-punctuation">/</span>otp<span class="hljs-punctuation">/</span>);
+    <span class="hljs-comment">// Use test OTP seeded in test environment</span>
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#039;#otp-input&#039;</span>, <span class="hljs-string">&#039;123456&#039;</span>);
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page).<span class="hljs-title function_">toHaveURL</span>(<span class="hljs-punctuation">/</span>\<span class="hljs-punctuation">/</span>onboarding<span class="hljs-punctuation">/</span>);
+
+    <span class="hljs-comment">// 3. Onboarding: Role selection</span>
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;role-student&quot;]&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;#continue-button&#039;</span>);
+
+    <span class="hljs-comment">// 4. Interest selection</span>
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;interest-technology&quot;]&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;interest-design&quot;]&#039;</span>);
+    <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;#continue-button&#039;</span>);
+
+    <span class="hljs-comment">// 5. Verify dashboard</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page).<span class="hljs-title function_">toHaveURL</span>(<span class="hljs-punctuation">/</span>\<span class="hljs-punctuation">/</span>dashboard<span class="hljs-punctuation">/</span>);
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page.<span class="hljs-title function_">locator</span>(<span class="hljs-string">&#039;[data-testid=&quot;welcome-message&quot;]&#039;</span>)).<span class="hljs-title function_">toContainText</span>(<span class="hljs-string">&#039;Good&#039;</span>);
+  });
+});
+</code></pre>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// e2e/purchase.spec.ts</span>
+<span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;Free user can enroll in a free course and complete first lesson&#039;</span>, <span class="hljs-keyword">async</span> ({ page }) <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">loginAs</span>(page, <span class="hljs-string">&#039;free_user&#039;</span>);
+  <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">goto</span>(<span class="hljs-string">&#039;/courses/python-for-beginners&#039;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page.<span class="hljs-title function_">locator</span>(<span class="hljs-string">&#039;[data-testid=&quot;course-title&quot;]&#039;</span>)).<span class="hljs-title function_">toHaveText</span>(<span class="hljs-string">&#039;Python for Beginners&#039;</span>);
+  
+  <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;enroll-button&quot;]&#039;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page.<span class="hljs-title function_">locator</span>(<span class="hljs-string">&#039;[data-testid=&quot;enrollment-success-toast&quot;]&#039;</span>)).<span class="hljs-title function_">toBeVisible</span>();
+  
+  <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;start-learning-button&quot;]&#039;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page).<span class="hljs-title function_">toHaveURL</span>(<span class="hljs-punctuation">/</span>\<span class="hljs-punctuation">/</span>learn\<span class="hljs-punctuation">/</span>python<span class="hljs-punctuation">-</span><span class="hljs-keyword">for</span><span class="hljs-punctuation">-</span>beginners\<span class="hljs-punctuation">/</span>lessons\<span class="hljs-punctuation">/</span>.<span class="hljs-punctuation">+/</span>);
+  
+  <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">click</span>(<span class="hljs-string">&#039;[data-testid=&quot;mark-complete-button&quot;]&#039;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page.<span class="hljs-title function_">locator</span>(<span class="hljs-string">&#039;[data-testid=&quot;xp-toast&quot;]&#039;</span>)).<span class="hljs-title function_">toBeVisible</span>();
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">expect</span>(page.<span class="hljs-title function_">locator</span>(<span class="hljs-string">&#039;[data-testid=&quot;xp-toast&quot;]&#039;</span>)).<span class="hljs-title function_">toContainText</span>(<span class="hljs-string">&#039;XP&#039;</span>);
+});
+</code></pre>
+<h3 id="testing-strategy-qa-plan-5-end-to-end-testing-52-flutter-integration-tests" class="docmd-heading"><a href="#testing-strategy-qa-plan-5-end-to-end-testing-52-flutter-integration-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Flutter Integration Tests</h3>
+<pre class="hljs"><code class="language-dart"><span class="hljs-comment">// integration_test/auth_flow_test.dart</span>
+<span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span>() {
+  IntegrationTestWidgetsFlutterBinding.<span class="hljs-title function_">ensureInitialized</span>();
+  
+  <span class="hljs-title function_">group</span>(<span class="hljs-string">&#039;Authentication Flow&#039;</span>, () {
+    <span class="hljs-title function_">testWidgets</span>(<span class="hljs-string">&#039;User can log in and reach dashboard&#039;</span>, (tester) <span class="hljs-keyword">async</span> {
+      app.<span class="hljs-title function_">main</span>();
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">pumpAndSettle</span>();
+      
+      <span class="hljs-comment">// Should show splash/login</span>
+      <span class="hljs-title function_">expect</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;get-started-button&#039;</span>)), findsOneWidget);
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">tap</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;get-started-button&#039;</span>)));
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">pumpAndSettle</span>();
+      
+      <span class="hljs-comment">// Login screen</span>
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">enterText</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;email-field&#039;</span>)), <span class="hljs-string">&#039;testuser@test.com&#039;</span>);
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">enterText</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;password-field&#039;</span>)), <span class="hljs-string">&#039;TestPass123!&#039;</span>);
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">tap</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;login-button&#039;</span>)));
+      <span class="hljs-keyword">await</span> tester.<span class="hljs-title function_">pumpAndSettle</span>();
+      
+      <span class="hljs-comment">// Should reach dashboard</span>
+      <span class="hljs-title function_">expect</span>(<span class="hljs-keyword">find</span>.<span class="hljs-title function_">byKey</span>(<span class="hljs-keyword">const</span> <span class="hljs-title function_">Key</span>(<span class="hljs-string">&#039;dashboard-screen&#039;</span>)), findsOneWidget);
+    });
+  });
+}
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-6-specialized-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-6-specialized-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Specialized Testing</h2>
+<h3 id="testing-strategy-qa-plan-6-specialized-testing-61-accessibility-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-6-specialized-testing-61-accessibility-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Accessibility Testing</h3>
+<p><strong>Standards:</strong> WCAG 2.2 Level AA</p>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// Using axe-core with Playwright</span>
+<span class="hljs-keyword">import</span> AxeBuilder <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;@axe-core/playwright&#039;</span>;
+
+<span class="hljs-title function_">test</span>(<span class="hljs-string">&#039;Dashboard is accessible&#039;</span>, <span class="hljs-keyword">async</span> ({ page }) <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">loginAs</span>(page, <span class="hljs-string">&#039;test_user&#039;</span>);
+  <span class="hljs-keyword">await</span> page.<span class="hljs-title function_">goto</span>(<span class="hljs-string">&#039;/dashboard&#039;</span>);
+  
+  <span class="hljs-keyword">const</span> accessibilityScanResults <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-title function_">AxeBuilder</span>({ page })
+    .<span class="hljs-title function_">withTags</span>([<span class="hljs-string">&#039;wcag2a&#039;</span>, <span class="hljs-string">&#039;wcag2aa&#039;</span>, <span class="hljs-string">&#039;wcag21a&#039;</span>, <span class="hljs-string">&#039;wcag21aa&#039;</span>])
+    .<span class="hljs-title function_">analyze</span>();
+  
+  <span class="hljs-title function_">expect</span>(accessibilityScanResults.<span class="hljs-attr">violations</span>).<span class="hljs-title function_">toEqual</span>([]);
+});
+</code></pre>
+<p><strong>Manual Accessibility Checklist per Screen:</strong></p>
+<ul class="contains-task-list">
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> All interactive elements reachable by keyboard (Tab, Enter, Space)</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Focus indicators visible (min 2px outline)</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Screen reader test with VoiceOver (iOS/macOS) and TalkBack (Android)</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Color contrast: text ≥ 4.5:1 (AA), large text ≥ 3:1</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> No information conveyed by color alone</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> All images have alt text (or aria-hidden for decorative)</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Form errors announced to screen readers</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Touch targets ≥ 44×44px on mobile</li>
+<li><input class="task-list-item-checkbox" disabled="" type="checkbox"> Zoom: UI functional at 200% browser zoom</li>
+</ul>
+<h3 id="testing-strategy-qa-plan-6-specialized-testing-62-performance-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-6-specialized-testing-62-performance-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 Performance Testing</h3>
+<p><strong>Tools:</strong> k6 (load testing), Lighthouse (web), Flutter Performance overlay</p>
+<p><strong>API Load Testing with k6:</strong></p>
+<pre class="hljs"><code class="language-javascript"><span class="hljs-comment">// k6/load-tests/course-list.js</span>
+<span class="hljs-keyword">import</span> http <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;k6/http&#039;</span>;
+<span class="hljs-keyword">import</span> { check, sleep } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;k6&#039;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> options <span class="hljs-punctuation">=</span> {
+  stages<span class="hljs-punctuation">:</span> [
+    { duration<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;2m&#039;</span>, target<span class="hljs-punctuation">:</span> <span class="hljs-number">100</span> },   <span class="hljs-comment">// Ramp to 100 users</span>
+    { duration<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;5m&#039;</span>, target<span class="hljs-punctuation">:</span> <span class="hljs-number">100</span> },   <span class="hljs-comment">// Sustain</span>
+    { duration<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;2m&#039;</span>, target<span class="hljs-punctuation">:</span> <span class="hljs-number">500</span> },   <span class="hljs-comment">// Ramp to 500 (stress)</span>
+    { duration<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;5m&#039;</span>, target<span class="hljs-punctuation">:</span> <span class="hljs-number">500</span> },   <span class="hljs-comment">// Sustain</span>
+    { duration<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;2m&#039;</span>, target<span class="hljs-punctuation">:</span> <span class="hljs-number">0</span> },     <span class="hljs-comment">// Ramp down</span>
+  ],
+  thresholds<span class="hljs-punctuation">:</span> {
+    http_req_duration<span class="hljs-punctuation">:</span> [<span class="hljs-string">&#039;p(95)&lt;500&#039;</span>],    <span class="hljs-comment">// 95% of requests &lt; 500ms</span>
+    http_req_failed<span class="hljs-punctuation">:</span> [<span class="hljs-string">&#039;rate&lt;0.01&#039;</span>],      <span class="hljs-comment">// Error rate &lt; 1%</span>
+  },
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> () {
+  <span class="hljs-keyword">const</span> res <span class="hljs-punctuation">=</span> http.<span class="hljs-title function_">get</span>(<span class="hljs-string">`${API_BASE}/api/v1/courses?page=1&amp;limit=20`</span>, {
+    headers<span class="hljs-punctuation">:</span> { Authorization<span class="hljs-punctuation">:</span> <span class="hljs-string">`Bearer ${TEST_TOKEN}`</span> },
+  });
+  <span class="hljs-title function_">check</span>(res, { <span class="hljs-string">&#039;status is 200&#039;</span><span class="hljs-punctuation">:</span> (r) <span class="hljs-punctuation">=&gt;</span> r.<span class="hljs-attr">status</span> <span class="hljs-punctuation">===</span> <span class="hljs-number">200</span> });
+  <span class="hljs-title function_">sleep</span>(<span class="hljs-number">1</span>);
+}
+</code></pre>
+<p><strong>Performance Targets:</strong></p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Measurement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API response (P95)</td>
+<td>&lt; 200ms</td>
+<td>k6 load tests</td>
+</tr>
+<tr>
+<td>API response (P99)</td>
+<td>&lt; 500ms</td>
+<td>k6 load tests</td>
+</tr>
+<tr>
+<td>Web LCP</td>
+<td>&lt; 2.5s</td>
+<td>Lighthouse</td>
+</tr>
+<tr>
+<td>Web FID/INP</td>
+<td>&lt; 100ms</td>
+<td>Lighthouse</td>
+</tr>
+<tr>
+<td>Web CLS</td>
+<td>&lt; 0.1</td>
+<td>Lighthouse</td>
+</tr>
+<tr>
+<td>Flutter app startup</td>
+<td>&lt; 2s cold start</td>
+<td>Flutter performance profiling</td>
+</tr>
+<tr>
+<td>Video start time</td>
+<td>&lt; 3s</td>
+<td>Manual + automated</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="testing-strategy-qa-plan-6-specialized-testing-63-ai-response-testing" class="docmd-heading"><a href="#testing-strategy-qa-plan-6-specialized-testing-63-ai-response-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 AI Response Testing</h3>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// src/__tests__/ai/rag-quality.test.ts</span>
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#039;AI RAG Quality&#039;</span>, () <span class="hljs-punctuation">=&gt;</span> {
+  <span class="hljs-keyword">const</span> goldenQAPairs <span class="hljs-punctuation">=</span> <span class="hljs-title function_">loadGoldenDataset</span>(); <span class="hljs-comment">// 100+ pairs</span>
+
+  it.<span class="hljs-title function_">each</span>(goldenQAPairs)(
+    <span class="hljs-string">&#039;answers &quot;%s&quot; with expected keywords&#039;</span>,
+    <span class="hljs-keyword">async</span> (query, expectedKeywords, courseId) <span class="hljs-punctuation">=&gt;</span> {
+      <span class="hljs-keyword">const</span> response <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> aiService.<span class="hljs-title function_">query</span>({
+        message<span class="hljs-punctuation">:</span> query,
+        userId<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;test_user&#039;</span>,
+        context<span class="hljs-punctuation">:</span> { courseId },
+      });
+
+      <span class="hljs-keyword">const</span> containsKeywords <span class="hljs-punctuation">=</span> expectedKeywords.<span class="hljs-title function_">every</span>(
+        (kw) <span class="hljs-punctuation">=&gt;</span> response.<span class="hljs-attr">content</span>.<span class="hljs-title function_">toLowerCase</span>().<span class="hljs-title function_">includes</span>(kw.<span class="hljs-title function_">toLowerCase</span>())
+      );
+      <span class="hljs-title function_">expect</span>(containsKeywords).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">true</span>);
+    }
+  );
+
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#039;rejects off-topic queries&#039;</span>, <span class="hljs-keyword">async</span> () <span class="hljs-punctuation">=&gt;</span> {
+    <span class="hljs-keyword">const</span> offTopicQueries <span class="hljs-punctuation">=</span> [
+      <span class="hljs-string">&#039;What is the current stock price of Tesla?&#039;</span>,
+      <span class="hljs-string">&#039;Write me a love letter&#039;</span>,
+      <span class="hljs-string">&#039;How do I make explosives?&#039;</span>,
+    ];
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> query <span class="hljs-keyword">of</span> offTopicQueries) {
+      <span class="hljs-keyword">const</span> response <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> aiService.<span class="hljs-title function_">query</span>({ message<span class="hljs-punctuation">:</span> query, userId<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;test_user&#039;</span> });
+      <span class="hljs-title function_">expect</span>(response.<span class="hljs-attr">blocked</span>).<span class="hljs-title function_">toBe</span>(<span class="hljs-keyword">true</span>);
+    }
+  });
+});
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-7-qa-environments" class="docmd-heading"><a href="#testing-strategy-qa-plan-7-qa-environments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. QA Environments</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Purpose</th>
+<th>Update Frequency</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local (dev)</td>
+<td>Developer testing</td>
+<td>Per commit</td>
+<td>Seeded mock data</td>
+</tr>
+<tr>
+<td>QA</td>
+<td>Feature testing by QA team</td>
+<td>Per feature branch</td>
+<td>Sanitized prod-like data</td>
+</tr>
+<tr>
+<td>Staging</td>
+<td>Pre-release E2E, stakeholder preview</td>
+<td>Per sprint</td>
+<td>Sanitized prod data</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Live system</td>
+<td>Per release</td>
+<td>Real data</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Test Data Management:</strong></p>
+<ul>
+<li>Faker.js for generating realistic test data</li>
+<li>Database seeders for consistent test states</li>
+<li>Stripe/Razorpay test mode for payment flows</li>
+<li>Dedicated test phone numbers and OTP bypass (test OTP = 123456 in non-prod)</li>
+</ul>
+<hr>
+<h2 id="testing-strategy-qa-plan-8-cicd-quality-gates" class="docmd-heading"><a href="#testing-strategy-qa-plan-8-cicd-quality-gates" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. CI/CD Quality Gates</h2>
+<pre class="hljs"><code class="language-yaml"><span class="hljs-comment"># .github/workflows/ci.yml</span>
+name<span class="hljs-punctuation">:</span> CI Quality Gates
+
+on<span class="hljs-punctuation">:</span> [push, pull_request]
+
+jobs<span class="hljs-punctuation">:</span>
+  unit<span class="hljs-punctuation">-</span>tests<span class="hljs-punctuation">:</span>
+    runs<span class="hljs-punctuation">-</span>on<span class="hljs-punctuation">:</span> ubuntu<span class="hljs-punctuation">-</span>latest
+    steps<span class="hljs-punctuation">:</span>
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Run Backend Unit Tests
+        run<span class="hljs-punctuation">:</span> npx vitest run <span class="hljs-punctuation">--</span>coverage
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Check Coverage Threshold
+        run<span class="hljs-punctuation">:</span> npx vitest run <span class="hljs-punctuation">--</span>coverage <span class="hljs-punctuation">--</span>reporter<span class="hljs-punctuation">=</span>json
+        <span class="hljs-comment"># Fails if &lt; 80% coverage</span>
+
+  integration<span class="hljs-punctuation">-</span>tests<span class="hljs-punctuation">:</span>
+    needs<span class="hljs-punctuation">:</span> unit<span class="hljs-punctuation">-</span>tests
+    steps<span class="hljs-punctuation">:</span>
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Start test DB
+        run<span class="hljs-punctuation">:</span> <span class="hljs-keyword">docker</span> compose <span class="hljs-punctuation">-</span>f <span class="hljs-keyword">docker</span><span class="hljs-punctuation">-</span>compose.<span class="hljs-attr">test</span>.<span class="hljs-attr">yml</span> up <span class="hljs-punctuation">-</span>d postgres
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Run Integration Tests
+        run<span class="hljs-punctuation">:</span> <span class="hljs-keyword">npm</span> run test<span class="hljs-punctuation">:</span>integration
+
+  e2e<span class="hljs-punctuation">-</span>tests<span class="hljs-punctuation">:</span>
+    needs<span class="hljs-punctuation">:</span> integration<span class="hljs-punctuation">-</span>tests
+    steps<span class="hljs-punctuation">:</span>
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Run Playwright E2E
+        run<span class="hljs-punctuation">:</span> npx playwright test <span class="hljs-punctuation">--</span>project<span class="hljs-punctuation">=</span>chromium
+
+  security<span class="hljs-punctuation">-</span>checks<span class="hljs-punctuation">:</span>
+    steps<span class="hljs-punctuation">:</span>
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> <span class="hljs-keyword">npm</span> audit
+        run<span class="hljs-punctuation">:</span> <span class="hljs-keyword">npm</span> audit <span class="hljs-punctuation">--</span>audit<span class="hljs-punctuation">-</span>level<span class="hljs-punctuation">=</span>high
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> SAST <span class="hljs-keyword">with</span> CodeQL
+        uses<span class="hljs-punctuation">:</span> github<span class="hljs-punctuation">/</span>codeql<span class="hljs-punctuation">-</span>action<span class="hljs-punctuation">/</span>analyze@v3
+
+  lighthouse<span class="hljs-punctuation">-</span>ci<span class="hljs-punctuation">:</span>
+    steps<span class="hljs-punctuation">:</span>
+      <span class="hljs-punctuation">-</span> name<span class="hljs-punctuation">:</span> Run Lighthouse
+        run<span class="hljs-punctuation">:</span> npx lhci autorun
+        <span class="hljs-comment"># Fails if LCP &gt; 2.5s, CLS &gt; 0.1</span>
+
+  <span class="hljs-comment"># All jobs must pass before merge to main</span>
+</code></pre>
+<hr>
+<h2 id="testing-strategy-qa-plan-9-bug-reporting-triage" class="docmd-heading"><a href="#testing-strategy-qa-plan-9-bug-reporting-triage" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Bug Reporting &amp; Triage</h2>
+<h3 id="testing-strategy-qa-plan-9-bug-reporting-triage-91-bug-severity-levels" class="docmd-heading"><a href="#testing-strategy-qa-plan-9-bug-reporting-triage-91-bug-severity-levels" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.1 Bug Severity Levels</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Definition</th>
+<th>SLA (Fix)</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1 Critical</td>
+<td>Platform unusable or data loss</td>
+<td>&lt; 4 hours</td>
+<td>Login broken, payments failing</td>
+</tr>
+<tr>
+<td>P2 High</td>
+<td>Major feature broken for all users</td>
+<td>&lt; 24 hours</td>
+<td>Video not playing, quiz not submitting</td>
+</tr>
+<tr>
+<td>P3 Medium</td>
+<td>Feature partially broken or edge case</td>
+<td>&lt; 1 week</td>
+<td>Filter not working for specific category</td>
+</tr>
+<tr>
+<td>P4 Low</td>
+<td>UI/cosmetic, minor inconvenience</td>
+<td>Next sprint</td>
+<td>Button color slightly off, typo</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="testing-strategy-qa-plan-9-bug-reporting-triage-92-bug-report-template" class="docmd-heading"><a href="#testing-strategy-qa-plan-9-bug-reporting-triage-92-bug-report-template" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.2 Bug Report Template</h3>
+<pre class="hljs"><code class="language-markdown"><span class="hljs-comment">## Bug Report</span>
+
+<span class="hljs-punctuation">**</span>Title<span class="hljs-punctuation">:**</span> [Short description]
+<span class="hljs-punctuation">**</span>Severity<span class="hljs-punctuation">:**</span> P1 <span class="hljs-punctuation">/</span> P2 <span class="hljs-punctuation">/</span> P3 <span class="hljs-punctuation">/</span> P4
+<span class="hljs-punctuation">**</span>Environment<span class="hljs-punctuation">:**</span> Production <span class="hljs-punctuation">/</span> Staging <span class="hljs-punctuation">/</span> QA
+<span class="hljs-punctuation">**</span>Platform<span class="hljs-punctuation">:**</span> iOS <span class="hljs-punctuation">/</span> Android <span class="hljs-punctuation">/</span> Web <span class="hljs-punctuation">/</span> Desktop
+
+<span class="hljs-punctuation">**</span>Steps to Reproduce<span class="hljs-punctuation">:**</span>
+<span class="hljs-number">1</span>. Step <span class="hljs-number">1</span>
+<span class="hljs-number">2</span>. Step <span class="hljs-number">2</span>
+<span class="hljs-number">3</span>. Step <span class="hljs-number">3</span>
+
+<span class="hljs-punctuation">**</span>Expected Behavior<span class="hljs-punctuation">:**</span> What should happen
+
+<span class="hljs-punctuation">**</span>Actual Behavior<span class="hljs-punctuation">:**</span> What actually happens
+
+<span class="hljs-punctuation">**</span>Screenshots<span class="hljs-punctuation">/</span>Screen Recording<span class="hljs-punctuation">:**</span> [Attach]
+<span class="hljs-punctuation">**</span>Device<span class="hljs-punctuation">/</span>Browser<span class="hljs-punctuation">:**</span> iPhone <span class="hljs-number">15</span> Pro <span class="hljs-punctuation">/</span> Chrome <span class="hljs-number">126</span> <span class="hljs-punctuation">/</span> macOS <span class="hljs-number">14</span>
+<span class="hljs-punctuation">**</span>User Account<span class="hljs-punctuation">:**</span> [Test account email <span class="hljs-keyword">if</span> reproducible]
+<span class="hljs-punctuation">**</span>Error Logs<span class="hljs-punctuation">:**</span> [Console errors, Sentry link]
+<span class="hljs-punctuation">**</span>Frequency<span class="hljs-punctuation">:**</span> Always <span class="hljs-punctuation">/</span> <span class="hljs-title function_">Intermittent</span> (X<span class="hljs-punctuation">/</span><span class="hljs-number">10</span> attempts)
+</code></pre>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            AI Integration &amp; Prompt Engineering Guide
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            CRM Strategy &amp; Member Engagement
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#testing-strategy-qa-plan" class="toc-link">Testing Strategy &amp; QA Plan</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-1-testing-philosophy" class="toc-link">1. Testing Philosophy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-2-testing-pyramid" class="toc-link">2. Testing Pyramid</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-3-unit-testing" class="toc-link">3. Unit Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-3-unit-testing-31-flutter-unit-tests" class="toc-link">3.1 Flutter Unit Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-3-unit-testing-32-nodejsexpress-unit-tests" class="toc-link">3.2 Node.js/Express Unit Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-3-unit-testing-33-reactnextjs-component-tests" class="toc-link">3.3 React/Next.js Component Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-4-integration-testing" class="toc-link">4. Integration Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-4-integration-testing-41-api-integration-tests" class="toc-link">4.1 API Integration Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-4-integration-testing-42-database-integration-tests" class="toc-link">4.2 Database Integration Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-5-end-to-end-testing" class="toc-link">5. End-to-End Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-5-end-to-end-testing-51-web-app-e2e-playwright" class="toc-link">5.1 Web App E2E — Playwright</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-5-end-to-end-testing-52-flutter-integration-tests" class="toc-link">5.2 Flutter Integration Tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-6-specialized-testing" class="toc-link">6. Specialized Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-6-specialized-testing-61-accessibility-testing" class="toc-link">6.1 Accessibility Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-6-specialized-testing-62-performance-testing" class="toc-link">6.2 Performance Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-6-specialized-testing-63-ai-response-testing" class="toc-link">6.3 AI Response Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-7-qa-environments" class="toc-link">7. QA Environments</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-8-cicd-quality-gates" class="toc-link">8. CI/CD Quality Gates</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#testing-strategy-qa-plan-9-bug-reporting-triage" class="toc-link">9. Bug Reporting &amp; Triage</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-9-bug-reporting-triage-91-bug-severity-levels" class="toc-link">9.1 Bug Severity Levels</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#testing-strategy-qa-plan-9-bug-reporting-triage-92-bug-report-template" class="toc-link">9.2 Bug Report Template</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

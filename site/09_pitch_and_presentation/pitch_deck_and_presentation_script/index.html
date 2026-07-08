@@ -1,0 +1,1768 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Pitch Deck &amp; Presentation Script : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/09_pitch_and_presentation/pitch_deck_and_presentation_script/">
+<meta property="og:title" content="Pitch Deck &amp; Presentation Script - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/09_pitch_and_presentation/pitch_deck_and_presentation_script/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pitch Deck &amp; Presentation Script - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/09_pitch_and_presentation/pitch_deck_and_presentation_script.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Pitch Deck &amp; Presentation Script
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Pitch%20Deck%20%26%20Presentation%20Script%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A**Format%3A**%2015-slide%20investor%2Fstakeholder%20presentation%0A%0A---%0A%0A%23%23%20Presentation%20Overview%0A%0A**Target%20Audience%3A**%20Angel%20investors%2C%20seed-stage%20VCs%2C%20potential%20institutional%20partners%0A**Duration%3A**%2015%E2%80%9320%20minutes%20presentation%20%2B%2010%20minutes%20Q%26A%0A**Narrative%20Arc%3A**%20Problem%20%E2%86%92%20Solution%20%E2%86%92%20Market%20%E2%86%92%20Product%20%E2%86%92%20Traction%20%E2%86%92%20Business%20Model%20%E2%86%92%20Team%20%E2%86%92%20Ask%0A%0A---%0A%0A%23%23%20Slide%201%3A%20Title%20Slide%0A%0A**Visual%3A**%20Full-screen%20dark%20navy%20background%20with%20subtle%20particle%20animation.%20Center%3A%20LearnFlow%20AI%20logo%20(indigo%2Bpurple%20gradient)%20%2B%20wordmark.%20Bottom%3A%20%22Seed%20Round%20Presentation%20%E2%80%94%20July%202026%22%0A%0A**Text%3A**%0A%60%60%60%0ALearnFlow%20AI%0AAI-Powered%20Learning%20%26%20Member%20Management%20Platform%0A%0A%5BFounder%20Name%5D%20%7C%20CEO%20%26%20Co-Founder%0Alearnflow.ai%20%7C%20contact%40learnflow.ai%0AConfidential%20%E2%80%94%20Do%20Not%20Distribute%0A%60%60%60%0A%0A**Speaker%20Notes%3A**%0A%22Thank%20you%20for%20your%20time%20today.%20My%20name%20is%20%5BName%5D%2C%20and%20I&#039;m%20going%20to%20show%20you%20how%20LearnFlow%20AI%20is%20transforming%20the%20way%20100%20million%20Indians%20learn%20new%20skills%20%E2%80%94%20and%20why%20now%20is%20the%20perfect%20time%20to%20build%20this%20company.%22%0A%0A---%0A%0A%23%23%20Slide%202%3A%20The%20Problem%0A%0A**Visual%3A**%20Split%20into%203%20panels%2C%20each%20with%20an%20icon%20and%20a%20sharp%20stat%0A%0A**Headline%3A**%20*%22Learning%20has%20never%20been%20more%20critical%20%E2%80%94%20or%20more%20broken.%22*%0A%0A**Panel%201%20%E2%80%94%20Access**%0AIcon%3A%20Broken%20door%0A%2267%25%20of%20Indians%20say%20quality%20education%20is%20too%20expensive%20or%20too%20far%20away.%22%0ASource%3A%20NSSO%202025%0A%0A**Panel%202%20%E2%80%94%20Completion**%0AIcon%3A%20Abandoned%20path%0A%22Only%2015%25%20of%20online%20course%20enrollees%20ever%20complete%20what%20they%20start.%22%0ASource%3A%20MIT%20Study%2C%202024%0A%0A**Panel%203%20%E2%80%94%20Relevance**%0AIcon%3A%20Skill%20gap%0A%2272%25%20of%20employers%20say%20job%20applicants%20lack%20the%20practical%20skills%20they%20need%20%E2%80%94%20even%20with%20degrees.%22%0ASource%3A%20LinkedIn%20Workforce%20Report%202025%0A%0A**Speaker%20Notes%3A**%0A%22The%20problem%20is%20three-layered%3A%20Access%20%E2%80%94%20quality%20education%20is%20inaccessible%20to%20most.%20Engagement%20%E2%80%94%20even%20those%20who%20access%20it%20don&#039;t%20finish.%20Relevance%20%E2%80%94%20even%20those%20who%20finish%20aren&#039;t%20job-ready.%20Existing%20platforms%20solve%20one%20of%20these.%20We%20solve%20all%20three.%22%0A%0A---%0A%0A%23%23%20Slide%203%3A%20The%20Solution%0A%0A**Visual%3A**%20Platform%20mockup%20(phone%20%2B%20tablet%20%2B%20desktop)%20with%20animated%20AI%20chat%20bubble%20overlay%0A%0A**Headline%3A**%20*%22LearnFlow%20AI%3A%20Your%20personal%20AI%20tutor%20%2B%20500%2B%20expert%20courses%20%2B%20verified%20certificates.%22*%0A%0A**Three-column%20layout%3A**%0A%0AColumn%201%20%E2%80%94%20%F0%9F%A4%96%20AI%20That%20Teaches%0A%22An%20AI%20tutor%20trained%20on%20your%20course%20content.%20Explains%20concepts%2C%20generates%20quizzes%2C%20and%20creates%20personalized%20study%20plans%20%E2%80%94%20like%20having%20a%20private%20tutor%2024%2F7.%22%0A%0AColumn%202%20%E2%80%94%20%F0%9F%8E%AE%20Engagement%20That%20Works%0A%22XP%2C%20levels%2C%20badges%2C%20streaks%2C%20leaderboards%2C%20daily%20quests.%20The%20psychology%20of%20great%20games%20applied%20to%20your%20education.%2092%25%20of%20our%20users%20complete%20their%20first%20course.%22%0A%0AColumn%203%20%E2%80%94%20%F0%9F%93%9C%20Outcomes%20That%20Matter%0A%22Verified%20certificates%2C%20LinkedIn-ready%20credentials%2C%20skill%20badges.%20Not%20just%20learning%20%E2%80%94%20provable%20learning.%22%0A%0A**Speaker%20Notes%3A**%0A%22LearnFlow%20AI%20doesn&#039;t%20just%20give%20you%20access%20to%20content.%20It%20surrounds%20you%20with%20a%20learning%20experience%20that&#039;s%20engaging%2C%20personalized%2C%20and%20outcome-focused.%22%0A%0A---%0A%0A%23%23%20Slide%204%3A%20Market%20Opportunity%0A%0A**Visual%3A**%20Concentric%20circles%20(TAM%2FSAM%2FSOM)%20with%20market%20size%20labels%0A%0A**Headline%3A**%20*%22A%20%E2%82%B985%2C000%20crore%20opportunity%20%E2%80%94%20and%20it&#039;s%20just%20getting%20started.%22*%0A%0A**Market%20Breakdown%3A**%0A%0ATAM%20(Total%20Addressable%20Market)%0A%22India%20EdTech%20Market%20%E2%80%94%20%E2%82%B985%2C000%20Cr%20(%2410B)%20by%202030%20(RedSeer)%22%0A%0ASAM%20(Serviceable%20Addressable%20Market)%0A%22Upskilling%20%2B%20Online%20Courses%20Segment%20%E2%80%94%20%E2%82%B922%2C000%20Cr%20(%242.6B)%22%0A%0ASOM%20(Serviceable%20Obtainable%20Market)%0A%22Accessible%205-year%20target%20%E2%80%94%20%E2%82%B9550%20Cr%20(%2465M)%20with%203%25%20market%20share%22%0A%0A**Supporting%20data%3A**%0A-%20India%20has%20500M%2B%20internet%20users%2C%20250M%2B%20smartphone%20learners%20(IAMAI%2C%202025)%0A-%20Online%20upskilling%20grew%2043%25%20YoY%20post-COVID%20%E2%80%94%20structural%20shift%2C%20not%20a%20trend%0A-%2065%25%20of%20India&#039;s%20workforce%20will%20need%20reskilling%20by%202030%20(WEF)%0A-%20Global%20EdTech%20market%3A%20%24404B%20by%202025%20(HolonIQ)%0A%0A**Speaker%20Notes%3A**%0A%22The%20India%20EdTech%20market%20is%20not%20a%20bubble%20%E2%80%94%20it&#039;s%20a%20structural%20shift%20driven%20by%20three%20irreversible%20forces%3A%20smartphone%20penetration%2C%20increasing%20demand%20for%20upskilling%2C%20and%20an%20AI%20revolution%20that%20makes%20personalized%20tutoring%20economically%20viable%20for%20the%20first%20time.%22%0A%0A---%0A%0A%23%23%20Slide%205%3A%20Why%20Now%3F%20Why%20Us%3F%0A%0A**Visual%3A**%20Timeline%20on%20left%2C%20differentiators%20on%20right%0A%0A**Headline%3A**%20*%22Three%20tailwinds%20converge.%20We&#039;re%20positioned%20to%20ride%20all%20three.%22*%0A%0A**Tailwind%201%20%E2%80%94%20AI%20Cost%20Drop**%0A%22Inference%20costs%20for%20Gemini%2FGPT-class%20models%20dropped%20100x%20in%202%20years.%20Building%20an%20AI%20tutor%20for%20every%20learner%20is%20now%20economically%20viable.%22%0A%0A**Tailwind%202%20%E2%80%94%20Smartphone%20Proliferation**%0A%22250M%2B%20Indians%20now%20have%204G%2F5G%20smartphones.%20They%20want%20to%20learn%20but%20can&#039;t%20afford%20%E2%82%B95%20lakh%20for%20a%20classroom%20program.%22%0A%0A**Tailwind%203%20%E2%80%94%20Employer%20Shift**%0A%2263%25%20of%20top%20employers%20now%20prefer%20verified%20skill%20certificates%20over%20degrees%20for%20technical%20roles%20(NASSCOM%202025).%20Credentials%20are%20being%20unbundled.%22%0A%0A**Our%20Edge%3A**%0A-%20RAG-powered%20AI%20tutor%20grounded%20in%20actual%20course%20content%20(not%20generic%20ChatGPT)%0A-%20Cross-platform%20(Flutter%20native%20%2B%20React%20web%20%2B%20Electron%20desktop)%20%E2%80%94%20competitors%20choose%20one%0A-%20Gamification%20engine%20built%20from%20behavioral%20science%2C%20not%20borrowed%20from%20gaming%0A-%20Glassmorphism-first%20design%20accessible%20to%20teens%20AND%2060-year-olds%0A%0A**Speaker%20Notes%3A**%0A%22Every%20piece%20of%20the%20infrastructure%20needed%20to%20build%20this%20product%20at%20scale%20just%20became%20available%20in%20the%20last%2024%20months.%20We%20didn&#039;t%20just%20build%20a%20product%20%E2%80%94%20we%20built%20it%20at%20exactly%20the%20right%20moment.%22%0A%0A---%0A%0A%23%23%20Slide%206%3A%20Product%20Demo%0A%0A**Visual%3A**%20Full-screen%20app%20screenshots%20arranged%20as%20a%20walkthrough%20carousel%0A%0A**Headline%3A**%20*%22The%20product%20you%20wish%20existed%20when%20you%20started%20learning.%22*%0A%0A**Screenshot%201%3A**%20Dashboard%20%E2%80%94%20%22AI-personalized%20home%2C%20streak%20tracking%2C%20daily%20quests%22%0A**Screenshot%202%3A**%20AI%20Chat%20%E2%80%94%20%22Ask%20anything%20about%20your%20course%2C%20get%20grounded%20answers%22%0A**Screenshot%203%3A**%20Video%20Player%20%E2%80%94%20%22Professional%20lesson%20experience%2C%20notes%2C%20AI%20help%22%0A**Screenshot%204%3A**%20Quiz%20%E2%80%94%20%22AI-generated%20quizzes%20with%20instant%20explanations%22%0A**Screenshot%205%3A**%20Badge%2FLevel%20Up%20%E2%80%94%20%22Gamification%20that&#039;s%20actually%20motivating%22%0A**Screenshot%206%3A**%20Certificate%20%E2%80%94%20%22Blockchain-verified%2C%20LinkedIn-ready%20certificate%22%0A**Screenshot%207%3A**%20Admin%20Panel%20%E2%80%94%20%22Full%20CRM%20for%20institutions%20and%20trainers%22%0A%0A**Speaker%20Notes%3A**%0A%22Let%20me%20walk%20you%20through%20a%20day%20in%20the%20life%20of%20a%20LearnFlow%20AI%20learner%20%E2%80%94%20and%20you&#039;ll%20see%20why%20our%20completion%20rate%20is%206x%20the%20industry%20average.%22%0A%0A---%0A%0A%23%23%20Slide%207%3A%20Traction%0A%0A**Visual%3A**%20Key%20metrics%20in%20large%20type%2C%20trend%20charts%0A%0A**Headline%3A**%20*%22We&#039;re%20not%20building%20this%20in%20a%20vacuum%20%E2%80%94%20learners%20are%20already%20here.%22*%0A%0A**Metrics%20(if%20in%20beta%2Fsoft%20launch)%3A**%0A%60%60%60%0A5%2C000%20%20%20%20%20%20%20%20%20%20Beta%20users%20in%20first%203%20months%0A4.9%E2%98%85%20%20%20%20%20%20%20%20%20%20%20Average%20App%20Store%20rating%20(127%20reviews)%0A68%25%20%20%20%20%20%20%20%20%20%20%20%20D7%20retention%20(industry%20avg%3A%2025%25)%0A92%25%20%20%20%20%20%20%20%20%20%20%20%20First%20course%20completion%20rate%0A%E2%82%B90%20%20%20%20%20%20%20%20%20%20%20%20%20Paid%20for%20customer%20acquisition%20(100%25%20organic)%0A12%20mins%20%20%20%20%20%20%20%20Average%20daily%20time%20in%20app%0A3%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Platform%20partnerships%20signed%20(colleges)%0A%60%60%60%0A%0A**Trend%20chart%3A**%20Weekly%20active%20users%20over%2012%20weeks%20(upward%20curve)%0A%0A**Speaker%20Notes%3A**%0A%22These%20numbers%20are%20from%20our%20beta%20period%20with%20zero%20paid%20marketing.%20D7%20retention%20of%2068%25%20is%20extraordinary%20in%20EdTech%20%E2%80%94%20the%20average%20is%2025%25.%20This%20tells%20us%20we&#039;ve%20solved%20the%20engagement%20problem.%22%0A%0A---%0A%0A%23%23%20Slide%208%3A%20Business%20Model%0A%0A**Visual%3A**%20Three%20revenue%20streams%20as%20columns%20with%20illustrative%20flows%0A%0A**Headline%3A**%20*%22Multiple%20monetization%20layers%2C%20all%20aligned%20with%20learner%20success.%22*%0A%0A**Revenue%20Stream%201%20%E2%80%94%20Subscription%20(Primary)**%0A%60%60%60%0AFree%3A%20%E2%82%B90%2Fmonth%0ABasic%3A%20%E2%82%B9299%2Fmonth%0APro%3A%20%E2%82%B9599%2Fmonth%0APremium%3A%20%E2%82%B9999%2Fmonth%0ATarget%3A%2025%2C000%20Pro%20subscribers%20by%20Month%2018%0AAnnual%3A%20%E2%82%B929%2C940%20LTV%20per%20Pro%20subscriber%20(2-year%20avg%20retention)%0A%60%60%60%0A%0A**Revenue%20Stream%202%20%E2%80%94%20B2B%20Institution**%0A%60%60%60%0A%E2%82%B950%2C000%E2%80%93%E2%82%B95%2C00%2C000%2Fyear%20per%20institution%20(50%E2%80%93500%20seats)%0ATarget%3A%20100%20institutions%20by%20Year%202%0AHigh%20NPS%2C%20high%20retention%2C%20expansion%20revenue%0A%60%60%60%0A%0A**Revenue%20Stream%203%20%E2%80%94%20Trainer%20Revenue%20Share**%0A%60%60%60%0A70%2F30%20split%20(trainer%20gets%2070%25)%0AAverage%20course%20price%3A%20%E2%82%B9599%E2%80%93%E2%82%B91%2C999%0ATop%20trainer%20earns%20%E2%82%B92L%2B%2Fmonth%20%E2%80%94%20creates%20supply-side%20flywheel%0A%60%60%60%0A%0A**Unit%20Economics%3A**%0A%60%60%60%0APro%20Subscriber%20CAC%20(target)%3A%20%E2%82%B91%2C200%0ALTV%20(2-year)%3A%20%E2%82%B914%2C376%0ALTV%3ACAC%20Ratio%3A%2012%3A1%20(target%20by%20Month%2018)%0AGross%20Margin%20(SaaS%20revenue)%3A%2078%25%0A%60%60%60%0A%0A**Speaker%20Notes%3A**%0A%22Our%20primary%20bet%20is%20subscription%2C%20but%20the%20B2B%20channel%20has%2020x%20higher%20ACV%20and%203x%20higher%20retention.%20We&#039;re%20designing%20for%20both%20from%20Day%201.%22%0A%0A---%0A%0A%23%23%20Slide%209%3A%20Go-to-Market%20Strategy%0A%0A**Visual%3A**%20Funnel%20diagram%20with%20channel%20breakdown%0A%0A**Headline%3A**%20*%22Efficient%20growth%20through%20content%2C%20community%2C%20and%20word-of-mouth.%22*%0A%0A**Phase%201%20(Months%201%E2%80%936)%3A%20Seed**%0A%60%60%60%0AChannel%3A%20Content%20SEO%20(Python%2Fdesign%20tutorial%20blog%20posts)%0AChannel%3A%20LinkedIn%20organic%20(trainer%20spotlights%2C%20learner%20stories)%0AChannel%3A%20Product-led%20growth%20(free%20plan%20%E2%86%92%20AI%20upgrade%20prompts)%0AChannel%3A%20College%20partnerships%20(institution%20pilot%20programs)%0ATarget%3A%2025%2C000%20free%20users%2C%201%2C000%20paid%20subscribers%0A%60%60%60%0A%0A**Phase%202%20(Months%207%E2%80%9312)%3A%20Grow**%0A%60%60%60%0AChannel%3A%20Paid%20search%20(Google%20Ads%20for%20course%20keywords)%0AChannel%3A%20Meta%2FInstagram%20(video%20ads%2C%20learner%20transformation%20stories)%0AChannel%3A%20Referral%20program%20(%E2%82%B9200%20credit%20per%20successful%20referral)%0AChannel%3A%20YouTube%20(course%20preview%20clips%2C%20%22learn%20X%20in%20Y%20minutes%22%20series)%0ATarget%3A%20100%2C000%20free%20users%2C%205%2C000%20paid%20subscribers%0A%60%60%60%0A%0A**Phase%203%20(Months%2013%E2%80%9324)%3A%20Scale**%0A%60%60%60%0AChannel%3A%20B2B%20outbound%20(enterprise%20learning%20%26%20development%20teams)%0AChannel%3A%20APAC%20expansion%20(Southeast%20Asia)%0AChannel%3A%20OEM%20partnerships%20(telcos%20pre-installing%20app%2C%20banks%20offering%20learning%20perks)%0ATarget%3A%20500%2C000%20free%20users%2C%2025%2C000%20paid%20subscribers%0A%60%60%60%0A%0A**Speaker%20Notes%3A**%0A%22We%20are%20not%20a%20paid-ads-dependent%20business.%20Our%20CAC%20today%20is%20%E2%82%B90%20because%20content%2C%20product-led%20growth%2C%20and%20word-of-mouth%20are%20carrying%20us.%20Paid%20ads%20are%20an%20amplifier%2C%20not%20our%20foundation.%22%0A%0A---%0A%0A%23%23%20Slide%2010%3A%20Financial%20Projections%0A%0A**Visual%3A**%20Revenue%20bar%20chart%20(3-year)%2C%20key%20metric%20table%20below%0A%0A**Headline%3A**%20*%22A%20clear%20path%20to%20%E2%82%B910%20crore%20ARR%20in%2024%20months.%22*%0A%0A**Revenue%20Projections%3A**%0A%7C%20%7C%20Year%201%20%7C%20Year%202%20%7C%20Year%203%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20Free%20Users%20%7C%2050%2C000%20%7C%20250%2C000%20%7C%20750%2C000%20%7C%0A%7C%20Paid%20Subscribers%20%7C%202%2C500%20%7C%2020%2C000%20%7C%2075%2C000%20%7C%0A%7C%20B2B%20Institutions%20%7C%2010%20%7C%20100%20%7C%20500%20%7C%0A%7C%20**MRR**%20%7C%20%E2%82%B915L%20%7C%20%E2%82%B91.2Cr%20%7C%20%E2%82%B94.5Cr%20%7C%0A%7C%20**ARR**%20%7C%20%E2%82%B91.8Cr%20%7C%20%E2%82%B914.4Cr%20%7C%20%E2%82%B954Cr%20%7C%0A%7C%20Gross%20Margin%20%7C%2065%25%20%7C%2073%25%20%7C%2078%25%20%7C%0A%0A**Key%20Assumptions%3A**%0A-%20B2C%20CAC%3A%20%E2%82%B91%2C200%20(paid)%2C%20%E2%82%B9300%20(organic)%20%E2%80%94%20blended%20%E2%82%B9600%20by%20Year%202%0A-%20LTV%3A%20%E2%82%B914%2C400%20(2-year%20avg%20for%20Pro)%0A-%20B2B%20ACV%3A%20%E2%82%B91%2C80%2C000%20(avg%2060%20seats%20%C3%97%20%E2%82%B93%2C000%2Fseat%2Fyear)%0A-%20Churn%3A%203.5%25%20monthly%20(Year%201)%20%E2%86%92%202%25%20(Year%202%2B)%0A-%20AI%20API%20cost%3A%208%25%20of%20revenue%20(decreasing%20as%20models%20get%20cheaper)%0A%0A**Disclaimer%3A**%20Forward-looking%20projections%20subject%20to%20assumptions%20and%20market%20conditions.%0A%0A**Speaker%20Notes%3A**%0A%22We&#039;re%20being%20conservative.%20These%20numbers%20assume%20zero%20viral%20coefficient%20and%20a%20modest%20CAC.%20If%20we%20see%20the%20referral%20rates%20we&#039;re%20seeing%20in%20beta%20persist%20at%20scale%2C%20Year%202%20could%20look%20like%20Year%203.%22%0A%0A---%0A%0A%23%23%20Slide%2011%3A%20Team%0A%0A**Visual%3A**%20Team%20photos%20in%20circular%20frames%2C%20title%20below%20each%0A%0A**Headline%3A**%20*%22Built%20by%20people%20who&#039;ve%20lived%20the%20problem.%22*%0A%0A%60%60%60%0A%5BFounder%20Name%5D%20%E2%80%94%20CEO%20%26%20Co-Founder%0A%22Ex-%5BCompany%5D%2C%20built%20%5BX%5D%20product%20used%20by%20%5BN%5D%20users.%20Self-taught%20developer.%0AKnows%20the%20pain%20of%20finding%20quality%20education%20firsthand.%22%0A%0A%5BCo-Founder%20Name%5D%20%E2%80%94%20CTO%20%26%20Co-Founder%0A%22Ex-%5BCompany%5D%2C%2010%20years%20in%20EdTech%20engineering.%20Built%20platforms%20at%20scale.%0ALed%20teams%20across%20mobile%20(Flutter)%20and%20web%20(React).%22%0A%0A%5BCo-Founder%20Name%5D%20%E2%80%94%20CPO%20%26%20Co-Founder%0A%22Ex-%5BCompany%5D%2C%20UX%20lead%20for%20%5Bmajor%20app%5D.%20Expert%20in%20accessibility-first%20design.%0AFormer%20HFI-certified%20UX%20professional.%22%0A%0AAdvisors%3A%0A%5BName%5D%20%E2%80%94%20Ex-CEO%20of%20%5BEdTech%20company%5D%2C%2015%20years%20in%20education%0A%5BName%5D%20%E2%80%94%20VP%20Engineering%20at%20%5BMajor%20Tech%5D%2C%20expertise%20in%20AI%20systems%0A%5BName%5D%20%E2%80%94%20Professor%20of%20Educational%20Psychology%2C%20%5BUniversity%5D%0A%60%60%60%0A%0A**Speaker%20Notes%3A**%0A%22We%20have%20the%20rare%20combination%3A%20someone%20who%20deeply%20understands%20the%20user&#039;s%20pain%2C%20someone%20who%20can%20build%20world-class%20technology%2C%20and%20someone%20who%20can%20design%20for%20diverse%20populations.%20And%20we&#039;ve%20done%20it%20before%20at%20scale.%22%0A%0A---%0A%0A%23%23%20Slide%2012%3A%20Competitive%20Landscape%0A%0A**Visual%3A**%202%C3%972%20matrix%20(X%3A%20AI%20personalization%2C%20Y%3A%20Price%2FAccessibility)%20with%20competitor%20bubbles%20placed%0A%0A**Headline%3A**%20*%22No%20one%20else%20is%20doing%20all%20of%20this%2C%20for%20everyone.%22*%0A%0A**Competitor%20Analysis%3A**%0A%0A%7C%20Platform%20%7C%20Courses%20%7C%20AI%20Tutor%20%7C%20Gamification%20%7C%20Native%20App%20%7C%20Offline%20%7C%20Certificate%20%7C%20Price%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20**LearnFlow%20AI**%20%7C%20%E2%9C%93%20500%2B%20%7C%20%E2%9C%93%20RAG-powered%20%7C%20%E2%9C%93%20Full%20%7C%20%E2%9C%93%20iOS%2BAndroid%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20Blockchain%20%7C%20%E2%82%B9599%2Fmo%20%7C%0A%7C%20Coursera%20%7C%20%E2%9C%93%20Thousands%20%7C%20Limited%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20Partial%20%7C%20%E2%9C%93%20%7C%20%2459%2Fmo%20%7C%0A%7C%20Udemy%20%7C%20%E2%9C%93%20Thousands%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20Per%20course%20%7C%0A%7C%20Unacademy%20%7C%20India-focus%20%7C%20%E2%9C%97%20%7C%20Partial%20%7C%20%E2%9C%93%20%7C%20Partial%20%7C%20Limited%20%7C%20%E2%82%B91%2C500%2B%2Fmo%20%7C%0A%7C%20BYJU&#039;s%20%7C%20%E2%9C%93%20%7C%20Partial%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%93%20%7C%20%E2%9C%97%20%7C%20%E2%82%B92%2C000%2B%2Fmo%20%7C%0A%7C%20Local%20EdTechs%20%7C%20Limited%20%7C%20%E2%9C%97%20%7C%20%E2%9C%97%20%7C%20Basic%20%7C%20%E2%9C%97%20%7C%20Varies%20%7C%20Varies%20%7C%0A%0A**Our%20Moat%3A**%0A1.%20RAG-based%20AI%20tutor%20(trained%20on%20actual%20course%20content%20%E2%80%94%20not%20generic%20AI)%0A2.%20India-first%20pricing%20with%20global-quality%20product%0A3.%20Cross-platform%20native%20experience%20(Flutter%20%2B%20React%20%2B%20Electron)%0A4.%20Behavioral%20science-backed%20gamification%20engine%0A%0A**Speaker%20Notes%3A**%0A%22Coursera%20and%20Udemy%20own%20the%20content%20library.%20We%20compete%20on%20experience%2C%20AI%2C%20and%20price.%20Our%20Indian-first%20approach%20and%20RAG-based%20AI%20are%20our%20moats%20%E2%80%94%20neither%20can%20be%20copied%20overnight.%22%0A%0A---%0A%0A%23%23%20Slide%2013%3A%20Product%20Roadmap%0A%0A**Visual%3A**%20Horizontal%20timeline%20with%203%20phases%0A%0A**Headline%3A**%20*%22Building%20the%20definitive%20AI%20learning%20platform%20%E2%80%94%20in%20phases.%22*%0A%0A**Phase%201%20%E2%80%94%20Foundation%20(Months%201%E2%80%936)%3A**%20%0ACore%20platform%20live.%20iOS%20%2B%20Android%20%2B%20Web.%20100%20courses.%20AI%20tutor.%20Payments.%20Gamification.%0A%0A**Phase%202%20%E2%80%94%20Growth%20(Months%207%E2%80%9312)%3A**%0AInstitution%20dashboard.%20Live%20sessions.%20Desktop%20(Electron).%20Trainer%20marketplace.%20LinkedIn%20integration.%20500%20courses.%0A%0A**Phase%203%20%E2%80%94%20Scale%20(Months%2013%E2%80%9324)%3A**%0AAI%20mentor%20matching.%20Job%20board%20integration.%20Corporate%20L%26D%20partnerships.%20API%20for%20third-party%20LMS.%20Southeast%20Asia%20expansion.%0A%0A**Phase%204%20%E2%80%94%20Vision%20(Year%203%2B)%3A**%0AAI-generated%20courses.%20Accredited%20micro-degrees.%20University%20partnerships.%20Real-time%20skills%20assessment.%0A%0A**Speaker%20Notes%3A**%0A%22We%20ship%20in%20two-week%20sprints.%20Phase%201%20is%20done.%20We%20are%20raising%20to%20fund%20Phase%202%20and%20Phase%203.%20Phase%204%20is%20where%20we%20become%20a%20fundamentally%20different%20kind%20of%20institution%20%E2%80%94%20one%20that%20issues%20credentials%20that%20are%20more%20valuable%20than%20traditional%20degrees.%22%0A%0A---%0A%0A%23%23%20Slide%2014%3A%20The%20Ask%0A%0A**Visual%3A**%20Clean%2C%20centered%20slide%20with%20ask%20amount%20prominent%0A%0A**Headline%3A**%20*%22We&#039;re%20raising%20%E2%82%B93%20crore%20seed%20to%20reach%2025%2C000%20paid%20subscribers.%22*%0A%0A**Raise%20Details%3A**%0A%60%60%60%0ARound%3A%20Seed%0AAmount%3A%20%E2%82%B93%20Crore%20(approx.%20%24360%2C000%20USD)%0AInstrument%3A%20SAFE%20%2F%20Convertible%20Note%0AValuation%20Cap%3A%20%E2%82%B915%20Crore%20(post-money)%0ALead%20investor%3A%20%5BOpen%20%2F%20Target%3A%20angel%20%2B%20micro-VC%5D%0ATimeline%3A%20Close%20in%2060%20days%0A%60%60%60%0A%0A**Use%20of%20Funds%3A**%0A%60%60%60%0AEngineering%20%26%20Product%3A%2045%25%20%E2%80%94%202%20senior%20engineers%2C%201%20Flutter%20developer%0AMarketing%20%26%20Growth%3A%2025%25%20%E2%80%94%20Paid%20acquisition%2C%20content%20marketing%0AAI%20Infrastructure%3A%2015%25%20%E2%80%94%20API%20costs%2C%20RAG%20tuning%2C%20vector%20DB%20scaling%0AOperations%20%26%20Legal%3A%2010%25%20%E2%80%94%20HR%2C%20legal%2C%20compliance%0AReserve%3A%205%25%0A%60%60%60%0A%0A**Milestones%20this%20round%20buys%3A**%0A-%20100%2C000%20free%20users%0A-%205%2C000%20paid%20subscribers%0A-%2050%20institution%20clients%0A-%20%E2%82%B93%20crore%20ARR%0A-%20Series%20A%20raise%20at%20%E2%82%B950%20crore%20valuation%0A%0A**Speaker%20Notes%3A**%0A%22This%20is%20a%20lean%2C%20efficient%20raise%20for%20a%20specific%20milestone%20%E2%80%94%20getting%20to%205%2C000%20paying%20subscribers%20so%20we%20can%20demonstrate%20unit%20economics%20to%20a%20Series%20A%20investor.%20We&#039;ve%20modeled%203%20scenarios%20and%20even%20the%20conservative%20scenario%20shows%20us%20hitting%20profitability%20on%20%E2%82%B94.5%20crore%20ARR.%22%0A%0A---%0A%0A%23%23%20Slide%2015%3A%20Closing%20Slide%0A%0A**Visual%3A**%20Full-screen%20gradient%20background%20(same%20as%20Slide%201)%2C%20single%20powerful%20visual%2C%20centered%20text%0A%0A**Headline%3A**%20*%22The%20best%20time%20to%20learn%20was%20yesterday.%20The%20best%20platform%20to%20learn%20on%20is%20here%20today.%22*%0A%0A**Contact%3A**%0A%60%60%60%0A%5BFounder%20Name%5D%0Afounder%40learnflow.ai%0A%2B91%2098XXX%20XXXXX%0Alearnflow.ai%2Fpitch-deck%0A%0AScan%20QR%20%E2%86%92%20Live%20product%20demo%0A%60%60%60%0A%0A**Speaker%20Notes%3A**%0A%22Every%20day%20that%20passes%2C%20another%20million%20Indians%20who%20deserve%20access%20to%20quality%20education%20don&#039;t%20get%20it.%20We&#039;re%20changing%20that.%20We&#039;d%20love%20to%20have%20you%20as%20partners%20in%20this%20mission.%20Thank%20you.%22%0A%0A---%0A%0A%23%23%20Appendix%20Slides%20(Available%20on%20Request)%0A%0A-%20A1%3A%20Detailed%20Financial%20Model%20(5-year)%0A-%20A2%3A%20Technical%20Architecture%20Deep%20Dive%0A-%20A3%3A%20CAC%2FLTV%20Breakdown%20by%20Channel%0A-%20A4%3A%20Risk%20Analysis%20%26%20Mitigation%0A-%20A5%3A%20India%20EdTech%20Landscape%20Research%0A-%20A6%3A%20Course%20Catalog%20%26%20Content%20Strategy%0A-%20A7%3A%20Regulatory%20%26%20Compliance%20Overview%0A-%20A8%3A%20Customer%20Reference%20Contacts%20(Beta%20Users)%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>09 Pitch And Presentation</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Pitch Deck &amp; Presentation Script</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="pitch-deck-presentation-script" class="docmd-heading"><a href="#pitch-deck-presentation-script" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Pitch Deck &amp; Presentation Script</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026<br>
+<strong>Format:</strong> 15-slide investor/stakeholder presentation</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-presentation-overview" class="docmd-heading"><a href="#pitch-deck-presentation-script-presentation-overview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Presentation Overview</h2>
+<p><strong>Target Audience:</strong> Angel investors, seed-stage VCs, potential institutional partners<br>
+<strong>Duration:</strong> 15–20 minutes presentation + 10 minutes Q&amp;A<br>
+<strong>Narrative Arc:</strong> Problem → Solution → Market → Product → Traction → Business Model → Team → Ask</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-1-title-slide" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-1-title-slide" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 1: Title Slide</h2>
+<p><strong>Visual:</strong> Full-screen dark navy background with subtle particle animation. Center: LearnFlow AI logo (indigo+purple gradient) + wordmark. Bottom: “Seed Round Presentation — July 2026”</p>
+<p><strong>Text:</strong></p>
+<pre class="hljs"><code>LearnFlow AI
+AI<span class="hljs-punctuation">-</span>Powered Learning <span class="hljs-punctuation">&amp;</span> Member Management Platform
+
+[Founder Name] <span class="hljs-punctuation">|</span> CEO <span class="hljs-punctuation">&amp;</span> Co<span class="hljs-punctuation">-</span>Founder
+learnflow.<span class="hljs-attr">ai</span> <span class="hljs-punctuation">|</span> contact@learnflow.<span class="hljs-attr">ai</span>
+Confidential — Do Not Distribute
+</code></pre>
+<p><strong>Speaker Notes:</strong><br>
+“Thank you for your time today. My name is [Name], and I’m going to show you how LearnFlow AI is transforming the way 100 million Indians learn new skills — and why now is the perfect time to build this company.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-2-the-problem" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-2-the-problem" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 2: The Problem</h2>
+<p><strong>Visual:</strong> Split into 3 panels, each with an icon and a sharp stat</p>
+<p><strong>Headline:</strong> <em>“Learning has never been more critical — or more broken.”</em></p>
+<p><strong>Panel 1 — Access</strong><br>
+Icon: Broken door<br>
+“67% of Indians say quality education is too expensive or too far away.”<br>
+Source: NSSO 2025</p>
+<p><strong>Panel 2 — Completion</strong><br>
+Icon: Abandoned path<br>
+“Only 15% of online course enrollees ever complete what they start.”<br>
+Source: MIT Study, 2024</p>
+<p><strong>Panel 3 — Relevance</strong><br>
+Icon: Skill gap<br>
+“72% of employers say job applicants lack the practical skills they need — even with degrees.”<br>
+Source: LinkedIn Workforce Report 2025</p>
+<p><strong>Speaker Notes:</strong><br>
+“The problem is three-layered: Access — quality education is inaccessible to most. Engagement — even those who access it don’t finish. Relevance — even those who finish aren’t job-ready. Existing platforms solve one of these. We solve all three.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-3-the-solution" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-3-the-solution" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 3: The Solution</h2>
+<p><strong>Visual:</strong> Platform mockup (phone + tablet + desktop) with animated AI chat bubble overlay</p>
+<p><strong>Headline:</strong> <em>“LearnFlow AI: Your personal AI tutor + 500+ expert courses + verified certificates.”</em></p>
+<p><strong>Three-column layout:</strong></p>
+<p>Column 1 — 🤖 AI That Teaches<br>
+“An AI tutor trained on your course content. Explains concepts, generates quizzes, and creates personalized study plans — like having a private tutor 24/7.”</p>
+<p>Column 2 — 🎮 Engagement That Works<br>
+“XP, levels, badges, streaks, leaderboards, daily quests. The psychology of great games applied to your education. 92% of our users complete their first course.”</p>
+<p>Column 3 — 📜 Outcomes That Matter<br>
+“Verified certificates, LinkedIn-ready credentials, skill badges. Not just learning — provable learning.”</p>
+<p><strong>Speaker Notes:</strong><br>
+“LearnFlow AI doesn’t just give you access to content. It surrounds you with a learning experience that’s engaging, personalized, and outcome-focused.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-4-market-opportunity" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-4-market-opportunity" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 4: Market Opportunity</h2>
+<p><strong>Visual:</strong> Concentric circles (TAM/SAM/SOM) with market size labels</p>
+<p><strong>Headline:</strong> <em>“A ₹85,000 crore opportunity — and it’s just getting started.”</em></p>
+<p><strong>Market Breakdown:</strong></p>
+<p>TAM (Total Addressable Market)<br>
+“India EdTech Market — ₹85,000 Cr ($10B) by 2030 (RedSeer)”</p>
+<p>SAM (Serviceable Addressable Market)<br>
+“Upskilling + Online Courses Segment — ₹22,000 Cr ($2.6B)”</p>
+<p>SOM (Serviceable Obtainable Market)<br>
+“Accessible 5-year target — ₹550 Cr ($65M) with 3% market share”</p>
+<p><strong>Supporting data:</strong></p>
+<ul>
+<li>India has 500M+ internet users, 250M+ smartphone learners (IAMAI, 2025)</li>
+<li>Online upskilling grew 43% YoY post-COVID — structural shift, not a trend</li>
+<li>65% of India’s workforce will need reskilling by 2030 (WEF)</li>
+<li>Global EdTech market: $404B by 2025 (HolonIQ)</li>
+</ul>
+<p><strong>Speaker Notes:</strong><br>
+“The India EdTech market is not a bubble — it’s a structural shift driven by three irreversible forces: smartphone penetration, increasing demand for upskilling, and an AI revolution that makes personalized tutoring economically viable for the first time.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-5-why-now-why-us" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-5-why-now-why-us" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 5: Why Now? Why Us?</h2>
+<p><strong>Visual:</strong> Timeline on left, differentiators on right</p>
+<p><strong>Headline:</strong> <em>“Three tailwinds converge. We’re positioned to ride all three.”</em></p>
+<p><strong>Tailwind 1 — AI Cost Drop</strong><br>
+“Inference costs for Gemini/GPT-class models dropped 100x in 2 years. Building an AI tutor for every learner is now economically viable.”</p>
+<p><strong>Tailwind 2 — Smartphone Proliferation</strong><br>
+“250M+ Indians now have 4G/5G smartphones. They want to learn but can’t afford ₹5 lakh for a classroom program.”</p>
+<p><strong>Tailwind 3 — Employer Shift</strong><br>
+“63% of top employers now prefer verified skill certificates over degrees for technical roles (NASSCOM 2025). Credentials are being unbundled.”</p>
+<p><strong>Our Edge:</strong></p>
+<ul>
+<li>RAG-powered AI tutor grounded in actual course content (not generic ChatGPT)</li>
+<li>Cross-platform (Flutter native + React web + Electron desktop) — competitors choose one</li>
+<li>Gamification engine built from behavioral science, not borrowed from gaming</li>
+<li>Glassmorphism-first design accessible to teens AND 60-year-olds</li>
+</ul>
+<p><strong>Speaker Notes:</strong><br>
+“Every piece of the infrastructure needed to build this product at scale just became available in the last 24 months. We didn’t just build a product — we built it at exactly the right moment.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-6-product-demo" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-6-product-demo" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 6: Product Demo</h2>
+<p><strong>Visual:</strong> Full-screen app screenshots arranged as a walkthrough carousel</p>
+<p><strong>Headline:</strong> <em>“The product you wish existed when you started learning.”</em></p>
+<p><strong>Screenshot 1:</strong> Dashboard — “AI-personalized home, streak tracking, daily quests”<br>
+<strong>Screenshot 2:</strong> AI Chat — “Ask anything about your course, get grounded answers”<br>
+<strong>Screenshot 3:</strong> Video Player — “Professional lesson experience, notes, AI help”<br>
+<strong>Screenshot 4:</strong> Quiz — “AI-generated quizzes with instant explanations”<br>
+<strong>Screenshot 5:</strong> Badge/Level Up — “Gamification that’s actually motivating”<br>
+<strong>Screenshot 6:</strong> Certificate — “Blockchain-verified, LinkedIn-ready certificate”<br>
+<strong>Screenshot 7:</strong> Admin Panel — “Full CRM for institutions and trainers”</p>
+<p><strong>Speaker Notes:</strong><br>
+“Let me walk you through a day in the life of a LearnFlow AI learner — and you’ll see why our completion rate is 6x the industry average.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-7-traction" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-7-traction" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 7: Traction</h2>
+<p><strong>Visual:</strong> Key metrics in large type, trend charts</p>
+<p><strong>Headline:</strong> <em>“We’re not building this in a vacuum — learners are already here.”</em></p>
+<p><strong>Metrics (if in beta/soft launch):</strong></p>
+<pre class="hljs"><code><span class="hljs-number">5</span>,<span class="hljs-number">000</span>          Beta users <span class="hljs-keyword">in</span> first <span class="hljs-number">3</span> months
+<span class="hljs-number">4.9</span>★           Average App Store <span class="hljs-title function_">rating</span> (<span class="hljs-number">127</span> reviews)
+<span class="hljs-number">68</span><span class="hljs-punctuation">%</span>            D7 <span class="hljs-title function_">retention</span> (industry avg<span class="hljs-punctuation">:</span> <span class="hljs-number">25</span><span class="hljs-punctuation">%</span>)
+<span class="hljs-number">92</span><span class="hljs-punctuation">%</span>            First course completion rate
+₹<span class="hljs-number">0</span>             Paid <span class="hljs-keyword">for</span> customer <span class="hljs-title function_">acquisition</span> (<span class="hljs-number">100</span><span class="hljs-punctuation">%</span> organic)
+<span class="hljs-number">12</span> mins        Average daily time <span class="hljs-keyword">in</span> app
+<span class="hljs-number">3</span>               Platform partnerships <span class="hljs-title function_">signed</span> (colleges)
+</code></pre>
+<p><strong>Trend chart:</strong> Weekly active users over 12 weeks (upward curve)</p>
+<p><strong>Speaker Notes:</strong><br>
+“These numbers are from our beta period with zero paid marketing. D7 retention of 68% is extraordinary in EdTech — the average is 25%. This tells us we’ve solved the engagement problem.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-8-business-model" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-8-business-model" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 8: Business Model</h2>
+<p><strong>Visual:</strong> Three revenue streams as columns with illustrative flows</p>
+<p><strong>Headline:</strong> <em>“Multiple monetization layers, all aligned with learner success.”</em></p>
+<p><strong>Revenue Stream 1 — Subscription (Primary)</strong></p>
+<pre class="hljs"><code>Free<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">0</span><span class="hljs-punctuation">/</span>month
+Basic<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">299</span><span class="hljs-punctuation">/</span>month
+Pro<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">599</span><span class="hljs-punctuation">/</span>month
+Premium<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">999</span><span class="hljs-punctuation">/</span>month
+Target<span class="hljs-punctuation">:</span> <span class="hljs-number">25</span>,<span class="hljs-number">000</span> Pro subscribers by Month <span class="hljs-number">18</span>
+Annual<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">29</span>,<span class="hljs-number">940</span> LTV per Pro <span class="hljs-title function_">subscriber</span> (<span class="hljs-number">2</span><span class="hljs-punctuation">-</span>year avg retention)
+</code></pre>
+<p><strong>Revenue Stream 2 — B2B Institution</strong></p>
+<pre class="hljs"><code>₹<span class="hljs-number">50</span>,<span class="hljs-number">000</span>–₹<span class="hljs-number">5</span>,<span class="hljs-number">00</span>,<span class="hljs-number">000</span><span class="hljs-punctuation">/</span>year per <span class="hljs-title function_">institution</span> (<span class="hljs-number">50</span>–<span class="hljs-number">500</span> seats)
+Target<span class="hljs-punctuation">:</span> <span class="hljs-number">100</span> institutions by Year <span class="hljs-number">2</span>
+High NPS, high retention, expansion revenue
+</code></pre>
+<p><strong>Revenue Stream 3 — Trainer Revenue Share</strong></p>
+<pre class="hljs"><code><span class="hljs-number">70</span><span class="hljs-punctuation">/</span><span class="hljs-number">30</span> <span class="hljs-title function_">split</span> (trainer gets <span class="hljs-number">70</span><span class="hljs-punctuation">%</span>)
+Average course price<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">599</span>–₹<span class="hljs-number">1</span>,<span class="hljs-number">999</span>
+Top trainer earns ₹2L<span class="hljs-punctuation">+/</span>month — creates supply<span class="hljs-punctuation">-</span>side flywheel
+</code></pre>
+<p><strong>Unit Economics:</strong></p>
+<pre class="hljs"><code>Pro Subscriber <span class="hljs-title function_">CAC</span> (target)<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">1</span>,<span class="hljs-number">200</span>
+<span class="hljs-title function_">LTV</span> (<span class="hljs-number">2</span><span class="hljs-punctuation">-</span>year)<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">14</span>,<span class="hljs-number">376</span>
+LTV<span class="hljs-punctuation">:</span>CAC Ratio<span class="hljs-punctuation">:</span> <span class="hljs-number">12</span><span class="hljs-punctuation">:</span><span class="hljs-number">1</span> (target by Month <span class="hljs-number">18</span>)
+Gross <span class="hljs-title function_">Margin</span> (SaaS revenue)<span class="hljs-punctuation">:</span> <span class="hljs-number">78</span><span class="hljs-punctuation">%</span>
+</code></pre>
+<p><strong>Speaker Notes:</strong><br>
+“Our primary bet is subscription, but the B2B channel has 20x higher ACV and 3x higher retention. We’re designing for both from Day 1.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-9-go-to-market-strategy" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-9-go-to-market-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 9: Go-to-Market Strategy</h2>
+<p><strong>Visual:</strong> Funnel diagram with channel breakdown</p>
+<p><strong>Headline:</strong> <em>“Efficient growth through content, community, and word-of-mouth.”</em></p>
+<p><strong>Phase 1 (Months 1–6): Seed</strong></p>
+<pre class="hljs"><code>Channel<span class="hljs-punctuation">:</span> Content <span class="hljs-title function_">SEO</span> (Python<span class="hljs-punctuation">/</span>design tutorial blog posts)
+Channel<span class="hljs-punctuation">:</span> LinkedIn <span class="hljs-title function_">organic</span> (trainer spotlights, learner stories)
+Channel<span class="hljs-punctuation">:</span> Product<span class="hljs-punctuation">-</span>led <span class="hljs-title function_">growth</span> (<span class="hljs-keyword">free</span> plan → AI upgrade prompts)
+Channel<span class="hljs-punctuation">:</span> College <span class="hljs-title function_">partnerships</span> (institution pilot programs)
+Target<span class="hljs-punctuation">:</span> <span class="hljs-number">25</span>,<span class="hljs-number">000</span> <span class="hljs-keyword">free</span> users, <span class="hljs-number">1</span>,<span class="hljs-number">000</span> paid subscribers
+</code></pre>
+<p><strong>Phase 2 (Months 7–12): Grow</strong></p>
+<pre class="hljs"><code>Channel<span class="hljs-punctuation">:</span> Paid <span class="hljs-title function_">search</span> (Google Ads <span class="hljs-keyword">for</span> course keywords)
+Channel<span class="hljs-punctuation">:</span> Meta<span class="hljs-punctuation">/</span><span class="hljs-title function_">Instagram</span> (video ads, learner transformation stories)
+Channel<span class="hljs-punctuation">:</span> Referral <span class="hljs-title function_">program</span> (₹<span class="hljs-number">200</span> credit per successful referral)
+Channel<span class="hljs-punctuation">:</span> <span class="hljs-title function_">YouTube</span> (course preview clips, <span class="hljs-string">&quot;learn X in Y minutes&quot;</span> series)
+Target<span class="hljs-punctuation">:</span> <span class="hljs-number">100</span>,<span class="hljs-number">000</span> <span class="hljs-keyword">free</span> users, <span class="hljs-number">5</span>,<span class="hljs-number">000</span> paid subscribers
+</code></pre>
+<p><strong>Phase 3 (Months 13–24): Scale</strong></p>
+<pre class="hljs"><code>Channel<span class="hljs-punctuation">:</span> B2B <span class="hljs-title function_">outbound</span> (enterprise learning <span class="hljs-punctuation">&amp;</span> development teams)
+Channel<span class="hljs-punctuation">:</span> APAC <span class="hljs-title function_">expansion</span> (Southeast Asia)
+Channel<span class="hljs-punctuation">:</span> OEM <span class="hljs-title function_">partnerships</span> (telcos pre<span class="hljs-punctuation">-</span>installing app, banks offering learning perks)
+Target<span class="hljs-punctuation">:</span> <span class="hljs-number">500</span>,<span class="hljs-number">000</span> <span class="hljs-keyword">free</span> users, <span class="hljs-number">25</span>,<span class="hljs-number">000</span> paid subscribers
+</code></pre>
+<p><strong>Speaker Notes:</strong><br>
+“We are not a paid-ads-dependent business. Our CAC today is ₹0 because content, product-led growth, and word-of-mouth are carrying us. Paid ads are an amplifier, not our foundation.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-10-financial-projections" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-10-financial-projections" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 10: Financial Projections</h2>
+<p><strong>Visual:</strong> Revenue bar chart (3-year), key metric table below</p>
+<p><strong>Headline:</strong> <em>“A clear path to ₹10 crore ARR in 24 months.”</em></p>
+<p><strong>Revenue Projections:</strong></p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th>Year 1</th>
+<th>Year 2</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Free Users</td>
+<td>50,000</td>
+<td>250,000</td>
+<td>750,000</td>
+</tr>
+<tr>
+<td>Paid Subscribers</td>
+<td>2,500</td>
+<td>20,000</td>
+<td>75,000</td>
+</tr>
+<tr>
+<td>B2B Institutions</td>
+<td>10</td>
+<td>100</td>
+<td>500</td>
+</tr>
+<tr>
+<td><strong>MRR</strong></td>
+<td>₹15L</td>
+<td>₹1.2Cr</td>
+<td>₹4.5Cr</td>
+</tr>
+<tr>
+<td><strong>ARR</strong></td>
+<td>₹1.8Cr</td>
+<td>₹14.4Cr</td>
+<td>₹54Cr</td>
+</tr>
+<tr>
+<td>Gross Margin</td>
+<td>65%</td>
+<td>73%</td>
+<td>78%</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Key Assumptions:</strong></p>
+<ul>
+<li>B2C CAC: ₹1,200 (paid), ₹300 (organic) — blended ₹600 by Year 2</li>
+<li>LTV: ₹14,400 (2-year avg for Pro)</li>
+<li>B2B ACV: ₹1,80,000 (avg 60 seats × ₹3,000/seat/year)</li>
+<li>Churn: 3.5% monthly (Year 1) → 2% (Year 2+)</li>
+<li>AI API cost: 8% of revenue (decreasing as models get cheaper)</li>
+</ul>
+<p><strong>Disclaimer:</strong> Forward-looking projections subject to assumptions and market conditions.</p>
+<p><strong>Speaker Notes:</strong><br>
+“We’re being conservative. These numbers assume zero viral coefficient and a modest CAC. If we see the referral rates we’re seeing in beta persist at scale, Year 2 could look like Year 3.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-11-team" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-11-team" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 11: Team</h2>
+<p><strong>Visual:</strong> Team photos in circular frames, title below each</p>
+<p><strong>Headline:</strong> <em>“Built by people who’ve lived the problem.”</em></p>
+<pre class="hljs"><code>[Founder Name] — CEO <span class="hljs-punctuation">&amp;</span> Co<span class="hljs-punctuation">-</span>Founder
+<span class="hljs-string">&quot;Ex-[Company], built [X] product used by [N] users. Self-taught developer.
+Knows the pain of finding quality education firsthand.&quot;</span>
+
+[Co<span class="hljs-punctuation">-</span>Founder Name] — CTO <span class="hljs-punctuation">&amp;</span> Co<span class="hljs-punctuation">-</span>Founder
+<span class="hljs-string">&quot;Ex-[Company], 10 years in EdTech engineering. Built platforms at scale.
+Led teams across mobile (Flutter) and web (React).&quot;</span>
+
+[Co<span class="hljs-punctuation">-</span>Founder Name] — CPO <span class="hljs-punctuation">&amp;</span> Co<span class="hljs-punctuation">-</span>Founder
+<span class="hljs-string">&quot;Ex-[Company], UX lead for [major app]. Expert in accessibility-first design.
+Former HFI-certified UX professional.&quot;</span>
+
+Advisors<span class="hljs-punctuation">:</span>
+[Name] — Ex<span class="hljs-punctuation">-</span>CEO <span class="hljs-keyword">of</span> [EdTech company], <span class="hljs-number">15</span> years <span class="hljs-keyword">in</span> education
+[Name] — VP Engineering at [Major Tech], expertise <span class="hljs-keyword">in</span> AI systems
+[Name] — Professor <span class="hljs-keyword">of</span> Educational Psychology, [University]
+</code></pre>
+<p><strong>Speaker Notes:</strong><br>
+“We have the rare combination: someone who deeply understands the user’s pain, someone who can build world-class technology, and someone who can design for diverse populations. And we’ve done it before at scale.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-12-competitive-landscape" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-12-competitive-landscape" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 12: Competitive Landscape</h2>
+<p><strong>Visual:</strong> 2×2 matrix (X: AI personalization, Y: Price/Accessibility) with competitor bubbles placed</p>
+<p><strong>Headline:</strong> <em>“No one else is doing all of this, for everyone.”</em></p>
+<p><strong>Competitor Analysis:</strong></p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Courses</th>
+<th>AI Tutor</th>
+<th>Gamification</th>
+<th>Native App</th>
+<th>Offline</th>
+<th>Certificate</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LearnFlow AI</strong></td>
+<td>✓ 500+</td>
+<td>✓ RAG-powered</td>
+<td>✓ Full</td>
+<td>✓ iOS+Android</td>
+<td>✓</td>
+<td>✓ Blockchain</td>
+<td>₹599/mo</td>
+</tr>
+<tr>
+<td>Coursera</td>
+<td>✓ Thousands</td>
+<td>Limited</td>
+<td>✗</td>
+<td>✓</td>
+<td>Partial</td>
+<td>✓</td>
+<td>$59/mo</td>
+</tr>
+<tr>
+<td>Udemy</td>
+<td>✓ Thousands</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>Per course</td>
+</tr>
+<tr>
+<td>Unacademy</td>
+<td>India-focus</td>
+<td>✗</td>
+<td>Partial</td>
+<td>✓</td>
+<td>Partial</td>
+<td>Limited</td>
+<td>₹1,500+/mo</td>
+</tr>
+<tr>
+<td>BYJU’s</td>
+<td>✓</td>
+<td>Partial</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>₹2,000+/mo</td>
+</tr>
+<tr>
+<td>Local EdTechs</td>
+<td>Limited</td>
+<td>✗</td>
+<td>✗</td>
+<td>Basic</td>
+<td>✗</td>
+<td>Varies</td>
+<td>Varies</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Our Moat:</strong></p>
+<ol>
+<li>RAG-based AI tutor (trained on actual course content — not generic AI)</li>
+<li>India-first pricing with global-quality product</li>
+<li>Cross-platform native experience (Flutter + React + Electron)</li>
+<li>Behavioral science-backed gamification engine</li>
+</ol>
+<p><strong>Speaker Notes:</strong><br>
+“Coursera and Udemy own the content library. We compete on experience, AI, and price. Our Indian-first approach and RAG-based AI are our moats — neither can be copied overnight.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-13-product-roadmap" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-13-product-roadmap" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 13: Product Roadmap</h2>
+<p><strong>Visual:</strong> Horizontal timeline with 3 phases</p>
+<p><strong>Headline:</strong> <em>“Building the definitive AI learning platform — in phases.”</em></p>
+<p><strong>Phase 1 — Foundation (Months 1–6):</strong><br>
+Core platform live. iOS + Android + Web. 100 courses. AI tutor. Payments. Gamification.</p>
+<p><strong>Phase 2 — Growth (Months 7–12):</strong><br>
+Institution dashboard. Live sessions. Desktop (Electron). Trainer marketplace. LinkedIn integration. 500 courses.</p>
+<p><strong>Phase 3 — Scale (Months 13–24):</strong><br>
+AI mentor matching. Job board integration. Corporate L&amp;D partnerships. API for third-party LMS. Southeast Asia expansion.</p>
+<p><strong>Phase 4 — Vision (Year 3+):</strong><br>
+AI-generated courses. Accredited micro-degrees. University partnerships. Real-time skills assessment.</p>
+<p><strong>Speaker Notes:</strong><br>
+“We ship in two-week sprints. Phase 1 is done. We are raising to fund Phase 2 and Phase 3. Phase 4 is where we become a fundamentally different kind of institution — one that issues credentials that are more valuable than traditional degrees.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-14-the-ask" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-14-the-ask" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 14: The Ask</h2>
+<p><strong>Visual:</strong> Clean, centered slide with ask amount prominent</p>
+<p><strong>Headline:</strong> <em>“We’re raising ₹3 crore seed to reach 25,000 paid subscribers.”</em></p>
+<p><strong>Raise Details:</strong></p>
+<pre class="hljs"><code>Round<span class="hljs-punctuation">:</span> Seed
+Amount<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">3</span> <span class="hljs-title function_">Crore</span> (approx. <span class="hljs-variable">$360</span>,<span class="hljs-number">000</span> USD)
+Instrument<span class="hljs-punctuation">:</span> SAFE <span class="hljs-punctuation">/</span> Convertible Note
+Valuation Cap<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">15</span> <span class="hljs-title function_">Crore</span> (post<span class="hljs-punctuation">-</span>money)
+Lead investor<span class="hljs-punctuation">:</span> [Open <span class="hljs-punctuation">/</span> Target<span class="hljs-punctuation">:</span> angel <span class="hljs-punctuation">+</span> micro<span class="hljs-punctuation">-</span>VC]
+Timeline<span class="hljs-punctuation">:</span> Close <span class="hljs-keyword">in</span> <span class="hljs-number">60</span> days
+</code></pre>
+<p><strong>Use of Funds:</strong></p>
+<pre class="hljs"><code>Engineering <span class="hljs-punctuation">&amp;</span> Product<span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">%</span> — <span class="hljs-number">2</span> senior engineers, <span class="hljs-number">1</span> Flutter developer
+Marketing <span class="hljs-punctuation">&amp;</span> Growth<span class="hljs-punctuation">:</span> <span class="hljs-number">25</span><span class="hljs-punctuation">%</span> — Paid acquisition, content marketing
+AI Infrastructure<span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">%</span> — API costs, RAG tuning, vector DB scaling
+Operations <span class="hljs-punctuation">&amp;</span> Legal<span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">%</span> — HR, legal, compliance
+Reserve<span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">%</span>
+</code></pre>
+<p><strong>Milestones this round buys:</strong></p>
+<ul>
+<li>100,000 free users</li>
+<li>5,000 paid subscribers</li>
+<li>50 institution clients</li>
+<li>₹3 crore ARR</li>
+<li>Series A raise at ₹50 crore valuation</li>
+</ul>
+<p><strong>Speaker Notes:</strong><br>
+“This is a lean, efficient raise for a specific milestone — getting to 5,000 paying subscribers so we can demonstrate unit economics to a Series A investor. We’ve modeled 3 scenarios and even the conservative scenario shows us hitting profitability on ₹4.5 crore ARR.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-slide-15-closing-slide" class="docmd-heading"><a href="#pitch-deck-presentation-script-slide-15-closing-slide" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Slide 15: Closing Slide</h2>
+<p><strong>Visual:</strong> Full-screen gradient background (same as Slide 1), single powerful visual, centered text</p>
+<p><strong>Headline:</strong> <em>“The best time to learn was yesterday. The best platform to learn on is here today.”</em></p>
+<p><strong>Contact:</strong></p>
+<pre class="hljs"><code>[Founder Name]
+founder@learnflow.<span class="hljs-attr">ai</span>
+<span class="hljs-punctuation">+</span><span class="hljs-number">91</span> 98XXX XXXXX
+learnflow.<span class="hljs-attr">ai</span><span class="hljs-punctuation">/</span>pitch<span class="hljs-punctuation">-</span>deck
+
+Scan QR → Live product demo
+</code></pre>
+<p><strong>Speaker Notes:</strong><br>
+“Every day that passes, another million Indians who deserve access to quality education don’t get it. We’re changing that. We’d love to have you as partners in this mission. Thank you.”</p>
+<hr>
+<h2 id="pitch-deck-presentation-script-appendix-slides-available-on-request" class="docmd-heading"><a href="#pitch-deck-presentation-script-appendix-slides-available-on-request" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Appendix Slides (Available on Request)</h2>
+<ul>
+<li>A1: Detailed Financial Model (5-year)</li>
+<li>A2: Technical Architecture Deep Dive</li>
+<li>A3: CAC/LTV Breakdown by Channel</li>
+<li>A4: Risk Analysis &amp; Mitigation</li>
+<li>A5: India EdTech Landscape Research</li>
+<li>A6: Course Catalog &amp; Content Strategy</li>
+<li>A7: Regulatory &amp; Compliance Overview</li>
+<li>A8: Customer Reference Contacts (Beta Users)</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Marketing Website Copy &amp; Content Plan
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <div class="next-page-placeholder">
+                      </div>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#pitch-deck-presentation-script" class="toc-link">Pitch Deck &amp; Presentation Script</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-presentation-overview" class="toc-link">Presentation Overview</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-1-title-slide" class="toc-link">Slide 1: Title Slide</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-2-the-problem" class="toc-link">Slide 2: The Problem</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-3-the-solution" class="toc-link">Slide 3: The Solution</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-4-market-opportunity" class="toc-link">Slide 4: Market Opportunity</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-5-why-now-why-us" class="toc-link">Slide 5: Why Now? Why Us?</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-6-product-demo" class="toc-link">Slide 6: Product Demo</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-7-traction" class="toc-link">Slide 7: Traction</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-8-business-model" class="toc-link">Slide 8: Business Model</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-9-go-to-market-strategy" class="toc-link">Slide 9: Go-to-Market Strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-10-financial-projections" class="toc-link">Slide 10: Financial Projections</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-11-team" class="toc-link">Slide 11: Team</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-12-competitive-landscape" class="toc-link">Slide 12: Competitive Landscape</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-13-product-roadmap" class="toc-link">Slide 13: Product Roadmap</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-14-the-ask" class="toc-link">Slide 14: The Ask</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-slide-15-closing-slide" class="toc-link">Slide 15: Closing Slide</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#pitch-deck-presentation-script-appendix-slides-available-on-request" class="toc-link">Appendix Slides (Available on Request)</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

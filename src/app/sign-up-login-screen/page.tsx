@@ -4,7 +4,7 @@ import { AuthScreen } from './components/AuthScreen';
 export const metadata: Metadata = {
   title: 'Sign In or Create Account',
   description:
-    'Join LearnFlow AI and start your personalized learning journey today. Sign up free or log in to continue.',
+    'Join GUIDESOFT IT SOLUTIONS and start your personalized learning journey today. Sign up free or log in to continue.',
   robots: { index: false },
 };
 

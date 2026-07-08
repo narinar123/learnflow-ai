@@ -108,7 +108,7 @@ export function AuthScreen() {
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-indigo-400 flex-shrink-0" />
             <div>
               <p className="text-white text-sm leading-relaxed mb-1">
-                "LearnFlow AI transformed my career. The AI tutor explained concepts in a way no textbook ever could."
+                "GUIDESOFT IT SOLUTIONS transformed my career. The AI tutor explained concepts in a way no textbook ever could."
               </p>
               <p className="text-indigo-300 text-xs font-medium">Priya Sharma · Senior Developer @ Infosys</p>
             </div>

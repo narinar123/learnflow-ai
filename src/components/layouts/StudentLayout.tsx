@@ -158,7 +158,7 @@ export default function StudentLayout({ children }: StudentLayoutProps) {
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shrink-0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
             </div>
-            {!collapsed && <span className="font-bold text-base tracking-tight truncate" style={{ color: 'var(--foreground)' }}>LearnFlow AI</span>}
+            {!collapsed && <span className="font-bold text-base tracking-tight truncate" style={{ color: 'var(--foreground)' }}>GUIDESOFT IT SOLUTIONS</span>}
           </div>
           {!collapsed && (
             <button onClick={() => setCollapsed(true)} className="btn-ghost p-1.5 ml-auto shrink-0 lg:flex hidden" aria-label="Collapse sidebar">

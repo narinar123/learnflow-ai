@@ -1,0 +1,160 @@
+okf_version: 0.8.9
+bundle:
+  name: eduai
+  title: Eduai
+  description: ""
+  url: ""
+  generated_by: "@docmd/plugin-okf"
+  generated_at: "2026-07-07T15:59:27.375Z"
+  default_type: concept
+stats:
+  concepts: 18
+  by_type:
+    concept: 18
+  locales: 
+  versions: 
+concepts:
+  - id: 01-business-and-prd-product-requirements-document-prd
+    type: concept
+    title: "Product Requirements Document (PRD)"
+    path: /01_business_and_prd/product_requirements_document_prd/
+    file: concepts/01-business-and-prd-product-requirements-document-prd.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 01-business-and-prd-product-vision-and-business-goals
+    type: concept
+    title: "Product Vision & Business Goals"
+    path: /01_business_and_prd/product_vision_and_business_goals/
+    file: concepts/01-business-and-prd-product-vision-and-business-goals.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 02-user-and-ux-onboarding-and-gamification-mechanics
+    type: concept
+    title: "Onboarding & Gamification Mechanics"
+    path: /02_user_and_ux/onboarding_and_gamification_mechanics/
+    file: concepts/02-user-and-ux-onboarding-and-gamification-mechanics.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 02-user-and-ux-user-roles-and-permissions
+    type: concept
+    title: "User Roles & Permissions Matrix"
+    path: /02_user_and_ux/user_roles_and_permissions/
+    file: concepts/02-user-and-ux-user-roles-and-permissions.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 02-user-and-ux-ux-research-and-journey-flows
+    type: concept
+    title: "UX Research & Journey Flows"
+    path: /02_user_and_ux/ux_research_and_journey_flows/
+    file: concepts/02-user-and-ux-ux-research-and-journey-flows.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 03-design-system-and-ui-high-fidelity-ui-prompts
+    type: concept
+    title: "High-Fidelity UI Design Prompts"
+    path: /03_design_system_and_ui/high_fidelity_ui_prompts/
+    file: concepts/03-design-system-and-ui-high-fidelity-ui-prompts.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 03-design-system-and-ui-low-fidelity-wireframe-prompts
+    type: concept
+    title: "Low-Fidelity Wireframe Prompts"
+    path: /03_design_system_and_ui/low_fidelity_wireframe_prompts/
+    file: concepts/03-design-system-and-ui-low-fidelity-wireframe-prompts.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 03-design-system-and-ui-screen-by-screen-ui-spec
+    type: concept
+    title: "Screen-by-Screen UI Specification"
+    path: /03_design_system_and_ui/screen_by_screen_ui_spec/
+    file: concepts/03-design-system-and-ui-screen-by-screen-ui-spec.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 03-design-system-and-ui-ux-latest-design-system
+    type: concept
+    title: "UX Latest Design System"
+    path: /03_design_system_and_ui/ux_latest_design_system/
+    file: concepts/03-design-system-and-ui-ux-latest-design-system.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 04-technical-architecture-backend-architecture-and-apis
+    type: concept
+    title: "Backend Architecture & API Specification"
+    path: /04_technical_architecture/backend_architecture_and_apis/
+    file: concepts/04-technical-architecture-backend-architecture-and-apis.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 04-technical-architecture-database-schema-and-orm
+    type: concept
+    title: "Database Schema & ORM Design"
+    path: /04_technical_architecture/database_schema_and_orm/
+    file: concepts/04-technical-architecture-database-schema-and-orm.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 04-technical-architecture-frontend-architecture-flutter-react
+    type: concept
+    title: "Frontend Architecture — Flutter & React/Next.js"
+    path: /04_technical_architecture/frontend_architecture_flutter_react/
+    file: concepts/04-technical-architecture-frontend-architecture-flutter-react.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 04-technical-architecture-security-and-compliance
+    type: concept
+    title: "Security & Compliance"
+    path: /04_technical_architecture/security_and_compliance/
+    file: concepts/04-technical-architecture-security-and-compliance.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 05-ai-integration-ai-integration-and-prompt-engineering-guide
+    type: concept
+    title: "AI Integration & Prompt Engineering Guide"
+    path: /05_ai_integration/ai_integration_and_prompt_engineering_guide/
+    file: concepts/05-ai-integration-ai-integration-and-prompt-engineering-guide.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 06-testing-and-qa-testing-strategy-and-qa-plan
+    type: concept
+    title: "Testing Strategy & QA Plan"
+    path: /06_testing_and_qa/testing_strategy_and_qa_plan/
+    file: concepts/06-testing-and-qa-testing-strategy-and-qa-plan.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 07-crm-and-engagement-crm-strategy-and-member-engagement
+    type: concept
+    title: "CRM Strategy & Member Engagement"
+    path: /07_crm_and_engagement/crm_strategy_and_member_engagement/
+    file: concepts/07-crm-and-engagement-crm-strategy-and-member-engagement.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 08-marketing-marketing-website-copy-and-content-plan
+    type: concept
+    title: "Marketing Website Copy & Content Plan"
+    path: /08_marketing/marketing_website_copy_and_content_plan/
+    file: concepts/08-marketing-marketing-website-copy-and-content-plan.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: 09-pitch-and-presentation-pitch-deck-and-presentation-script
+    type: concept
+    title: "Pitch Deck & Presentation Script"
+    path: /09_pitch_and_presentation/pitch_deck_and_presentation_script/
+    file: concepts/09-pitch-and-presentation-pitch-deck-and-presentation-script.md
+    locale: ""
+    version: ""
+    tags: 

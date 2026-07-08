@@ -1,0 +1,2387 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Database Schema &amp; ORM Design : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/04_technical_architecture/database_schema_and_orm/">
+<meta property="og:title" content="Database Schema &amp; ORM Design - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/04_technical_architecture/database_schema_and_orm/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Database Schema &amp; ORM Design - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/04_technical_architecture/database_schema_and_orm.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Database Schema &amp; ORM Design
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Database%20Schema%20%26%20ORM%20Design%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%20%7C%20**ORM%3A**%20Prisma%205.x%20%7C%20**Database%3A**%20PostgreSQL%2016%0A%0A---%0A%0A%23%23%201.%20Schema%20Design%20Principles%0A%0A1.%20**Relational%20integrity%3A**%20Foreign%20keys%20enforced%20everywhere%3B%20no%20orphaned%20records%0A2.%20**Audit%20trail%3A**%20All%20major%20entities%20have%20%60createdAt%60%2C%20%60updatedAt%60%2C%20soft-delete%20via%20%60deletedAt%60%0A3.%20**UUID%20primary%20keys%3A**%20UUIDs%20for%20all%20entities%20(prevents%20enumeration%20attacks)%0A4.%20**JSONB%20for%20flexible%20data%3A**%20Quiz%20answers%2C%20AI%20conversation%20messages%2C%20course%20metadata%20stored%20as%20JSONB%0A5.%20**Indexed%20for%20performance%3A**%20All%20foreign%20keys%2C%20frequently%20filtered%2Fsorted%20columns%20are%20indexed%0A6.%20**Enum%20types%3A**%20Role%2C%20plan%2C%20status%20fields%20use%20PostgreSQL%20enums%20for%20data%20integrity%0A%0A---%0A%0A%23%23%202.%20Complete%20Prisma%20Schema%0A%0A%60%60%60prisma%0A%2F%2F%20prisma%2Fschema.prisma%0A%0Agenerator%20client%20%7B%0A%20%20provider%20%3D%20%22prisma-client-js%22%0A%7D%0A%0Adatasource%20db%20%7B%0A%20%20provider%20%3D%20%22postgresql%22%0A%20%20url%20%20%20%20%20%20%3D%20env(%22DATABASE_URL%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20ENUMS%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Aenum%20Role%20%7B%0A%20%20GUEST%0A%20%20STUDENT%0A%20%20PROFESSIONAL%0A%20%20JOB_SEEKER%0A%20%20TRAINER%0A%20%20INSTITUTION_USER%0A%20%20INSTITUTION_ADMIN%0A%20%20SUPPORT_AGENT%0A%20%20CONTENT_MANAGER%0A%20%20ADMIN%0A%7D%0A%0Aenum%20PlanType%20%7B%0A%20%20FREE%0A%20%20BASIC%0A%20%20PRO%0A%20%20PREMIUM%0A%20%20ENTERPRISE%0A%7D%0A%0Aenum%20BillingCycle%20%7B%0A%20%20MONTHLY%0A%20%20ANNUAL%0A%7D%0A%0Aenum%20CourseLevel%20%7B%0A%20%20BEGINNER%0A%20%20INTERMEDIATE%0A%20%20ADVANCED%0A%7D%0A%0Aenum%20CourseStatus%20%7B%0A%20%20DRAFT%0A%20%20PENDING_REVIEW%0A%20%20PUBLISHED%0A%20%20UNPUBLISHED%0A%20%20REJECTED%0A%20%20ARCHIVED%0A%7D%0A%0Aenum%20LessonType%20%7B%0A%20%20VIDEO%0A%20%20PDF%0A%20%20TEXT%0A%20%20QUIZ_LESSON%0A%7D%0A%0Aenum%20QuestionType%20%7B%0A%20%20MCQ_SINGLE%0A%20%20MCQ_MULTI%0A%20%20TRUE_FALSE%0A%20%20FILL_BLANK%0A%20%20SHORT_ANSWER%0A%7D%0A%0Aenum%20PaymentStatus%20%7B%0A%20%20PENDING%0A%20%20COMPLETED%0A%20%20FAILED%0A%20%20REFUNDED%0A%20%20DISPUTED%0A%7D%0A%0Aenum%20PaymentGateway%20%7B%0A%20%20RAZORPAY%0A%20%20STRIPE%0A%7D%0A%0Aenum%20PaymentType%20%7B%0A%20%20SUBSCRIPTION%0A%20%20COURSE_PURCHASE%0A%20%20CERTIFICATION_FEE%0A%7D%0A%0Aenum%20SubscriptionStatus%20%7B%0A%20%20ACTIVE%0A%20%20PAST_DUE%0A%20%20CANCELLED%0A%20%20EXPIRED%0A%20%20TRIALING%0A%7D%0A%0Aenum%20NotificationChannel%20%7B%0A%20%20PUSH%0A%20%20IN_APP%0A%20%20EMAIL%0A%20%20SMS%0A%7D%0A%0Aenum%20TicketStatus%20%7B%0A%20%20OPEN%0A%20%20IN_PROGRESS%0A%20%20WAITING_USER%0A%20%20RESOLVED%0A%20%20CLOSED%0A%7D%0A%0Aenum%20TicketPriority%20%7B%0A%20%20LOW%0A%20%20MEDIUM%0A%20%20HIGH%0A%20%20URGENT%0A%7D%0A%0Aenum%20TicketCategory%20%7B%0A%20%20PAYMENT%0A%20%20COURSE_ACCESS%0A%20%20TECHNICAL%0A%20%20ACCOUNT%0A%20%20AI_ASSISTANT%0A%20%20GENERAL%0A%7D%0A%0Aenum%20AuditAction%20%7B%0A%20%20CREATE%0A%20%20UPDATE%0A%20%20DELETE%0A%20%20LOGIN%0A%20%20LOGOUT%0A%20%20SUSPEND%0A%20%20RESTORE%0A%20%20IMPERSONATE%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20USER%20%26%20IDENTITY%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20User%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20email%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40unique%0A%20%20emailVerified%20%20%20%20%20%20%20%20%20Boolean%20%20%20%40default(false)%0A%20%20phone%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%3F%20%20%20%40unique%0A%20%20phoneVerified%20%20%20%20%20%20%20%20%20Boolean%20%20%20%40default(false)%0A%20%20passwordHash%20%20%20%20%20%20%20%20%20%20String%3F%0A%20%20displayName%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20avatarUrl%20%20%20%20%20%20%20%20%20%20%20%20%20String%3F%0A%20%20role%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Role%20%20%20%20%20%20%40default(STUDENT)%0A%20%20ageRange%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%3F%20%20%20%2F%2F%20%2213-17%22%2C%20%2218-25%22%2C%20%2226-35%22%2C%20%2236-50%22%2C%20%2250%2B%22%0A%20%20language%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40default(%22en%22)%0A%20%20timezone%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40default(%22Asia%2FKolkata%22)%0A%20%20onboardingCompleted%20%20%20Boolean%20%20%20%40default(false)%0A%20%20onboardingData%20%20%20%20%20%20%20%20Json%3F%20%20%20%20%20%2F%2F%20Stores%20role%20selection%2C%20goals%2C%20interests%0A%20%20lastActiveAt%20%20%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20isSuspended%20%20%20%20%20%20%20%20%20%20%20Boolean%20%20%20%40default(false)%0A%20%20suspendedReason%20%20%20%20%20%20%20String%3F%0A%20%20deletedAt%20%20%20%20%20%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20createdAt%20%20%20%20%20%20%20%20%20%20%20%20%20DateTime%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20%20%20%20%20%20%20DateTime%20%20%40updatedAt%0A%0A%20%20%2F%2F%20Relations%0A%20%20profile%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20UserProfile%3F%0A%20%20socialAccounts%20%20%20%20%20%20%20%20SocialAccount%5B%5D%0A%20%20subscription%20%20%20%20%20%20%20%20%20%20Subscription%3F%0A%20%20enrollments%20%20%20%20%20%20%20%20%20%20%20Enrollment%5B%5D%0A%20%20lessonProgress%20%20%20%20%20%20%20%20LessonProgress%5B%5D%0A%20%20quizAttempts%20%20%20%20%20%20%20%20%20%20QuizAttempt%5B%5D%0A%20%20certificates%20%20%20%20%20%20%20%20%20%20Certificate%5B%5D%0A%20%20notes%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LessonNote%5B%5D%0A%20%20bookmarks%20%20%20%20%20%20%20%20%20%20%20%20%20CourseBookmark%5B%5D%0A%20%20reviews%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20CourseReview%5B%5D%0A%20%20notifications%20%20%20%20%20%20%20%20%20Notification%5B%5D%0A%20%20notificationPrefs%20%20%20%20%20NotificationPreference%3F%0A%20%20supportTickets%20%20%20%20%20%20%20%20SupportTicket%5B%5D%0A%20%20aiConversations%20%20%20%20%20%20%20AIConversation%5B%5D%0A%20%20gamificationProfile%20%20%20GamificationProfile%3F%0A%20%20streaks%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20UserStreak%5B%5D%0A%20%20badges%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20UserBadge%5B%5D%0A%20%20trainerCourses%20%20%20%20%20%20%20%20Course%5B%5D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%40relation(%22TrainerCourses%22)%0A%20%20institutionMembership%20InstitutionMember%3F%0A%20%20auditLogs%20%20%20%20%20%20%20%20%20%20%20%20%20AuditLog%5B%5D%20%20%20%20%20%20%20%20%20%20%20%20%40relation(%22AuditUser%22)%0A%20%20performedAudits%20%20%20%20%20%20%20AuditLog%5B%5D%20%20%20%20%20%20%20%20%20%20%20%20%40relation(%22AuditActor%22)%0A%20%20refreshTokens%20%20%20%20%20%20%20%20%20RefreshToken%5B%5D%0A%20%20payments%20%20%20%20%20%20%20%20%20%20%20%20%20%20Payment%5B%5D%0A%0A%20%20%40%40index(%5Bemail%5D)%0A%20%20%40%40index(%5Bphone%5D)%0A%20%20%40%40index(%5Brole%5D)%0A%20%20%40%40index(%5BcreatedAt%5D)%0A%20%20%40%40map(%22users%22)%0A%7D%0A%0Amodel%20UserProfile%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20bio%20%20%20%20%20%20%20%20%20%20String%3F%0A%20%20headline%20%20%20%20%20String%3F%20%20%2F%2F%20%22Full-Stack%20Developer%20%40%20Google%22%0A%20%20linkedInUrl%20%20String%3F%0A%20%20websiteUrl%20%20%20String%3F%0A%20%20interests%20%20%20%20String%5B%5D%20%2F%2F%20Array%20of%20category%20names%0A%20%20goals%20%20%20%20%20%20%20%20String%5B%5D%20%2F%2F%20Primary%20%2B%20secondary%20goals%0A%20%20occupation%20%20%20String%3F%0A%20%20location%20%20%20%20%20String%3F%0A%20%20updatedAt%20%20%20%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40map(%22user_profiles%22)%0A%7D%0A%0Amodel%20SocialAccount%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20String%0A%20%20provider%20%20%20String%20%20%20%2F%2F%20%22google%22%2C%20%22apple%22%0A%20%20providerId%20String%0A%20%20email%20%20%20%20%20%20String%3F%0A%20%20createdAt%20%20DateTime%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5Bprovider%2C%20providerId%5D)%0A%20%20%40%40map(%22social_accounts%22)%0A%7D%0A%0Amodel%20RefreshToken%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20tokenHash%20%20%20String%20%20%20%40unique%0A%20%20deviceInfo%20%20String%3F%0A%20%20ipAddress%20%20%20String%3F%0A%20%20expiresAt%20%20%20DateTime%0A%20%20createdAt%20%20%20DateTime%20%40default(now())%0A%20%20revokedAt%20%20%20DateTime%3F%0A%0A%20%20user%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40index(%5BtokenHash%5D)%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40map(%22refresh_tokens%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20GAMIFICATION%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20GamificationProfile%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20xp%20%20%20%20%20%20%20%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20level%20%20%20%20%20%20%20Int%20%20%20%20%20%20%40default(1)%0A%20%20totalXpEarned%20Int%20%20%20%20%40default(0)%0A%20%20updatedAt%20%20%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40map(%22gamification_profiles%22)%0A%7D%0A%0Amodel%20UserStreak%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20currentStreak%20%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20longestStreak%20%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20lastActivityDate%20DateTime%3F%0A%20%20streakFreezes%20%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20updatedAt%20%20%20%20%20%20%20%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%5D)%0A%20%20%40%40map(%22user_streaks%22)%0A%7D%0A%0Amodel%20Badge%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20name%20%20%20%20%20%20%20%20String%20%20%20%20%40unique%0A%20%20description%20String%0A%20%20category%20%20%20%20String%20%20%20%20%2F%2F%20%22Learning%22%2C%20%22Achievement%22%2C%20%22Streak%22%2C%20%22Social%22%2C%20%22Special%22%0A%20%20iconUrl%20%20%20%20%20String%0A%20%20criteria%20%20%20%20Json%20%20%20%20%20%20%2F%2F%20%7B%20type%3A%20&#039;courses_completed&#039;%2C%20threshold%3A%205%20%7D%0A%20%20xpReward%20%20%20%20Int%0A%20%20isActive%20%20%20%20Boolean%20%20%20%40default(true)%0A%20%20createdAt%20%20%20DateTime%20%20%40default(now())%0A%0A%20%20userBadges%20%20UserBadge%5B%5D%0A%0A%20%20%40%40map(%22badges%22)%0A%7D%0A%0Amodel%20UserBadge%20%7B%0A%20%20id%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20String%0A%20%20badgeId%20%20%20String%0A%20%20earnedAt%20%20DateTime%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20badge%20%20%20%20%20Badge%20%20%20%20%40relation(fields%3A%20%5BbadgeId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40unique(%5BuserId%2C%20badgeId%5D)%0A%20%20%40%40map(%22user_badges%22)%0A%7D%0A%0Amodel%20XPTransaction%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20amount%20%20%20%20%20%20Int%0A%20%20action%20%20%20%20%20%20String%20%20%20%2F%2F%20%22lesson_completed%22%2C%20%22quiz_passed%22%2C%20%22badge_earned%22%2C%20etc.%0A%20%20referenceId%20String%3F%20%20%2F%2F%20lessonId%2C%20quizId%2C%20etc.%0A%20%20createdAt%20%20%20DateTime%20%40default(now())%0A%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40index(%5BcreatedAt%5D)%0A%20%20%40%40map(%22xp_transactions%22)%0A%7D%0A%0Amodel%20DailyQuest%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20questType%20%20%20String%20%20%20%2F%2F%20%22complete_lesson%22%2C%20%22answer_quiz_questions%22%2C%20etc.%0A%20%20description%20String%0A%20%20xpReward%20%20%20%20Int%0A%20%20requirement%20Json%20%20%20%20%20%2F%2F%20%7B%20count%3A%205%2C%20completedCount%3A%203%20%7D%0A%20%20isCompleted%20Boolean%20%20%40default(false)%0A%20%20date%20%20%20%20%20%20%20%20DateTime%20%2F%2F%20Date%20this%20quest%20is%20for%20(midnight%20UTC)%0A%20%20completedAt%20DateTime%3F%0A%20%20createdAt%20%20%20DateTime%20%40default(now())%0A%0A%20%20%40%40index(%5BuserId%2C%20date%5D)%0A%20%20%40%40map(%22daily_quests%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20COURSES%20%26%20CONTENT%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Category%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20name%20%20%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20slug%20%20%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20iconUrl%20%20%20%20%20String%3F%0A%20%20parentId%20%20%20%20String%3F%0A%20%20isActive%20%20%20%20Boolean%20%20%40default(true)%0A%20%20sortOrder%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20createdAt%20%20%20DateTime%20%40default(now())%0A%0A%20%20parent%20%20%20%20%20%20Category%3F%20%20%40relation(%22CategoryChildren%22%2C%20fields%3A%20%5BparentId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20children%20%20%20%20Category%5B%5D%20%40relation(%22CategoryChildren%22)%0A%20%20courses%20%20%20%20%20Course%5B%5D%0A%0A%20%20%40%40map(%22categories%22)%0A%7D%0A%0Amodel%20Course%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20trainerId%20%20%20%20%20%20%20%20String%0A%20%20categoryId%20%20%20%20%20%20%20String%0A%20%20title%20%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20slug%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40unique%0A%20%20shortDescription%20String%3F%0A%20%20description%20%20%20%20%20%20String%20%20%20%20%20%20%20%2F%2F%20Rich%20text%20%2F%20markdown%0A%20%20thumbnailUrl%20%20%20%20%20String%3F%0A%20%20previewVideoUrl%20%20String%3F%0A%20%20level%20%20%20%20%20%20%20%20%20%20%20%20CourseLevel%20%20%40default(BEGINNER)%0A%20%20language%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40default(%22English%22)%0A%20%20price%20%20%20%20%20%20%20%20%20%20%20%20Decimal%20%20%20%20%20%20%40default(0)%20%20%20%20%20%40db.Decimal(10%2C%202)%0A%20%20currency%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40default(%22INR%22)%0A%20%20isFree%20%20%20%20%20%20%20%20%20%20%20Boolean%20%20%20%20%20%20%40default(false)%0A%20%20includedInPro%20%20%20%20Boolean%20%20%20%20%20%20%40default(false)%0A%20%20hasCertificate%20%20%20Boolean%20%20%20%20%20%20%40default(true)%0A%20%20status%20%20%20%20%20%20%20%20%20%20%20CourseStatus%20%40default(DRAFT)%0A%20%20publishedAt%20%20%20%20%20%20DateTime%3F%0A%20%20reviewNotes%20%20%20%20%20%20String%3F%20%20%20%20%20%20%2F%2F%20Admin%20review%20feedback%0A%20%20isFeatured%20%20%20%20%20%20%20Boolean%20%20%20%20%20%20%40default(false)%0A%20%20tags%20%20%20%20%20%20%20%20%20%20%20%20%20String%5B%5D%0A%20%20prerequisites%20%20%20%20String%5B%5D%20%20%20%20%20%2F%2F%20courseIds%0A%20%20whatYoullLearn%20%20%20String%5B%5D%20%20%20%20%20%2F%2F%20Bullet%20points%0A%20%20targetAudience%20%20%20String%5B%5D%0A%20%20totalLessons%20%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(0)%20%20%20%20%20%2F%2F%20Denormalized%0A%20%20totalDuration%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(0)%20%20%20%20%20%2F%2F%20Seconds%2C%20denormalized%0A%20%20enrolledCount%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(0)%20%20%20%20%20%2F%2F%20Denormalized%0A%20%20averageRating%20%20%20%20Decimal%20%20%20%20%20%20%40default(0)%20%20%20%20%20%40db.Decimal(3%2C%202)%0A%20%20reviewsCount%20%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(0)%0A%20%20deletedAt%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20createdAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%40updatedAt%0A%0A%20%20trainer%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%20%40relation(%22TrainerCourses%22%2C%20fields%3A%20%5BtrainerId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20category%20%20%20%20%20%20%20%20%20Category%20%20%20%20%20%40relation(fields%3A%20%5BcategoryId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20sections%20%20%20%20%20%20%20%20%20CourseSection%5B%5D%0A%20%20enrollments%20%20%20%20%20%20Enrollment%5B%5D%0A%20%20reviews%20%20%20%20%20%20%20%20%20%20CourseReview%5B%5D%0A%20%20certificates%20%20%20%20%20Certificate%5B%5D%0A%20%20quizzes%20%20%20%20%20%20%20%20%20%20Quiz%5B%5D%0A%20%20bookmarks%20%20%20%20%20%20%20%20CourseBookmark%5B%5D%0A%20%20notifications%20%20%20%20Notification%5B%5D%0A%0A%20%20%40%40index(%5Bstatus%5D)%0A%20%20%40%40index(%5BcategoryId%5D)%0A%20%20%40%40index(%5BtrainerId%5D)%0A%20%20%40%40index(%5BisFeatured%5D)%0A%20%20%40%40map(%22courses%22)%0A%7D%0A%0Amodel%20CourseSection%20%7B%0A%20%20id%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20courseId%20%20String%0A%20%20title%20%20%20%20%20String%0A%20%20order%20%20%20%20%20Int%0A%20%20createdAt%20DateTime%20%40default(now())%0A%0A%20%20course%20%20%20%20Course%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20lessons%20%20%20Lesson%5B%5D%0A%0A%20%20%40%40index(%5BcourseId%2C%20order%5D)%0A%20%20%40%40map(%22course_sections%22)%0A%7D%0A%0Amodel%20Lesson%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20sectionId%20%20%20%20%20%20%20String%0A%20%20title%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20description%20%20%20%20%20String%3F%0A%20%20type%20%20%20%20%20%20%20%20%20%20%20%20LessonType%0A%20%20order%20%20%20%20%20%20%20%20%20%20%20Int%0A%20%20durationSeconds%20Int%20%20%20%20%20%20%20%20%40default(0)%0A%20%20isFreePreview%20%20%20Boolean%20%20%20%20%40default(false)%0A%20%20%2F%2F%20Video%20fields%0A%20%20videoUrl%20%20%20%20%20%20%20%20String%3F%20%20%20%20%2F%2F%20HLS%20manifest%20URL%0A%20%20videoRawUrl%20%20%20%20%20String%3F%20%20%20%20%2F%2F%20S3%20raw%20upload%20URL%0A%20%20captionUrl%20%20%20%20%20%20String%3F%20%20%20%20%2F%2F%20VTT%20file%20URL%0A%20%20%2F%2F%20PDF%20fields%0A%20%20pdfUrl%20%20%20%20%20%20%20%20%20%20String%3F%0A%20%20%2F%2F%20Text%20content%0A%20%20textContent%20%20%20%20%20String%3F%20%20%20%20%2F%2F%20Markdown%0A%20%20resources%20%20%20%20%20%20%20Json%3F%20%20%20%20%20%20%2F%2F%20%5B%7B%20name%2C%20url%2C%20type%20%7D%5D%0A%20%20isPublished%20%20%20%20%20Boolean%20%20%20%20%40default(false)%0A%20%20deletedAt%20%20%20%20%20%20%20DateTime%3F%0A%20%20createdAt%20%20%20%20%20%20%20DateTime%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20DateTime%20%20%20%40updatedAt%0A%0A%20%20section%20%20%20%20%20%20%20%20%20CourseSection%20%20%20%40relation(fields%3A%20%5BsectionId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20progress%20%20%20%20%20%20%20%20LessonProgress%5B%5D%0A%20%20notes%20%20%20%20%20%20%20%20%20%20%20LessonNote%5B%5D%0A%0A%20%20%40%40index(%5BsectionId%2C%20order%5D)%0A%20%20%40%40map(%22lessons%22)%0A%7D%0A%0Amodel%20Enrollment%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20courseId%20%20%20%20String%0A%20%20progress%20%20%20%20Decimal%20%20%20%40default(0)%20%20%20%40db.Decimal(5%2C%202)%20%2F%2F%200-100%25%0A%20%20completedAt%20DateTime%3F%0A%20%20enrolledAt%20%20DateTime%20%20%40default(now())%0A%20%20expiresAt%20%20%20DateTime%3F%0A%20%20source%20%20%20%20%20%20String%20%20%20%20%40default(%22direct%22)%20%2F%2F%20%22direct%22%2C%20%22pro_plan%22%2C%20%22institution%22%2C%20%22gift%22%0A%0A%20%20user%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20course%20%20%20%20%20%20Course%20%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%2C%20courseId%5D)%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40index(%5BcourseId%5D)%0A%20%20%40%40index(%5BcompletedAt%5D)%0A%20%20%40%40map(%22enrollments%22)%0A%7D%0A%0Amodel%20LessonProgress%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20String%0A%20%20lessonId%20%20%20%20%20%20String%0A%20%20lastPosition%20%20Int%20%20%20%20%20%20%40default(0)%20%2F%2F%20Seconds%20(for%20video)%0A%20%20completed%20%20%20%20%20Boolean%20%20%40default(false)%0A%20%20completedAt%20%20%20DateTime%3F%0A%20%20updatedAt%20%20%20%20%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20lesson%20%20%20%20%20%20%20%20Lesson%20%20%20%40relation(fields%3A%20%5BlessonId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%2C%20lessonId%5D)%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40map(%22lesson_progress%22)%0A%7D%0A%0Amodel%20LessonNote%20%7B%0A%20%20id%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20String%0A%20%20lessonId%20%20String%0A%20%20content%20%20%20String%0A%20%20updatedAt%20DateTime%20%40updatedAt%0A%20%20createdAt%20DateTime%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20lesson%20%20%20%20Lesson%20%20%20%40relation(fields%3A%20%5BlessonId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%2C%20lessonId%5D)%0A%20%20%40%40map(%22lesson_notes%22)%0A%7D%0A%0Amodel%20CourseBookmark%20%7B%0A%20%20id%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20String%0A%20%20courseId%20%20String%0A%20%20createdAt%20DateTime%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20course%20%20%20%20Course%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%2C%20courseId%5D)%0A%20%20%40%40map(%22course_bookmarks%22)%0A%7D%0A%0Amodel%20CourseReview%20%7B%0A%20%20id%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20String%0A%20%20courseId%20%20String%0A%20%20rating%20%20%20%20Int%20%20%20%20%20%20%2F%2F%201-5%0A%20%20title%20%20%20%20%20String%3F%0A%20%20content%20%20%20String%3F%0A%20%20isApproved%20Boolean%20%40default(true)%0A%20%20deletedAt%20DateTime%3F%0A%20%20createdAt%20DateTime%20%40default(now())%0A%20%20updatedAt%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20course%20%20%20%20Course%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40unique(%5BuserId%2C%20courseId%5D)%0A%20%20%40%40index(%5BcourseId%2C%20rating%5D)%0A%20%20%40%40map(%22course_reviews%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20QUIZ%20%26%20ASSESSMENT%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Quiz%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20courseId%20%20%20%20%20%20%20%20String%0A%20%20lessonId%20%20%20%20%20%20%20%20String%3F%20%20%2F%2F%20If%20null%2C%20it&#039;s%20a%20course-level%20quiz%0A%20%20title%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20description%20%20%20%20%20String%3F%0A%20%20timeLimitSeconds%20Int%3F%0A%20%20passingScore%20%20%20%20Int%20%20%20%20%20%20%40default(70)%20%2F%2F%20Percentage%0A%20%20maxAttempts%20%20%20%20%20Int%20%20%20%20%20%20%40default(3)%0A%20%20cooldownHours%20%20%20Int%20%20%20%20%20%20%40default(24)%0A%20%20isRandomized%20%20%20%20Boolean%20%20%40default(false)%0A%20%20isAIGenerated%20%20%20Boolean%20%20%40default(false)%0A%20%20isPublished%20%20%20%20%20Boolean%20%20%40default(false)%0A%20%20createdAt%20%20%20%20%20%20%20DateTime%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20DateTime%20%40updatedAt%0A%0A%20%20course%20%20%20%20%20%20%20%20%20%20Course%20%20%20%20%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20questions%20%20%20%20%20%20%20QuizQuestion%5B%5D%0A%20%20attempts%20%20%20%20%20%20%20%20QuizAttempt%5B%5D%0A%0A%20%20%40%40index(%5BcourseId%5D)%0A%20%20%40%40map(%22quizzes%22)%0A%7D%0A%0Amodel%20QuizQuestion%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20quizId%20%20%20%20%20%20%20%20%20%20String%0A%20%20type%20%20%20%20%20%20%20%20%20%20%20%20QuestionType%0A%20%20questionText%20%20%20%20String%0A%20%20questionImageUrl%20String%3F%0A%20%20options%20%20%20%20%20%20%20%20%20Json%3F%20%20%20%20%20%20%20%20%2F%2F%20%5B%7B%20id%2C%20text%2C%20isCorrect%2C%20explanation%20%7D%5D%20for%20MCQ%0A%20%20correctAnswer%20%20%20String%3F%20%20%20%20%20%20%2F%2F%20For%20fill-blank%20or%20short%20answer%0A%20%20explanation%20%20%20%20%20String%3F%20%20%20%20%20%20%2F%2F%20AI-generated%20or%20manual%20explanation%0A%20%20points%20%20%20%20%20%20%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(1)%0A%20%20order%20%20%20%20%20%20%20%20%20%20%20Int%0A%0A%20%20quiz%20%20%20%20%20%20%20%20%20%20%20%20Quiz%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BquizId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40index(%5BquizId%5D)%0A%20%20%40%40map(%22quiz_questions%22)%0A%7D%0A%0Amodel%20QuizAttempt%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20String%0A%20%20quizId%20%20%20%20%20%20%20%20%20%20String%0A%20%20score%20%20%20%20%20%20%20%20%20%20%20Decimal%20%20%20%40db.Decimal(5%2C%202)%0A%20%20maxScore%20%20%20%20%20%20%20%20Int%0A%20%20passed%20%20%20%20%20%20%20%20%20%20Boolean%0A%20%20timeTakenSeconds%20Int%0A%20%20answers%20%20%20%20%20%20%20%20%20Json%20%20%20%20%20%20%2F%2F%20%5B%7B%20questionId%2C%20selectedOptionIds%2C%20textAnswer%2C%20isCorrect%20%7D%5D%0A%20%20xpAwarded%20%20%20%20%20%20%20Int%20%20%20%20%20%20%20%40default(0)%0A%20%20startedAt%20%20%20%20%20%20%20DateTime%20%20%40default(now())%0A%20%20completedAt%20%20%20%20%20DateTime%20%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20quiz%20%20%20%20%20%20%20%20%20%20%20%20Quiz%20%20%20%20%20%20%40relation(fields%3A%20%5BquizId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40index(%5BuserId%2C%20quizId%5D)%0A%20%20%40%40map(%22quiz_attempts%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20CERTIFICATES%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Certificate%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20String%0A%20%20courseId%20%20%20%20%20%20%20%20String%0A%20%20recipientName%20%20%20String%0A%20%20courseName%20%20%20%20%20%20String%0A%20%20instructorName%20%20String%0A%20%20completedAt%20%20%20%20%20DateTime%0A%20%20issuedAt%20%20%20%20%20%20%20%20DateTime%20%20%40default(now())%0A%20%20pdfUrl%20%20%20%20%20%20%20%20%20%20String%3F%0A%20%20templateId%20%20%20%20%20%20String%20%20%20%20%40default(%22default%22)%0A%20%20isRevoked%20%20%20%20%20%20%20Boolean%20%20%20%40default(false)%0A%20%20revokedAt%20%20%20%20%20%20%20DateTime%3F%0A%20%20revokedReason%20%20%20String%3F%0A%20%20verificationCode%20String%20%20%20%40unique%20%40default(cuid())%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20course%20%20%20%20%20%20%20%20%20%20Course%20%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40unique(%5BuserId%2C%20courseId%5D)%0A%20%20%40%40index(%5BverificationCode%5D)%0A%20%20%40%40map(%22certificates%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20MEMBERSHIP%20%26%20BILLING%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20MembershipPlan%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20name%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40unique%0A%20%20planType%20%20%20%20%20%20%20%20%20PlanType%0A%20%20description%20%20%20%20%20%20String%3F%0A%20%20features%20%20%20%20%20%20%20%20%20Json%20%20%20%20%20%20%20%20%20%2F%2F%20%5B%7B%20name%2C%20included%3A%20bool%20%7D%5D%0A%20%20monthlyPrice%20%20%20%20%20Decimal%20%20%20%20%20%20%40db.Decimal(10%2C%202)%0A%20%20annualPrice%20%20%20%20%20%20Decimal%20%20%20%20%20%20%40db.Decimal(10%2C%202)%0A%20%20currency%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%40default(%22INR%22)%0A%20%20aiQueryLimit%20%20%20%20%20Int%3F%20%20%20%20%20%20%20%20%20%2F%2F%20null%20%3D%20unlimited%0A%20%20maxDevices%20%20%20%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(3)%0A%20%20hasOfflineAccess%20Boolean%20%20%20%20%20%20%40default(false)%0A%20%20hasLiveSessions%20%20Boolean%20%20%20%20%20%20%40default(false)%0A%20%20isActive%20%20%20%20%20%20%20%20%20Boolean%20%20%20%20%20%20%40default(true)%0A%20%20sortOrder%20%20%20%20%20%20%20%20Int%20%20%20%20%20%20%20%20%20%20%40default(0)%0A%20%20createdAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%40updatedAt%0A%0A%20%20subscriptions%20%20%20%20Subscription%5B%5D%0A%0A%20%20%40%40map(%22membership_plans%22)%0A%7D%0A%0Amodel%20Subscription%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%20%20%20%20%40unique%0A%20%20planId%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20status%20%20%20%20%20%20%20%20%20%20%20%20%20%20SubscriptionStatus%20%40default(TRIALING)%0A%20%20billingCycle%20%20%20%20%20%20%20%20BillingCycle%20%20%20%20%20%20%20%40default(MONTHLY)%0A%20%20currentPeriodStart%20%20DateTime%0A%20%20currentPeriodEnd%20%20%20%20DateTime%0A%20%20cancelAtPeriodEnd%20%20%20Boolean%20%20%20%20%20%20%20%20%20%20%20%20%40default(false)%0A%20%20cancelledAt%20%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20gatewaySubscriptionId%20String%3F%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20Razorpay%2FStripe%20subscription%20ID%0A%20%20gatewayCustomerId%20%20%20%20String%3F%0A%20%20trialEndsAt%20%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20aiQueriesUsedToday%20%20Int%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%40default(0)%0A%20%20lastQueryResetDate%20%20DateTime%20%20%20%20%20%20%20%20%20%20%20%40default(now())%0A%20%20createdAt%20%20%20%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%20%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%20%20%20%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20plan%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20MembershipPlan%20%20%20%20%20%40relation(fields%3A%20%5BplanId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40map(%22subscriptions%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20PAYMENTS%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Payment%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20%20String%0A%20%20type%20%20%20%20%20%20%20%20%20%20%20%20%20PaymentType%0A%20%20referenceId%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%2F%2F%20courseId%2C%20planId%2C%20etc.%0A%20%20amount%20%20%20%20%20%20%20%20%20%20%20Decimal%20%20%20%20%20%20%20%20%40db.Decimal(10%2C%202)%0A%20%20currency%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%40default(%22INR%22)%0A%20%20status%20%20%20%20%20%20%20%20%20%20%20PaymentStatus%20%20%40default(PENDING)%0A%20%20gateway%20%20%20%20%20%20%20%20%20%20PaymentGateway%0A%20%20gatewayOrderId%20%20%20String%3F%0A%20%20gatewayPaymentId%20String%3F%0A%20%20gatewaySignature%20String%3F%0A%20%20invoiceUrl%20%20%20%20%20%20%20String%3F%0A%20%20failureReason%20%20%20%20String%3F%0A%20%20refundedAt%20%20%20%20%20%20%20DateTime%3F%0A%20%20refundAmount%20%20%20%20%20Decimal%3F%20%20%20%20%20%20%20%40db.Decimal(10%2C%202)%0A%20%20metadata%20%20%20%20%20%20%20%20%20Json%3F%0A%20%20createdAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40index(%5BgatewayPaymentId%5D)%0A%20%20%40%40index(%5Bstatus%5D)%0A%20%20%40%40index(%5BcreatedAt%5D)%0A%20%20%40%40map(%22payments%22)%0A%7D%0A%0Amodel%20Coupon%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20code%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20discountType%20%20%20%20String%20%20%20%2F%2F%20%22PERCENTAGE%22%20%7C%20%22FIXED%22%0A%20%20discountValue%20%20%20Decimal%20%20%40db.Decimal(10%2C%202)%0A%20%20maxUsage%20%20%20%20%20%20%20%20Int%3F%0A%20%20usageCount%20%20%20%20%20%20Int%20%20%20%20%20%20%40default(0)%0A%20%20minOrderAmount%20%20Decimal%3F%20%40db.Decimal(10%2C%202)%0A%20%20applicablePlans%20String%5B%5D%20%2F%2F%20planIds%20or%20%5B%5D%20for%20all%0A%20%20expiresAt%20%20%20%20%20%20%20DateTime%3F%0A%20%20isActive%20%20%20%20%20%20%20%20Boolean%20%20%40default(true)%0A%20%20createdAt%20%20%20%20%20%20%20DateTime%20%40default(now())%0A%0A%20%20%40%40map(%22coupons%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20AI%20ASSISTANT%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20AIConversation%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20title%20%20%20%20%20%20%20String%3F%20%20%20%2F%2F%20Auto-generated%20from%20first%20message%0A%20%20context%20%20%20%20%20Json%3F%20%20%20%20%20%2F%2F%20%7B%20courseId%2C%20lessonId%20%7D%0A%20%20messages%20%20%20%20Json%20%20%20%20%20%20%40default(%22%5B%5D%22)%20%2F%2F%20%5B%7B%20role%2C%20content%2C%20timestamp%2C%20sources%20%7D%5D%0A%20%20messageCount%20Int%20%20%20%20%20%20%40default(0)%0A%20%20isFlagged%20%20%20Boolean%20%20%20%40default(false)%0A%20%20flagReason%20%20String%3F%0A%20%20createdAt%20%20%20DateTime%20%20%40default(now())%0A%20%20updatedAt%20%20%20DateTime%20%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40map(%22ai_conversations%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20NOTIFICATIONS%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Notification%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20String%0A%20%20title%20%20%20%20%20%20%20String%0A%20%20body%20%20%20%20%20%20%20%20String%0A%20%20type%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%22achievement%22%2C%20%22reminder%22%2C%20%22offer%22%2C%20%22system%22%0A%20%20channel%20%20%20%20%20NotificationChannel%0A%20%20isRead%20%20%20%20%20%20Boolean%20%20%20%20%20%20%20%20%20%20%20%20%20%40default(false)%0A%20%20readAt%20%20%20%20%20%20DateTime%3F%0A%20%20ctaUrl%20%20%20%20%20%20String%3F%0A%20%20metadata%20%20%20%20Json%3F%0A%20%20courseId%20%20%20%20String%3F%0A%20%20badgeId%20%20%20%20%20String%3F%0A%20%20sentAt%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%20%20%20%20%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20course%20%20%20%20%20%20Course%3F%20%20%20%20%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BcourseId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40index(%5BuserId%2C%20isRead%5D)%0A%20%20%40%40index(%5BsentAt%5D)%0A%20%20%40%40map(%22notifications%22)%0A%7D%0A%0Amodel%20NotificationPreference%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40unique%0A%20%20learningReminders%20%20%20%20Boolean%20%20%40default(true)%0A%20%20streakAlerts%20%20%20%20%20%20%20%20%20Boolean%20%20%40default(true)%0A%20%20achievements%20%20%20%20%20%20%20%20%20Boolean%20%20%40default(true)%0A%20%20newCourses%20%20%20%20%20%20%20%20%20%20%20Boolean%20%20%40default(true)%0A%20%20offersAndPromotions%20%20Boolean%20%20%40default(false)%0A%20%20emailDigest%20%20%20%20%20%20%20%20%20%20String%20%20%20%40default(%22WEEKLY%22)%20%2F%2F%20%22DAILY%22%20%7C%20%22WEEKLY%22%20%7C%20%22NEVER%22%0A%20%20quietHoursStart%20%20%20%20%20%20String%3F%20%20%2F%2F%20%2222%3A00%22%0A%20%20quietHoursEnd%20%20%20%20%20%20%20%20String%3F%20%20%2F%2F%20%2207%3A00%22%0A%20%20updatedAt%20%20%20%20%20%20%20%20%20%20%20%20DateTime%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40map(%22notification_preferences%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20SUPPORT%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20SupportTicket%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20%20String%0A%20%20assignedToId%20%20%20%20String%3F%0A%20%20category%20%20%20%20%20%20%20%20TicketCategory%0A%20%20subject%20%20%20%20%20%20%20%20%20String%0A%20%20description%20%20%20%20%20String%0A%20%20status%20%20%20%20%20%20%20%20%20%20TicketStatus%20%20%20%40default(OPEN)%0A%20%20priority%20%20%20%20%20%20%20%20TicketPriority%20%40default(MEDIUM)%0A%20%20attachmentUrls%20%20String%5B%5D%0A%20%20csatScore%20%20%20%20%20%20%20Int%3F%20%20%20%20%20%20%20%20%20%20%20%2F%2F%201-5%2C%20filled%20after%20resolution%0A%20%20csatComment%20%20%20%20%20String%3F%0A%20%20resolvedAt%20%20%20%20%20%20DateTime%3F%0A%20%20closedAt%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20firstResponseAt%20DateTime%3F%0A%20%20slaDeadline%20%20%20%20%20DateTime%3F%0A%20%20createdAt%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20%20%20DateTime%20%20%20%20%20%20%20%40updatedAt%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20messages%20%20%20%20%20%20%20%20TicketMessage%5B%5D%0A%0A%20%20%40%40index(%5BuserId%5D)%0A%20%20%40%40index(%5Bstatus%2C%20priority%5D)%0A%20%20%40%40map(%22support_tickets%22)%0A%7D%0A%0Amodel%20TicketMessage%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%40id%20%40default(uuid())%0A%20%20ticketId%20%20%20%20%20String%0A%20%20authorId%20%20%20%20%20String%0A%20%20isInternal%20%20%20Boolean%20%20%40default(false)%20%2F%2F%20Internal%20notes%20between%20agents%0A%20%20content%20%20%20%20%20%20String%0A%20%20attachments%20%20String%5B%5D%0A%20%20createdAt%20%20%20%20DateTime%20%40default(now())%0A%0A%20%20ticket%20%20%20%20%20%20%20SupportTicket%20%40relation(fields%3A%20%5BticketId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%0A%20%20%40%40index(%5BticketId%5D)%0A%20%20%40%40map(%22ticket_messages%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20INSTITUTION%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20Institution%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%40id%20%40default(uuid())%0A%20%20name%20%20%20%20%20%20%20%20%20%20String%0A%20%20logoUrl%20%20%20%20%20%20%20String%3F%0A%20%20domain%20%20%20%20%20%20%20%20String%3F%20%20%20%2F%2F%20For%20SSO%20%2F%20email%20domain%20matching%0A%20%20seatCount%20%20%20%20%20Int%20%20%20%20%20%20%20%40default(10)%0A%20%20usedSeats%20%20%20%20%20Int%20%20%20%20%20%20%20%40default(0)%0A%20%20planId%20%20%20%20%20%20%20%20String%3F%0A%20%20customDomain%20%20String%3F%0A%20%20isActive%20%20%20%20%20%20Boolean%20%20%20%40default(true)%0A%20%20createdAt%20%20%20%20%20DateTime%20%20%40default(now())%0A%20%20updatedAt%20%20%20%20%20DateTime%20%20%40updatedAt%0A%0A%20%20members%20%20%20%20%20%20%20InstitutionMember%5B%5D%0A%20%20courseAssignments%20InstitutionCourseAssignment%5B%5D%0A%0A%20%20%40%40map(%22institutions%22)%0A%7D%0A%0Amodel%20InstitutionMember%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20userId%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%40unique%0A%20%20institutionId%20%20String%0A%20%20role%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%40default(%22MEMBER%22)%20%2F%2F%20%22ADMIN%22%20%7C%20%22MEMBER%22%0A%20%20joinedAt%20%20%20%20%20%20%20DateTime%20%20%20%20%40default(now())%0A%0A%20%20user%20%20%20%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%40relation(fields%3A%20%5BuserId%5D%2C%20references%3A%20%5Bid%5D%2C%20onDelete%3A%20Cascade)%0A%20%20institution%20%20%20%20Institution%20%40relation(fields%3A%20%5BinstitutionId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40map(%22institution_members%22)%0A%7D%0A%0Amodel%20InstitutionCourseAssignment%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20institutionId%20%20%20String%0A%20%20courseId%20%20%20%20%20%20%20%20String%0A%20%20isRequired%20%20%20%20%20%20Boolean%20%20%20%20%20%40default(false)%0A%20%20deadline%20%20%20%20%20%20%20%20DateTime%3F%0A%20%20assignedAt%20%20%20%20%20%20DateTime%20%20%20%20%40default(now())%0A%0A%20%20institution%20%20%20%20%20Institution%20%40relation(fields%3A%20%5BinstitutionId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40unique(%5BinstitutionId%2C%20courseId%5D)%0A%20%20%40%40map(%22institution_course_assignments%22)%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%2F%2F%20AUDIT%20LOGS%0A%2F%2F%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0Amodel%20AuditLog%20%7B%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20String%20%20%20%20%20%20%40id%20%40default(uuid())%0A%20%20actorId%20%20%20%20%20%20String%0A%20%20targetUserId%20String%3F%0A%20%20action%20%20%20%20%20%20%20AuditAction%0A%20%20resource%20%20%20%20%20String%20%20%20%20%20%20%2F%2F%20%22user%22%2C%20%22course%22%2C%20%22payment%22%2C%20etc.%0A%20%20resourceId%20%20%20String%3F%0A%20%20details%20%20%20%20%20%20Json%3F%0A%20%20ipAddress%20%20%20%20String%3F%0A%20%20userAgent%20%20%20%20String%3F%0A%20%20createdAt%20%20%20%20DateTime%20%20%20%20%40default(now())%0A%0A%20%20actor%20%20%20%20%20%20%20%20User%20%20%20%20%20%20%20%20%40relation(%22AuditActor%22%2C%20fields%3A%20%5BactorId%5D%2C%20references%3A%20%5Bid%5D)%0A%20%20targetUser%20%20%20User%3F%20%20%20%20%20%20%20%40relation(%22AuditUser%22%2C%20fields%3A%20%5BtargetUserId%5D%2C%20references%3A%20%5Bid%5D)%0A%0A%20%20%40%40index(%5BactorId%5D)%0A%20%20%40%40index(%5BtargetUserId%5D)%0A%20%20%40%40index(%5Bresource%2C%20resourceId%5D)%0A%20%20%40%40index(%5BcreatedAt%5D)%0A%20%20%40%40map(%22audit_logs%22)%0A%7D%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20Entity%20Relationship%20Diagram%0A%0A%60%60%60mermaid%0AerDiagram%0A%20%20%20%20User%20%7C%7C--%7C%7C%20UserProfile%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20SocialAccount%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20RefreshToken%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--%7C%7C%20GamificationProfile%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--%7C%7C%20UserStreak%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20UserBadge%20%3A%20%22earns%22%0A%20%20%20%20User%20%7C%7C--o%7B%20XPTransaction%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20DailyQuest%20%3A%20%22receives%22%0A%20%20%20%20User%20%7C%7C--o%7B%20Enrollment%20%3A%20%22enrolls%22%0A%20%20%20%20User%20%7C%7C--o%7B%20LessonProgress%20%3A%20%22tracks%22%0A%20%20%20%20User%20%7C%7C--o%7B%20QuizAttempt%20%3A%20%22takes%22%0A%20%20%20%20User%20%7C%7C--o%7B%20Certificate%20%3A%20%22earns%22%0A%20%20%20%20User%20%7C%7C--o%7B%20LessonNote%20%3A%20%22writes%22%0A%20%20%20%20User%20%7C%7C--o%7B%20CourseBookmark%20%3A%20%22saves%22%0A%20%20%20%20User%20%7C%7C--o%7B%20CourseReview%20%3A%20%22writes%22%0A%20%20%20%20User%20%7C%7C--o%7B%20Notification%20%3A%20%22receives%22%0A%20%20%20%20User%20%7C%7C--%7C%7C%20NotificationPreference%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20SupportTicket%20%3A%20%22creates%22%0A%20%20%20%20User%20%7C%7C--o%7B%20AIConversation%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20Payment%20%3A%20%22makes%22%0A%20%20%20%20User%20%7C%7C--%7C%7C%20Subscription%20%3A%20%22has%22%0A%20%20%20%20User%20%7C%7C--o%7B%20Course%20%3A%20%22trains%22%0A%20%20%20%20%0A%20%20%20%20Course%20%7C%7C--o%7B%20CourseSection%20%3A%20%22has%22%0A%20%20%20%20Course%20%7C%7C--o%7B%20Enrollment%20%3A%20%22has%22%0A%20%20%20%20Course%20%7C%7C--o%7B%20CourseReview%20%3A%20%22has%22%0A%20%20%20%20Course%20%7C%7C--o%7B%20Certificate%20%3A%20%22grants%22%0A%20%20%20%20Course%20%7C%7C--o%7B%20Quiz%20%3A%20%22has%22%0A%20%20%20%20Course%20%7D%7C--%7C%7C%20Category%20%3A%20%22belongs%20to%22%0A%20%20%20%20%0A%20%20%20%20CourseSection%20%7C%7C--o%7B%20Lesson%20%3A%20%22contains%22%0A%20%20%20%20Lesson%20%7C%7C--o%7B%20LessonProgress%20%3A%20%22has%22%0A%20%20%20%20Lesson%20%7C%7C--o%7B%20LessonNote%20%3A%20%22has%22%0A%20%20%20%20%0A%20%20%20%20Quiz%20%7C%7C--o%7B%20QuizQuestion%20%3A%20%22has%22%0A%20%20%20%20Quiz%20%7C%7C--o%7B%20QuizAttempt%20%3A%20%22has%22%0A%20%20%20%20%0A%20%20%20%20MembershipPlan%20%7C%7C--o%7B%20Subscription%20%3A%20%22has%22%0A%20%20%20%20%0A%20%20%20%20Institution%20%7C%7C--o%7B%20InstitutionMember%20%3A%20%22has%22%0A%20%20%20%20Institution%20%7C%7C--o%7B%20InstitutionCourseAssignment%20%3A%20%22has%22%0A%20%20%20%20%0A%20%20%20%20Badge%20%7C%7C--o%7B%20UserBadge%20%3A%20%22awarded%20as%22%0A%20%20%20%20%0A%20%20%20%20SupportTicket%20%7C%7C--o%7B%20TicketMessage%20%3A%20%22has%22%0A%60%60%60%0A%0A---%0A%0A%23%23%204.%20Key%20Database%20Indexes%0A%0A%60%60%60sql%0A--%20Performance-critical%20indexes%20beyond%20Prisma%20%40%40index%0A%0A--%20Full-text%20search%20on%20courses%0ACREATE%20INDEX%20idx_courses_fts%20ON%20courses%20USING%20GIN(to_tsvector(&#039;english&#039;%2C%20title%20%7C%7C%20&#039;%20&#039;%20%7C%7C%20COALESCE(short_description%2C%20&#039;&#039;)))%3B%0A%0A--%20Full-text%20search%20on%20users%0ACREATE%20INDEX%20idx_users_fts%20ON%20users%20USING%20GIN(to_tsvector(&#039;english&#039;%2C%20display_name%20%7C%7C%20&#039;%20&#039;%20%7C%7C%20email))%3B%0A%0A--%20Leaderboard%20(weekly%20XP)%0ACREATE%20INDEX%20idx_xp_transactions_weekly%20ON%20xp_transactions%20(user_id%2C%20created_at%20DESC)%3B%0A%0A--%20Active%20subscriptions%20lookup%0ACREATE%20INDEX%20idx_subscriptions_active%20ON%20subscriptions%20(status%2C%20current_period_end)%20WHERE%20status%20%3D%20&#039;ACTIVE&#039;%3B%0A%0A--%20Notifications%20unread%20count%0ACREATE%20INDEX%20idx_notifications_unread%20ON%20notifications%20(user_id%2C%20is_read)%20WHERE%20is_read%20%3D%20false%3B%0A%60%60%60%0A%0A---%0A%0A%23%23%205.%20Prisma%20Repository%20Pattern%0A%0A%60%60%60typescript%0A%2F%2F%20repositories%2Fcourse.repository.ts%0Aimport%20%7B%20prisma%20%7D%20from%20&#039;..%2Flib%2Fprisma&#039;%3B%0A%0Aexport%20const%20courseRepository%20%3D%20%7B%0A%20%20async%20findMany(params%3A%20CourseQueryParams)%20%7B%0A%20%20%20%20const%20%7B%20page%20%3D%201%2C%20limit%20%3D%2020%2C%20category%2C%20level%2C%20search%2C%20sort%20%3D%20&#039;enrolledCount&#039;%20%7D%20%3D%20params%3B%0A%0A%20%20%20%20const%20where%20%3D%20%7B%0A%20%20%20%20%20%20status%3A%20&#039;PUBLISHED&#039;%20as%20const%2C%0A%20%20%20%20%20%20deletedAt%3A%20null%2C%0A%20%20%20%20%20%20...(category%20%26%26%20%7B%20category%3A%20%7B%20slug%3A%20category%20%7D%20%7D)%2C%0A%20%20%20%20%20%20...(level%20%26%26%20%7B%20level%20%7D)%2C%0A%20%20%20%20%20%20...(search%20%26%26%20%7B%0A%20%20%20%20%20%20%20%20OR%3A%20%5B%0A%20%20%20%20%20%20%20%20%20%20%7B%20title%3A%20%7B%20contains%3A%20search%2C%20mode%3A%20&#039;insensitive&#039;%20as%20const%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%7B%20shortDescription%3A%20%7B%20contains%3A%20search%2C%20mode%3A%20&#039;insensitive&#039;%20as%20const%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%7B%20tags%3A%20%7B%20has%3A%20search%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%5D%2C%0A%20%20%20%20%20%20%7D)%2C%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20const%20%5Bcourses%2C%20total%5D%20%3D%20await%20Promise.all(%5B%0A%20%20%20%20%20%20prisma.course.findMany(%7B%0A%20%20%20%20%20%20%20%20where%2C%0A%20%20%20%20%20%20%20%20include%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20trainer%3A%20%7B%20select%3A%20%7B%20id%3A%20true%2C%20displayName%3A%20true%2C%20avatarUrl%3A%20true%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20category%3A%20%7B%20select%3A%20%7B%20id%3A%20true%2C%20name%3A%20true%2C%20slug%3A%20true%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20orderBy%3A%20%7B%20%5Bsort%5D%3A%20&#039;desc&#039;%20%7D%2C%0A%20%20%20%20%20%20%20%20skip%3A%20(page%20-%201)%20*%20limit%2C%0A%20%20%20%20%20%20%20%20take%3A%20limit%2C%0A%20%20%20%20%20%20%7D)%2C%0A%20%20%20%20%20%20prisma.course.count(%7B%20where%20%7D)%2C%0A%20%20%20%20%5D)%3B%0A%0A%20%20%20%20return%20%7B%20courses%2C%20total%2C%20page%2C%20limit%2C%20totalPages%3A%20Math.ceil(total%20%2F%20limit)%20%7D%3B%0A%20%20%7D%2C%0A%0A%20%20async%20findByIdWithEnrollmentStatus(courseId%3A%20string%2C%20userId%3F%3A%20string)%20%7B%0A%20%20%20%20const%20%5Bcourse%2C%20enrollment%5D%20%3D%20await%20Promise.all(%5B%0A%20%20%20%20%20%20prisma.course.findUnique(%7B%0A%20%20%20%20%20%20%20%20where%3A%20%7B%20id%3A%20courseId%2C%20deletedAt%3A%20null%20%7D%2C%0A%20%20%20%20%20%20%20%20include%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20trainer%3A%20true%2C%0A%20%20%20%20%20%20%20%20%20%20category%3A%20true%2C%0A%20%20%20%20%20%20%20%20%20%20sections%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20orderBy%3A%20%7B%20order%3A%20&#039;asc&#039;%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20include%3A%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20lessons%3A%20%7B%20orderBy%3A%20%7B%20order%3A%20&#039;asc&#039;%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20reviews%3A%20%7B%20take%3A%2010%2C%20orderBy%3A%20%7B%20createdAt%3A%20&#039;desc&#039;%20%7D%20%7D%2C%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%7D)%2C%0A%20%20%20%20%20%20userId%20%3F%20prisma.enrollment.findUnique(%7B%20where%3A%20%7B%20userId_courseId%3A%20%7B%20userId%2C%20courseId%20%7D%20%7D%20%7D)%20%3A%20null%2C%0A%20%20%20%20%5D)%3B%0A%0A%20%20%20%20return%20%7B%20course%2C%20enrollment%20%7D%3B%0A%20%20%7D%2C%0A%7D%3B%0A%60%60%60%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>04 Technical Architecture</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Database Schema &amp; ORM Design</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="database-schema-orm-design" class="docmd-heading"><a href="#database-schema-orm-design" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Database Schema &amp; ORM Design</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026 | <strong>ORM:</strong> Prisma 5.x | <strong>Database:</strong> PostgreSQL 16</p>
+<hr>
+<h2 id="database-schema-orm-design-1-schema-design-principles" class="docmd-heading"><a href="#database-schema-orm-design-1-schema-design-principles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Schema Design Principles</h2>
+<ol>
+<li><strong>Relational integrity:</strong> Foreign keys enforced everywhere; no orphaned records</li>
+<li><strong>Audit trail:</strong> All major entities have <code>createdAt</code>, <code>updatedAt</code>, soft-delete via <code>deletedAt</code></li>
+<li><strong>UUID primary keys:</strong> UUIDs for all entities (prevents enumeration attacks)</li>
+<li><strong>JSONB for flexible data:</strong> Quiz answers, AI conversation messages, course metadata stored as JSONB</li>
+<li><strong>Indexed for performance:</strong> All foreign keys, frequently filtered/sorted columns are indexed</li>
+<li><strong>Enum types:</strong> Role, plan, status fields use PostgreSQL enums for data integrity</li>
+</ol>
+<hr>
+<h2 id="database-schema-orm-design-2-complete-prisma-schema" class="docmd-heading"><a href="#database-schema-orm-design-2-complete-prisma-schema" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Complete Prisma Schema</h2>
+<pre class="hljs"><code class="language-prisma"><span class="hljs-comment">// prisma/schema.prisma</span>
+
+generator client {
+  provider <span class="hljs-punctuation">=</span> <span class="hljs-string">&quot;prisma-client-js&quot;</span>
+}
+
+datasource db {
+  provider <span class="hljs-punctuation">=</span> <span class="hljs-string">&quot;postgresql&quot;</span>
+  url      <span class="hljs-punctuation">=</span> <span class="hljs-title function_">env</span>(<span class="hljs-string">&quot;DATABASE_URL&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// ENUMS</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+<span class="hljs-keyword">enum</span> Role {
+  GUEST
+  STUDENT
+  PROFESSIONAL
+  JOB_SEEKER
+  TRAINER
+  INSTITUTION_USER
+  INSTITUTION_ADMIN
+  SUPPORT_AGENT
+  CONTENT_MANAGER
+  ADMIN
+}
+
+<span class="hljs-keyword">enum</span> PlanType {
+  FREE
+  BASIC
+  PRO
+  PREMIUM
+  ENTERPRISE
+}
+
+<span class="hljs-keyword">enum</span> BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+<span class="hljs-keyword">enum</span> CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+<span class="hljs-keyword">enum</span> CourseStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  UNPUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+<span class="hljs-keyword">enum</span> LessonType {
+  VIDEO
+  PDF
+  TEXT
+  QUIZ_LESSON
+}
+
+<span class="hljs-keyword">enum</span> QuestionType {
+  MCQ_SINGLE
+  MCQ_MULTI
+  TRUE_FALSE
+  FILL_BLANK
+  SHORT_ANSWER
+}
+
+<span class="hljs-keyword">enum</span> PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  DISPUTED
+}
+
+<span class="hljs-keyword">enum</span> PaymentGateway {
+  RAZORPAY
+  STRIPE
+}
+
+<span class="hljs-keyword">enum</span> PaymentType {
+  SUBSCRIPTION
+  COURSE_PURCHASE
+  CERTIFICATION_FEE
+}
+
+<span class="hljs-keyword">enum</span> SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+  TRIALING
+}
+
+<span class="hljs-keyword">enum</span> NotificationChannel {
+  PUSH
+  IN_APP
+  EMAIL
+  SMS
+}
+
+<span class="hljs-keyword">enum</span> TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_USER
+  RESOLVED
+  CLOSED
+}
+
+<span class="hljs-keyword">enum</span> TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+<span class="hljs-keyword">enum</span> TicketCategory {
+  PAYMENT
+  COURSE_ACCESS
+  TECHNICAL
+  ACCOUNT
+  AI_ASSISTANT
+  GENERAL
+}
+
+<span class="hljs-keyword">enum</span> AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  SUSPEND
+  RESTORE
+  IMPERSONATE
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// USER &amp; IDENTITY</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model User {
+  <span class="hljs-keyword">id</span>                    String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  email                 String    @unique
+  emailVerified         Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  phone                 String<span class="hljs-punctuation">?</span>   @unique
+  phoneVerified         Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  passwordHash          String<span class="hljs-punctuation">?</span>
+  displayName           String
+  avatarUrl             String<span class="hljs-punctuation">?</span>
+  role                  Role      @<span class="hljs-keyword">default</span>(STUDENT)
+  ageRange              String<span class="hljs-punctuation">?</span>   <span class="hljs-comment">// &quot;13-17&quot;, &quot;18-25&quot;, &quot;26-35&quot;, &quot;36-50&quot;, &quot;50+&quot;</span>
+  language              String    @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;en&quot;</span>)
+  timezone              String    @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;Asia/Kolkata&quot;</span>)
+  onboardingCompleted   Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  onboardingData        Json<span class="hljs-punctuation">?</span>     <span class="hljs-comment">// Stores role selection, goals, interests</span>
+  lastActiveAt          DateTime<span class="hljs-punctuation">?</span>
+  isSuspended           Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  suspendedReason       String<span class="hljs-punctuation">?</span>
+  deletedAt             DateTime<span class="hljs-punctuation">?</span>
+  createdAt             DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt             DateTime  @updatedAt
+
+  <span class="hljs-comment">// Relations</span>
+  profile               UserProfile<span class="hljs-punctuation">?</span>
+  socialAccounts        SocialAccount[]
+  subscription          Subscription<span class="hljs-punctuation">?</span>
+  enrollments           Enrollment[]
+  lessonProgress        LessonProgress[]
+  quizAttempts          QuizAttempt[]
+  certificates          Certificate[]
+  notes                 LessonNote[]
+  bookmarks             CourseBookmark[]
+  reviews               CourseReview[]
+  notifications         Notification[]
+  notificationPrefs     NotificationPreference<span class="hljs-punctuation">?</span>
+  supportTickets        SupportTicket[]
+  aiConversations       AIConversation[]
+  gamificationProfile   GamificationProfile<span class="hljs-punctuation">?</span>
+  streaks               UserStreak[]
+  badges                UserBadge[]
+  trainerCourses        Course[]              @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;TrainerCourses&quot;</span>)
+  institutionMembership InstitutionMember<span class="hljs-punctuation">?</span>
+  auditLogs             AuditLog[]            @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;AuditUser&quot;</span>)
+  performedAudits       AuditLog[]            @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;AuditActor&quot;</span>)
+  refreshTokens         RefreshToken[]
+  payments              Payment[]
+
+  @@<span class="hljs-title function_">index</span>([email])
+  @@<span class="hljs-title function_">index</span>([phone])
+  @@<span class="hljs-title function_">index</span>([role])
+  @@<span class="hljs-title function_">index</span>([createdAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;users&quot;</span>)
+}
+
+model UserProfile {
+  <span class="hljs-keyword">id</span>           String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId       String   @unique
+  bio          String<span class="hljs-punctuation">?</span>
+  headline     String<span class="hljs-punctuation">?</span>  <span class="hljs-comment">// &quot;Full-Stack Developer @ Google&quot;</span>
+  linkedInUrl  String<span class="hljs-punctuation">?</span>
+  websiteUrl   String<span class="hljs-punctuation">?</span>
+  interests    String[] <span class="hljs-comment">// Array of category names</span>
+  goals        String[] <span class="hljs-comment">// Primary + secondary goals</span>
+  occupation   String<span class="hljs-punctuation">?</span>
+  location     String<span class="hljs-punctuation">?</span>
+  updatedAt    DateTime @updatedAt
+
+  user         User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;user_profiles&quot;</span>)
+}
+
+model SocialAccount {
+  <span class="hljs-keyword">id</span>         String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId     String
+  provider   String   <span class="hljs-comment">// &quot;google&quot;, &quot;apple&quot;</span>
+  providerId String
+  email      String<span class="hljs-punctuation">?</span>
+  createdAt  DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user       User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([provider, providerId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;social_accounts&quot;</span>)
+}
+
+model RefreshToken {
+  <span class="hljs-keyword">id</span>          String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  tokenHash   String   @unique
+  deviceInfo  String<span class="hljs-punctuation">?</span>
+  ipAddress   String<span class="hljs-punctuation">?</span>
+  expiresAt   DateTime
+  createdAt   DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  revokedAt   DateTime<span class="hljs-punctuation">?</span>
+
+  user        User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">index</span>([tokenHash])
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;refresh_tokens&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// GAMIFICATION</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model GamificationProfile {
+  <span class="hljs-keyword">id</span>          String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String   @unique
+  xp          Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  level       Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">1</span>)
+  totalXpEarned Int    @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  updatedAt   DateTime @updatedAt
+
+  user        User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;gamification_profiles&quot;</span>)
+}
+
+model UserStreak {
+  <span class="hljs-keyword">id</span>               String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId           String
+  currentStreak    Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  longestStreak    Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  lastActivityDate DateTime<span class="hljs-punctuation">?</span>
+  streakFreezes    Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  updatedAt        DateTime @updatedAt
+
+  user             User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;user_streaks&quot;</span>)
+}
+
+model Badge {
+  <span class="hljs-keyword">id</span>          String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  name        String    @unique
+  description String
+  category    String    <span class="hljs-comment">// &quot;Learning&quot;, &quot;Achievement&quot;, &quot;Streak&quot;, &quot;Social&quot;, &quot;Special&quot;</span>
+  iconUrl     String
+  criteria    Json      <span class="hljs-comment">// { type: &#039;courses_completed&#039;, threshold: 5 }</span>
+  xpReward    Int
+  isActive    Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  createdAt   DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  userBadges  UserBadge[]
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;badges&quot;</span>)
+}
+
+model UserBadge {
+  <span class="hljs-keyword">id</span>        String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user      User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  badge     Badge    @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [badgeId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">unique</span>([userId, badgeId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;user_badges&quot;</span>)
+}
+
+model XPTransaction {
+  <span class="hljs-keyword">id</span>          String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  amount      Int
+  action      String   <span class="hljs-comment">// &quot;lesson_completed&quot;, &quot;quiz_passed&quot;, &quot;badge_earned&quot;, etc.</span>
+  referenceId String<span class="hljs-punctuation">?</span>  <span class="hljs-comment">// lessonId, quizId, etc.</span>
+  createdAt   DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">index</span>([createdAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;xp_transactions&quot;</span>)
+}
+
+model DailyQuest {
+  <span class="hljs-keyword">id</span>          String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  questType   String   <span class="hljs-comment">// &quot;complete_lesson&quot;, &quot;answer_quiz_questions&quot;, etc.</span>
+  description String
+  xpReward    Int
+  requirement Json     <span class="hljs-comment">// { count: 5, completedCount: 3 }</span>
+  isCompleted Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  date        DateTime <span class="hljs-comment">// Date this quest is for (midnight UTC)</span>
+  completedAt DateTime<span class="hljs-punctuation">?</span>
+  createdAt   DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  @@<span class="hljs-title function_">index</span>([userId, date])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;daily_quests&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// COURSES &amp; CONTENT</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Category {
+  <span class="hljs-keyword">id</span>          String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  name        String   @unique
+  slug        String   @unique
+  iconUrl     String<span class="hljs-punctuation">?</span>
+  parentId    String<span class="hljs-punctuation">?</span>
+  isActive    Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  sortOrder   Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  createdAt   DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  parent      Category<span class="hljs-punctuation">?</span>  @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;CategoryChildren&quot;</span>, fields<span class="hljs-punctuation">:</span> [parentId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  children    Category[] @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;CategoryChildren&quot;</span>)
+  courses     Course[]
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;categories&quot;</span>)
+}
+
+model Course {
+  <span class="hljs-keyword">id</span>               String       @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  trainerId        String
+  categoryId       String
+  title            String
+  slug             String       @unique
+  shortDescription String<span class="hljs-punctuation">?</span>
+  description      String       <span class="hljs-comment">// Rich text / markdown</span>
+  thumbnailUrl     String<span class="hljs-punctuation">?</span>
+  previewVideoUrl  String<span class="hljs-punctuation">?</span>
+  level            CourseLevel  @<span class="hljs-keyword">default</span>(BEGINNER)
+  language         String       @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;English&quot;</span>)
+  price            Decimal      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)     @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  currency         String       @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;INR&quot;</span>)
+  isFree           Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  includedInPro    Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  hasCertificate   Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  status           CourseStatus @<span class="hljs-keyword">default</span>(DRAFT)
+  publishedAt      DateTime<span class="hljs-punctuation">?</span>
+  reviewNotes      String<span class="hljs-punctuation">?</span>      <span class="hljs-comment">// Admin review feedback</span>
+  isFeatured       Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  tags             String[]
+  prerequisites    String[]     <span class="hljs-comment">// courseIds</span>
+  whatYoullLearn   String[]     <span class="hljs-comment">// Bullet points</span>
+  targetAudience   String[]
+  totalLessons     Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)     <span class="hljs-comment">// Denormalized</span>
+  totalDuration    Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)     <span class="hljs-comment">// Seconds, denormalized</span>
+  enrolledCount    Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)     <span class="hljs-comment">// Denormalized</span>
+  averageRating    Decimal      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)     @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">3</span>, <span class="hljs-number">2</span>)
+  reviewsCount     Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  deletedAt        DateTime<span class="hljs-punctuation">?</span>
+  createdAt        DateTime     @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt        DateTime     @updatedAt
+
+  trainer          User         @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;TrainerCourses&quot;</span>, fields<span class="hljs-punctuation">:</span> [trainerId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  category         Category     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [categoryId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  sections         CourseSection[]
+  enrollments      Enrollment[]
+  reviews          CourseReview[]
+  certificates     Certificate[]
+  quizzes          Quiz[]
+  bookmarks        CourseBookmark[]
+  notifications    Notification[]
+
+  @@<span class="hljs-title function_">index</span>([status])
+  @@<span class="hljs-title function_">index</span>([categoryId])
+  @@<span class="hljs-title function_">index</span>([trainerId])
+  @@<span class="hljs-title function_">index</span>([isFeatured])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;courses&quot;</span>)
+}
+
+model CourseSection {
+  <span class="hljs-keyword">id</span>        String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  courseId  String
+  title     String
+  order     Int
+  createdAt DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  course    Course   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  lessons   Lesson[]
+
+  @@<span class="hljs-title function_">index</span>([courseId, order])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;course_sections&quot;</span>)
+}
+
+model Lesson {
+  <span class="hljs-keyword">id</span>              String     @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  sectionId       String
+  title           String
+  description     String<span class="hljs-punctuation">?</span>
+  <span class="hljs-keyword">type</span>            LessonType
+  order           Int
+  durationSeconds Int        @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  isFreePreview   Boolean    @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  <span class="hljs-comment">// Video fields</span>
+  videoUrl        String<span class="hljs-punctuation">?</span>    <span class="hljs-comment">// HLS manifest URL</span>
+  videoRawUrl     String<span class="hljs-punctuation">?</span>    <span class="hljs-comment">// S3 raw upload URL</span>
+  captionUrl      String<span class="hljs-punctuation">?</span>    <span class="hljs-comment">// VTT file URL</span>
+  <span class="hljs-comment">// PDF fields</span>
+  pdfUrl          String<span class="hljs-punctuation">?</span>
+  <span class="hljs-comment">// Text content</span>
+  textContent     String<span class="hljs-punctuation">?</span>    <span class="hljs-comment">// Markdown</span>
+  resources       Json<span class="hljs-punctuation">?</span>      <span class="hljs-comment">// [{ name, url, type }]</span>
+  isPublished     Boolean    @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  deletedAt       DateTime<span class="hljs-punctuation">?</span>
+  createdAt       DateTime   @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt       DateTime   @updatedAt
+
+  section         CourseSection   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [sectionId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  progress        LessonProgress[]
+  notes           LessonNote[]
+
+  @@<span class="hljs-title function_">index</span>([sectionId, order])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;lessons&quot;</span>)
+}
+
+model Enrollment {
+  <span class="hljs-keyword">id</span>          String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  courseId    String
+  progress    Decimal   @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)   @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">5</span>, <span class="hljs-number">2</span>) <span class="hljs-comment">// 0-100%</span>
+  completedAt DateTime<span class="hljs-punctuation">?</span>
+  enrolledAt  DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  expiresAt   DateTime<span class="hljs-punctuation">?</span>
+  <span class="hljs-keyword">source</span>      String    @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;direct&quot;</span>) <span class="hljs-comment">// &quot;direct&quot;, &quot;pro_plan&quot;, &quot;institution&quot;, &quot;gift&quot;</span>
+
+  user        User      @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  course      Course    @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId, courseId])
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">index</span>([courseId])
+  @@<span class="hljs-title function_">index</span>([completedAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;enrollments&quot;</span>)
+}
+
+model LessonProgress {
+  <span class="hljs-keyword">id</span>            String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId        String
+  lessonId      String
+  lastPosition  Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>) <span class="hljs-comment">// Seconds (for video)</span>
+  completed     Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  completedAt   DateTime<span class="hljs-punctuation">?</span>
+  updatedAt     DateTime @updatedAt
+
+  user          User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  lesson        Lesson   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [lessonId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId, lessonId])
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;lesson_progress&quot;</span>)
+}
+
+model LessonNote {
+  <span class="hljs-keyword">id</span>        String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId    String
+  lessonId  String
+  content   String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user      User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  lesson    Lesson   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [lessonId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId, lessonId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;lesson_notes&quot;</span>)
+}
+
+model CourseBookmark {
+  <span class="hljs-keyword">id</span>        String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId    String
+  courseId  String
+  createdAt DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user      User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  course    Course   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId, courseId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;course_bookmarks&quot;</span>)
+}
+
+model CourseReview {
+  <span class="hljs-keyword">id</span>        String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId    String
+  courseId  String
+  rating    Int      <span class="hljs-comment">// 1-5</span>
+  title     String<span class="hljs-punctuation">?</span>
+  content   String<span class="hljs-punctuation">?</span>
+  isApproved Boolean @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  deletedAt DateTime<span class="hljs-punctuation">?</span>
+  createdAt DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt DateTime @updatedAt
+
+  user      User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  course    Course   @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">unique</span>([userId, courseId])
+  @@<span class="hljs-title function_">index</span>([courseId, rating])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;course_reviews&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// QUIZ &amp; ASSESSMENT</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Quiz {
+  <span class="hljs-keyword">id</span>              String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  courseId        String
+  lessonId        String<span class="hljs-punctuation">?</span>  <span class="hljs-comment">// If null, it&#039;s a course-level quiz</span>
+  title           String
+  description     String<span class="hljs-punctuation">?</span>
+  timeLimitSeconds Int<span class="hljs-punctuation">?</span>
+  passingScore    Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">70</span>) <span class="hljs-comment">// Percentage</span>
+  maxAttempts     Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">3</span>)
+  cooldownHours   Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">24</span>)
+  isRandomized    Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  isAIGenerated   Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  isPublished     Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  createdAt       DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt       DateTime @updatedAt
+
+  course          Course       @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  questions       QuizQuestion[]
+  attempts        QuizAttempt[]
+
+  @@<span class="hljs-title function_">index</span>([courseId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;quizzes&quot;</span>)
+}
+
+model QuizQuestion {
+  <span class="hljs-keyword">id</span>              String       @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  quizId          String
+  <span class="hljs-keyword">type</span>            QuestionType
+  questionText    String
+  questionImageUrl String<span class="hljs-punctuation">?</span>
+  options         Json<span class="hljs-punctuation">?</span>        <span class="hljs-comment">// [{ id, text, isCorrect, explanation }] for MCQ</span>
+  correctAnswer   String<span class="hljs-punctuation">?</span>      <span class="hljs-comment">// For fill-blank or short answer</span>
+  explanation     String<span class="hljs-punctuation">?</span>      <span class="hljs-comment">// AI-generated or manual explanation</span>
+  points          Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">1</span>)
+  order           Int
+
+  quiz            Quiz         @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [quizId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">index</span>([quizId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;quiz_questions&quot;</span>)
+}
+
+model QuizAttempt {
+  <span class="hljs-keyword">id</span>              String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId          String
+  quizId          String
+  score           Decimal   @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">5</span>, <span class="hljs-number">2</span>)
+  maxScore        Int
+  passed          Boolean
+  timeTakenSeconds Int
+  answers         Json      <span class="hljs-comment">// [{ questionId, selectedOptionIds, textAnswer, isCorrect }]</span>
+  xpAwarded       Int       @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  startedAt       DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  completedAt     DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user            User      @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  quiz            Quiz      @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [quizId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">index</span>([userId, quizId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;quiz_attempts&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// CERTIFICATES</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Certificate {
+  <span class="hljs-keyword">id</span>              String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId          String
+  courseId        String
+  recipientName   String
+  courseName      String
+  instructorName  String
+  completedAt     DateTime
+  issuedAt        DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  pdfUrl          String<span class="hljs-punctuation">?</span>
+  templateId      String    @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;default&quot;</span>)
+  isRevoked       Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  revokedAt       DateTime<span class="hljs-punctuation">?</span>
+  revokedReason   String<span class="hljs-punctuation">?</span>
+  verificationCode String   @unique @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">cuid</span>())
+
+  user            User      @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  course          Course    @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">unique</span>([userId, courseId])
+  @@<span class="hljs-title function_">index</span>([verificationCode])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;certificates&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// MEMBERSHIP &amp; BILLING</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model MembershipPlan {
+  <span class="hljs-keyword">id</span>               String       @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  name             String       @unique
+  planType         PlanType
+  description      String<span class="hljs-punctuation">?</span>
+  features         Json         <span class="hljs-comment">// [{ name, included: bool }]</span>
+  monthlyPrice     Decimal      @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  annualPrice      Decimal      @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  currency         String       @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;INR&quot;</span>)
+  aiQueryLimit     Int<span class="hljs-punctuation">?</span>         <span class="hljs-comment">// null = unlimited</span>
+  maxDevices       Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">3</span>)
+  hasOfflineAccess Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  hasLiveSessions  Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  isActive         Boolean      @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  sortOrder        Int          @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  createdAt        DateTime     @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt        DateTime     @updatedAt
+
+  subscriptions    Subscription[]
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;membership_plans&quot;</span>)
+}
+
+model Subscription {
+  <span class="hljs-keyword">id</span>                  String             @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId              String             @unique
+  planId              String
+  status              SubscriptionStatus @<span class="hljs-keyword">default</span>(TRIALING)
+  billingCycle        BillingCycle       @<span class="hljs-keyword">default</span>(MONTHLY)
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean            @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  cancelledAt         DateTime<span class="hljs-punctuation">?</span>
+  gatewaySubscriptionId String<span class="hljs-punctuation">?</span>           <span class="hljs-comment">// Razorpay/Stripe subscription ID</span>
+  gatewayCustomerId    String<span class="hljs-punctuation">?</span>
+  trialEndsAt         DateTime<span class="hljs-punctuation">?</span>
+  aiQueriesUsedToday  Int                @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  lastQueryResetDate  DateTime           @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  createdAt           DateTime           @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt           DateTime           @updatedAt
+
+  user                User               @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  plan                MembershipPlan     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [planId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;subscriptions&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// PAYMENTS</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Payment {
+  <span class="hljs-keyword">id</span>               String         @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId           String
+  <span class="hljs-keyword">type</span>             PaymentType
+  referenceId      String         <span class="hljs-comment">// courseId, planId, etc.</span>
+  amount           Decimal        @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  currency         String         @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;INR&quot;</span>)
+  status           PaymentStatus  @<span class="hljs-keyword">default</span>(PENDING)
+  gateway          PaymentGateway
+  gatewayOrderId   String<span class="hljs-punctuation">?</span>
+  gatewayPaymentId String<span class="hljs-punctuation">?</span>
+  gatewaySignature String<span class="hljs-punctuation">?</span>
+  invoiceUrl       String<span class="hljs-punctuation">?</span>
+  failureReason    String<span class="hljs-punctuation">?</span>
+  refundedAt       DateTime<span class="hljs-punctuation">?</span>
+  refundAmount     Decimal<span class="hljs-punctuation">?</span>       @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  metadata         Json<span class="hljs-punctuation">?</span>
+  createdAt        DateTime       @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt        DateTime       @updatedAt
+
+  user             User           @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">index</span>([gatewayPaymentId])
+  @@<span class="hljs-title function_">index</span>([status])
+  @@<span class="hljs-title function_">index</span>([createdAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;payments&quot;</span>)
+}
+
+model Coupon {
+  <span class="hljs-keyword">id</span>              String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  code            String   @unique
+  discountType    String   <span class="hljs-comment">// &quot;PERCENTAGE&quot; | &quot;FIXED&quot;</span>
+  discountValue   Decimal  @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  maxUsage        Int<span class="hljs-punctuation">?</span>
+  usageCount      Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  minOrderAmount  Decimal<span class="hljs-punctuation">?</span> @db.<span class="hljs-title function_">Decimal</span>(<span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+  applicablePlans String[] <span class="hljs-comment">// planIds or [] for all</span>
+  expiresAt       DateTime<span class="hljs-punctuation">?</span>
+  isActive        Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  createdAt       DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;coupons&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// AI ASSISTANT</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model AIConversation {
+  <span class="hljs-keyword">id</span>          String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  title       String<span class="hljs-punctuation">?</span>   <span class="hljs-comment">// Auto-generated from first message</span>
+  context     Json<span class="hljs-punctuation">?</span>     <span class="hljs-comment">// { courseId, lessonId }</span>
+  messages    Json      @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;[]&quot;</span>) <span class="hljs-comment">// [{ role, content, timestamp, sources }]</span>
+  messageCount Int      @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  isFlagged   Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  flagReason  String<span class="hljs-punctuation">?</span>
+  createdAt   DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;ai_conversations&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// NOTIFICATIONS</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Notification {
+  <span class="hljs-keyword">id</span>          String              @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId      String
+  title       String
+  body        String
+  <span class="hljs-keyword">type</span>        String              <span class="hljs-comment">// &quot;achievement&quot;, &quot;reminder&quot;, &quot;offer&quot;, &quot;system&quot;</span>
+  channel     NotificationChannel
+  isRead      Boolean             @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  readAt      DateTime<span class="hljs-punctuation">?</span>
+  ctaUrl      String<span class="hljs-punctuation">?</span>
+  metadata    Json<span class="hljs-punctuation">?</span>
+  courseId    String<span class="hljs-punctuation">?</span>
+  badgeId     String<span class="hljs-punctuation">?</span>
+  sentAt      DateTime            @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user        User                @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  course      Course<span class="hljs-punctuation">?</span>             @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [courseId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">index</span>([userId, isRead])
+  @@<span class="hljs-title function_">index</span>([sentAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;notifications&quot;</span>)
+}
+
+model NotificationPreference {
+  <span class="hljs-keyword">id</span>                   String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId               String   @unique
+  learningReminders    Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  streakAlerts         Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  achievements         Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  newCourses           Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  offersAndPromotions  Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  emailDigest          String   @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;WEEKLY&quot;</span>) <span class="hljs-comment">// &quot;DAILY&quot; | &quot;WEEKLY&quot; | &quot;NEVER&quot;</span>
+  quietHoursStart      String<span class="hljs-punctuation">?</span>  <span class="hljs-comment">// &quot;22:00&quot;</span>
+  quietHoursEnd        String<span class="hljs-punctuation">?</span>  <span class="hljs-comment">// &quot;07:00&quot;</span>
+  updatedAt            DateTime @updatedAt
+
+  user                 User     @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;notification_preferences&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// SUPPORT</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model SupportTicket {
+  <span class="hljs-keyword">id</span>              String         @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId          String
+  assignedToId    String<span class="hljs-punctuation">?</span>
+  category        TicketCategory
+  subject         String
+  description     String
+  status          TicketStatus   @<span class="hljs-keyword">default</span>(OPEN)
+  priority        TicketPriority @<span class="hljs-keyword">default</span>(MEDIUM)
+  attachmentUrls  String[]
+  csatScore       Int<span class="hljs-punctuation">?</span>           <span class="hljs-comment">// 1-5, filled after resolution</span>
+  csatComment     String<span class="hljs-punctuation">?</span>
+  resolvedAt      DateTime<span class="hljs-punctuation">?</span>
+  closedAt        DateTime<span class="hljs-punctuation">?</span>
+  firstResponseAt DateTime<span class="hljs-punctuation">?</span>
+  slaDeadline     DateTime<span class="hljs-punctuation">?</span>
+  createdAt       DateTime       @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt       DateTime       @updatedAt
+
+  user            User           @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  messages        TicketMessage[]
+
+  @@<span class="hljs-title function_">index</span>([userId])
+  @@<span class="hljs-title function_">index</span>([status, priority])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;support_tickets&quot;</span>)
+}
+
+model TicketMessage {
+  <span class="hljs-keyword">id</span>           String   @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  ticketId     String
+  authorId     String
+  isInternal   Boolean  @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>) <span class="hljs-comment">// Internal notes between agents</span>
+  content      String
+  attachments  String[]
+  createdAt    DateTime @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  ticket       SupportTicket @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [ticketId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+
+  @@<span class="hljs-title function_">index</span>([ticketId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;ticket_messages&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// INSTITUTION</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model Institution {
+  <span class="hljs-keyword">id</span>            String    @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  name          String
+  logoUrl       String<span class="hljs-punctuation">?</span>
+  domain        String<span class="hljs-punctuation">?</span>   <span class="hljs-comment">// For SSO / email domain matching</span>
+  seatCount     Int       @<span class="hljs-keyword">default</span>(<span class="hljs-number">10</span>)
+  usedSeats     Int       @<span class="hljs-keyword">default</span>(<span class="hljs-number">0</span>)
+  planId        String<span class="hljs-punctuation">?</span>
+  customDomain  String<span class="hljs-punctuation">?</span>
+  isActive      Boolean   @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">true</span>)
+  createdAt     DateTime  @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+  updatedAt     DateTime  @updatedAt
+
+  members       InstitutionMember[]
+  courseAssignments InstitutionCourseAssignment[]
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;institutions&quot;</span>)
+}
+
+model InstitutionMember {
+  <span class="hljs-keyword">id</span>             String      @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  userId         String      @unique
+  institutionId  String
+  role           String      @<span class="hljs-keyword">default</span>(<span class="hljs-string">&quot;MEMBER&quot;</span>) <span class="hljs-comment">// &quot;ADMIN&quot; | &quot;MEMBER&quot;</span>
+  joinedAt       DateTime    @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  user           User        @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [userId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>], onDelete<span class="hljs-punctuation">:</span> Cascade)
+  institution    Institution @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [institutionId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;institution_members&quot;</span>)
+}
+
+model InstitutionCourseAssignment {
+  <span class="hljs-keyword">id</span>              String      @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  institutionId   String
+  courseId        String
+  isRequired      Boolean     @<span class="hljs-keyword">default</span>(<span class="hljs-keyword">false</span>)
+  deadline        DateTime<span class="hljs-punctuation">?</span>
+  assignedAt      DateTime    @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  institution     Institution @<span class="hljs-title function_">relation</span>(fields<span class="hljs-punctuation">:</span> [institutionId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">unique</span>([institutionId, courseId])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;institution_course_assignments&quot;</span>)
+}
+
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+<span class="hljs-comment">// AUDIT LOGS</span>
+<span class="hljs-comment">// ─────────────────────────────────────────────────────────</span>
+
+model AuditLog {
+  <span class="hljs-keyword">id</span>           String      @<span class="hljs-keyword">id</span> @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">uuid</span>())
+  actorId      String
+  targetUserId String<span class="hljs-punctuation">?</span>
+  action       AuditAction
+  resource     String      <span class="hljs-comment">// &quot;user&quot;, &quot;course&quot;, &quot;payment&quot;, etc.</span>
+  resourceId   String<span class="hljs-punctuation">?</span>
+  details      Json<span class="hljs-punctuation">?</span>
+  ipAddress    String<span class="hljs-punctuation">?</span>
+  userAgent    String<span class="hljs-punctuation">?</span>
+  createdAt    DateTime    @<span class="hljs-keyword">default</span>(<span class="hljs-title function_">now</span>())
+
+  actor        User        @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;AuditActor&quot;</span>, fields<span class="hljs-punctuation">:</span> [actorId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+  targetUser   User<span class="hljs-punctuation">?</span>       @<span class="hljs-title function_">relation</span>(<span class="hljs-string">&quot;AuditUser&quot;</span>, fields<span class="hljs-punctuation">:</span> [targetUserId], references<span class="hljs-punctuation">:</span> [<span class="hljs-keyword">id</span>])
+
+  @@<span class="hljs-title function_">index</span>([actorId])
+  @@<span class="hljs-title function_">index</span>([targetUserId])
+  @@<span class="hljs-title function_">index</span>([resource, resourceId])
+  @@<span class="hljs-title function_">index</span>([createdAt])
+  @@<span class="hljs-title function_">map</span>(<span class="hljs-string">&quot;audit_logs&quot;</span>)
+}
+</code></pre>
+<hr>
+<h2 id="database-schema-orm-design-3-entity-relationship-diagram" class="docmd-heading"><a href="#database-schema-orm-design-3-entity-relationship-diagram" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Entity Relationship Diagram</h2>
+<div class="mermaid">erDiagram
+    User ||--|| UserProfile : &quot;has&quot;
+    User ||--o{ SocialAccount : &quot;has&quot;
+    User ||--o{ RefreshToken : &quot;has&quot;
+    User ||--|| GamificationProfile : &quot;has&quot;
+    User ||--|| UserStreak : &quot;has&quot;
+    User ||--o{ UserBadge : &quot;earns&quot;
+    User ||--o{ XPTransaction : &quot;has&quot;
+    User ||--o{ DailyQuest : &quot;receives&quot;
+    User ||--o{ Enrollment : &quot;enrolls&quot;
+    User ||--o{ LessonProgress : &quot;tracks&quot;
+    User ||--o{ QuizAttempt : &quot;takes&quot;
+    User ||--o{ Certificate : &quot;earns&quot;
+    User ||--o{ LessonNote : &quot;writes&quot;
+    User ||--o{ CourseBookmark : &quot;saves&quot;
+    User ||--o{ CourseReview : &quot;writes&quot;
+    User ||--o{ Notification : &quot;receives&quot;
+    User ||--|| NotificationPreference : &quot;has&quot;
+    User ||--o{ SupportTicket : &quot;creates&quot;
+    User ||--o{ AIConversation : &quot;has&quot;
+    User ||--o{ Payment : &quot;makes&quot;
+    User ||--|| Subscription : &quot;has&quot;
+    User ||--o{ Course : &quot;trains&quot;
+    
+    Course ||--o{ CourseSection : &quot;has&quot;
+    Course ||--o{ Enrollment : &quot;has&quot;
+    Course ||--o{ CourseReview : &quot;has&quot;
+    Course ||--o{ Certificate : &quot;grants&quot;
+    Course ||--o{ Quiz : &quot;has&quot;
+    Course }|--|| Category : &quot;belongs to&quot;
+    
+    CourseSection ||--o{ Lesson : &quot;contains&quot;
+    Lesson ||--o{ LessonProgress : &quot;has&quot;
+    Lesson ||--o{ LessonNote : &quot;has&quot;
+    
+    Quiz ||--o{ QuizQuestion : &quot;has&quot;
+    Quiz ||--o{ QuizAttempt : &quot;has&quot;
+    
+    MembershipPlan ||--o{ Subscription : &quot;has&quot;
+    
+    Institution ||--o{ InstitutionMember : &quot;has&quot;
+    Institution ||--o{ InstitutionCourseAssignment : &quot;has&quot;
+    
+    Badge ||--o{ UserBadge : &quot;awarded as&quot;
+    
+    SupportTicket ||--o{ TicketMessage : &quot;has&quot;
+</div>
+<hr>
+<h2 id="database-schema-orm-design-4-key-database-indexes" class="docmd-heading"><a href="#database-schema-orm-design-4-key-database-indexes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Key Database Indexes</h2>
+<pre class="hljs"><code class="language-sql"><span class="hljs-punctuation">--</span> Performance<span class="hljs-punctuation">-</span>critical indexes beyond Prisma @@index
+
+<span class="hljs-punctuation">--</span> Full<span class="hljs-punctuation">-</span>text search on courses
+CREATE INDEX idx_courses_fts ON courses USING <span class="hljs-title function_">GIN</span>(<span class="hljs-title function_">to_tsvector</span>(<span class="hljs-string">&#039;english&#039;</span>, title <span class="hljs-punctuation">||</span> <span class="hljs-string">&#039; &#039;</span> <span class="hljs-punctuation">||</span> <span class="hljs-title function_">COALESCE</span>(short_description, <span class="hljs-string">&#039;&#039;</span>)));
+
+<span class="hljs-punctuation">--</span> Full<span class="hljs-punctuation">-</span>text search on users
+CREATE INDEX idx_users_fts ON users USING <span class="hljs-title function_">GIN</span>(<span class="hljs-title function_">to_tsvector</span>(<span class="hljs-string">&#039;english&#039;</span>, display_name <span class="hljs-punctuation">||</span> <span class="hljs-string">&#039; &#039;</span> <span class="hljs-punctuation">||</span> email));
+
+<span class="hljs-punctuation">--</span> <span class="hljs-title function_">Leaderboard</span> (weekly XP)
+CREATE INDEX idx_xp_transactions_weekly ON <span class="hljs-title function_">xp_transactions</span> (user_id, created_at DESC);
+
+<span class="hljs-punctuation">--</span> Active subscriptions lookup
+CREATE INDEX idx_subscriptions_active ON <span class="hljs-title function_">subscriptions</span> (status, current_period_end) WHERE status <span class="hljs-punctuation">=</span> <span class="hljs-string">&#039;ACTIVE&#039;</span>;
+
+<span class="hljs-punctuation">--</span> Notifications unread count
+CREATE INDEX idx_notifications_unread ON <span class="hljs-title function_">notifications</span> (user_id, is_read) WHERE is_read <span class="hljs-punctuation">=</span> <span class="hljs-keyword">false</span>;
+</code></pre>
+<hr>
+<h2 id="database-schema-orm-design-5-prisma-repository-pattern" class="docmd-heading"><a href="#database-schema-orm-design-5-prisma-repository-pattern" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Prisma Repository Pattern</h2>
+<pre class="hljs"><code class="language-typescript"><span class="hljs-comment">// repositories/course.repository.ts</span>
+<span class="hljs-keyword">import</span> { prisma } <span class="hljs-keyword">from</span> <span class="hljs-string">&#039;../lib/prisma&#039;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> courseRepository <span class="hljs-punctuation">=</span> {
+  <span class="hljs-keyword">async</span> <span class="hljs-title function_">findMany</span>(params<span class="hljs-punctuation">:</span> CourseQueryParams) {
+    <span class="hljs-keyword">const</span> { page <span class="hljs-punctuation">=</span> <span class="hljs-number">1</span>, limit <span class="hljs-punctuation">=</span> <span class="hljs-number">20</span>, category, level, search, sort <span class="hljs-punctuation">=</span> <span class="hljs-string">&#039;enrolledCount&#039;</span> } <span class="hljs-punctuation">=</span> params;
+
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">where</span> <span class="hljs-punctuation">=</span> {
+      status<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;PUBLISHED&#039;</span> <span class="hljs-keyword">as</span> <span class="hljs-keyword">const</span>,
+      deletedAt<span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>,
+      ...(category <span class="hljs-punctuation">&amp;&amp;</span> { category<span class="hljs-punctuation">:</span> { slug<span class="hljs-punctuation">:</span> category } }),
+      ...(level <span class="hljs-punctuation">&amp;&amp;</span> { level }),
+      ...(search <span class="hljs-punctuation">&amp;&amp;</span> {
+        OR<span class="hljs-punctuation">:</span> [
+          { title<span class="hljs-punctuation">:</span> { contains<span class="hljs-punctuation">:</span> search, mode<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;insensitive&#039;</span> <span class="hljs-keyword">as</span> <span class="hljs-keyword">const</span> } },
+          { shortDescription<span class="hljs-punctuation">:</span> { contains<span class="hljs-punctuation">:</span> search, mode<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;insensitive&#039;</span> <span class="hljs-keyword">as</span> <span class="hljs-keyword">const</span> } },
+          { tags<span class="hljs-punctuation">:</span> { has<span class="hljs-punctuation">:</span> search } },
+        ],
+      }),
+    };
+
+    <span class="hljs-keyword">const</span> [courses, total] <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> Promise.<span class="hljs-title function_">all</span>([
+      prisma.<span class="hljs-attr">course</span>.<span class="hljs-title function_">findMany</span>({
+        <span class="hljs-keyword">where</span>,
+        include<span class="hljs-punctuation">:</span> {
+          trainer<span class="hljs-punctuation">:</span> { <span class="hljs-keyword">select</span><span class="hljs-punctuation">:</span> { <span class="hljs-keyword">id</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, displayName<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, avatarUrl<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> } },
+          category<span class="hljs-punctuation">:</span> { <span class="hljs-keyword">select</span><span class="hljs-punctuation">:</span> { <span class="hljs-keyword">id</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, name<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>, slug<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> } },
+        },
+        orderBy<span class="hljs-punctuation">:</span> { [sort]<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;desc&#039;</span> },
+        skip<span class="hljs-punctuation">:</span> (page <span class="hljs-punctuation">-</span> <span class="hljs-number">1</span>) <span class="hljs-punctuation">*</span> limit,
+        take<span class="hljs-punctuation">:</span> limit,
+      }),
+      prisma.<span class="hljs-attr">course</span>.<span class="hljs-title function_">count</span>({ <span class="hljs-keyword">where</span> }),
+    ]);
+
+    <span class="hljs-keyword">return</span> { courses, total, page, limit, totalPages<span class="hljs-punctuation">:</span> Math.<span class="hljs-title function_">ceil</span>(total <span class="hljs-punctuation">/</span> limit) };
+  },
+
+  <span class="hljs-keyword">async</span> <span class="hljs-title function_">findByIdWithEnrollmentStatus</span>(courseId<span class="hljs-punctuation">:</span> string, userId<span class="hljs-punctuation">?:</span> string) {
+    <span class="hljs-keyword">const</span> [course, enrollment] <span class="hljs-punctuation">=</span> <span class="hljs-keyword">await</span> Promise.<span class="hljs-title function_">all</span>([
+      prisma.<span class="hljs-attr">course</span>.<span class="hljs-title function_">findUnique</span>({
+        <span class="hljs-keyword">where</span><span class="hljs-punctuation">:</span> { <span class="hljs-keyword">id</span><span class="hljs-punctuation">:</span> courseId, deletedAt<span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span> },
+        include<span class="hljs-punctuation">:</span> {
+          trainer<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+          category<span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>,
+          sections<span class="hljs-punctuation">:</span> {
+            orderBy<span class="hljs-punctuation">:</span> { order<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;asc&#039;</span> },
+            include<span class="hljs-punctuation">:</span> {
+              lessons<span class="hljs-punctuation">:</span> { orderBy<span class="hljs-punctuation">:</span> { order<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;asc&#039;</span> } },
+            },
+          },
+          reviews<span class="hljs-punctuation">:</span> { take<span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>, orderBy<span class="hljs-punctuation">:</span> { createdAt<span class="hljs-punctuation">:</span> <span class="hljs-string">&#039;desc&#039;</span> } },
+        },
+      }),
+      userId <span class="hljs-punctuation">?</span> prisma.<span class="hljs-attr">enrollment</span>.<span class="hljs-title function_">findUnique</span>({ <span class="hljs-keyword">where</span><span class="hljs-punctuation">:</span> { userId_courseId<span class="hljs-punctuation">:</span> { userId, courseId } } }) <span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span>,
+    ]);
+
+    <span class="hljs-keyword">return</span> { course, enrollment };
+  },
+};
+</code></pre>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../04_technical_architecture/backend_architecture_and_apis/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Backend Architecture &amp; API Specification
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Frontend Architecture — Flutter &amp; React/Next.js
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#database-schema-orm-design" class="toc-link">Database Schema &amp; ORM Design</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#database-schema-orm-design-1-schema-design-principles" class="toc-link">1. Schema Design Principles</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#database-schema-orm-design-2-complete-prisma-schema" class="toc-link">2. Complete Prisma Schema</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#database-schema-orm-design-3-entity-relationship-diagram" class="toc-link">3. Entity Relationship Diagram</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#database-schema-orm-design-4-key-database-indexes" class="toc-link">4. Key Database Indexes</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#database-schema-orm-design-5-prisma-repository-pattern" class="toc-link">5. Prisma Repository Pattern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/init-mermaid.js?v=mrau3vyn" type="module"></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

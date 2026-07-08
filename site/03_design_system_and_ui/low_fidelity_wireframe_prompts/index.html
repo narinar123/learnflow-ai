@@ -1,0 +1,1772 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Low-Fidelity Wireframe Prompts : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/03_design_system_and_ui/low_fidelity_wireframe_prompts/">
+<meta property="og:title" content="Low-Fidelity Wireframe Prompts - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/03_design_system_and_ui/low_fidelity_wireframe_prompts/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Low-Fidelity Wireframe Prompts - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/03_design_system_and_ui/low_fidelity_wireframe_prompts.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Low-Fidelity Wireframe Prompts
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Low-Fidelity%20Wireframe%20Prompts%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%20How%20to%20Use%20These%20Prompts%0A%0AThese%20prompts%20are%20designed%20for%20AI%20design%20tools%20(Figma%20AI%2C%20Galileo%20AI%2C%20Visily%2C%20Uizard%2C%20Midjourney%2C%20DALL%C2%B7E)%20and%20Figma%20FigJam%20rapid%20wireframing%20workflows.%20Use%20them%20in%20sequence%20to%20build%20out%20the%20full%20wireframe%20set%20for%20the%20platform.%20All%20wireframes%20should%3A%0A-%20Be%20in%20grayscale%20only%20(no%20color)%0A-%20Use%20placeholder%20text%20(%22Lorem%20Ipsum%22%20or%20%22%5BCourse%20Title%5D%22)%0A-%20Show%20structural%20hierarchy%20clearly%0A-%20Include%20navigation%20elements%0A-%20Mark%20interactive%20elements%20with%20simple%20annotations%0A%0A---%0A%0A%23%23%20Group%201%3A%20Authentication%20%26%20Onboarding%20Wireframes%0A%0A%23%23%23%20Prompt%201.1%20%E2%80%94%20Splash%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20(375%C3%97812px%2C%20iPhone%20frame)%20for%20an%20app%20splash%20screen.%0ALayout%3A%20Full-screen%20centered%20layout%20with%20a%20placeholder%20logo%20box%20at%20center%20(80%C3%9780px)%2C%20a%20wordmark%20text%20placeholder%20below%20it%2C%20a%20tagline%20text%20line%20below%20that%2C%20and%20two%20stacked%20button%20rectangles%20at%20the%20bottom%20(primary%20button%20%22Get%20Started%22%20and%20ghost%20button%20%22Log%20In%22).%20%0AAdd%20a%20subtle%20placeholder%20background%20pattern%20or%20lines.%20%0AUse%20only%20grayscale.%20No%20color.%20Label%20all%20elements.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.2%20%E2%80%94%20Register%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20(375%C3%97812px)%20for%20a%20user%20registration%20form%20screen.%0ALayout%3A%20Back%20arrow%20top%20left.%20Title%20%22Create%20Account%22%20(large%20text).%20Below%3A%20email%20input%20field%2C%20password%20input%20field%20with%20eye%20icon%20on%20right%2C%20confirm%20password%20field.%20Primary%20button%20%22Create%20Account%22%20full%20width.%20Horizontal%20%22OR%22%20divider.%20Two%20social%20login%20buttons%20stacked%20(Google%20icon%20placeholder%2C%20Apple%20icon%20placeholder).%20Footer%20text%20%22Already%20have%20an%20account%3F%20Log%20In%22.%0AUse%20only%20grayscale.%20Show%20field%20labels%20above%20each%20input.%20Mark%20the%20submit%20button%20as%20primary%20with%20darker%20fill.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.3%20%E2%80%94%20OTP%20Verification%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20an%20OTP%20verification%20screen.%0ALayout%3A%20Large%20icon%20at%20top%20(phone%2Femail%20icon%20circle%20placeholder).%20Title%20%22Enter%20verification%20code%22.%20Subtitle%20text%20%22Sent%20to%20%5Bemail%40example.com%5D%22.%20Six%20square%20input%20boxes%20side%20by%20side%20in%20a%20row%20(OTP%20input).%20Below%3A%20resend%20countdown%20text%20%22Resend%20in%2000%3A28%22.%20Skip%20link%20at%20bottom.%0AUse%20only%20grayscale.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.4%20%E2%80%94%20Onboarding%20Step%201%3A%20Role%20Selection%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20an%20onboarding%20role%20selection%20screen.%0ALayout%3A%20Progress%20indicator%20at%20top%20(5%20dots%2C%201%20filled).%20Title%20%22How%20will%20you%20use%20the%20app%3F%22.%202%C3%972%20grid%20of%20selection%20cards%2C%20each%20card%20has%3A%20a%20square%20icon%20placeholder%2C%20a%20title%2C%20and%201%20line%20of%20description%20text.%20Cards%20have%20a%20border.%20%22Continue%22%20primary%20button%20at%20bottom.%20Skip%20text%20link.%0AUse%20only%20grayscale.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.5%20%E2%80%94%20Onboarding%20Step%202%3A%20Goal%20Selection%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20goal%20selection%20screen.%0ALayout%3A%20Progress%20dots%20(2%20of%205%20filled).%20Title%20%22What&#039;s%20your%20main%20goal%3F%22.%202%C3%973%20grid%20of%20goal%20cards%20(icon%20placeholder%20%2B%20label).%20Multiple%20selection%20allowed.%20%22Continue%22%20primary%20button.%20Skip%20link.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.6%20%E2%80%94%20Onboarding%20Step%203%3A%20Interest%20Selection%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20topic%2Finterest%20selection.%0ALayout%3A%20Progress%20dots%20(3%2F5).%20Title%20%22What%20topics%20interest%20you%3F%22.%20Wrapping%20chip%20grid%20of%2012%20chips%20with%20labels%20(Technology%2C%20Design%2C%20Business%2C%20Finance%2C%20etc.).%20Chips%20are%20rounded%20rectangles.%20Selected%20state%3A%20darker%20fill.%20Counter%3A%20%223%20selected%20(min%202)%22.%20Continue%20button.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.7%20%E2%80%94%20Onboarding%20Step%204%3A%20Daily%20Schedule%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20daily%20learning%20schedule%20setup%20screen.%0ALayout%3A%20Progress%20dots%20(4%2F5).%20Title%20%22How%20much%20time%20per%20day%3F%22.%20Row%20of%205%20option%20buttons%20(pill%20shape)%3A%20%225min%22%2C%20%2215min%22%2C%20%2230min%22%2C%20%221hr%22%2C%20%22AI%20Pick%22.%20One%20selected%20state%20shown.%20Descriptive%20text%20below%20selection.%20Continue%20button.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.8%20%E2%80%94%20Onboarding%20Step%205%3A%20Profile%20Setup%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20profile%20setup.%0ALayout%3A%20Progress%20dots%20(5%2F5).%20Large%20circular%20avatar%20placeholder%20with%20%22%2B%22%20add%20icon.%20Name%20text%20input%20below.%20Age%20range%20dropdown%20field.%20%22Complete%20Setup%22%20primary%20button.%20%22Skip%20for%20now%22%20link.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%201.9%20%E2%80%94%20Personalized%20Recommendations%20Preview%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20post-onboarding%20course%20recommendation%20screen.%0ALayout%3A%20Celebratory%20header%20area%20with%20sparkles%2Fstars%20placeholder%20icons.%20Title%20text%20%22We%20found%20courses%20for%20you!%22%20Horizontal%20scroll%20row%20of%205%20course%20cards%20(each%3A%20rectangle%20thumbnail%20%2B%20title%20text%20%2B%20small%20chip%20tag).%20%22Start%20Learning%22%20primary%20button.%20%22Explore%20All%20Courses%22%20secondary%20link.%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%202%3A%20Dashboard%20%26%20Navigation%20Wireframes%0A%0A%23%23%23%20Prompt%202.1%20%E2%80%94%20Dashboard%20(Home%20Screen)%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20learning%20app%20home%2Fdashboard%20screen.%0ALayout%20from%20top%20to%20bottom%3A%0A-%20Top%20bar%3A%20avatar%20circle%20(left)%2C%20title%20%22Good%20morning%20%5BName%5D%22%2C%20bell%20icon%20(right)%0A-%20Streak%20banner%20card%3A%20flame%20icon%20%2B%20%227%20day%20streak%22%20%2B%20goal%20progress%20bar%0A-%20Section%20%22Continue%20Learning%22%3A%20single%20large%20course%20card%20with%20progress%20bar%0A-%20Section%20header%20%22Daily%20Quests%22%20with%20%22See%20all%22%20link%3A%203%20small%20quest%20item%20rows%0A-%20Section%20header%20%22For%20You%22%3A%20horizontal%20scroll%20of%203%20course%20cards%20(each%3A%20thumbnail%20rectangle%20%2B%20title%20%2B%20rating)%0A-%20Section%20header%20%22New%20Courses%22%3A%20horizontal%20scroll%20of%203%20course%20cards%0A-%20Bottom%3A%20tab%20bar%20with%205%20icons%20(home%2C%20courses%2C%20AI%20robot%2C%20chart%2C%20person)%0AGrayscale%20only.%20Label%20each%20section.%0A%60%60%60%0A%0A%23%23%23%20Prompt%202.2%20%E2%80%94%20Tab%20Bar%20Navigation%0A%60%60%60%0ACreate%20a%20low-fidelity%20wireframe%20showing%20the%20bottom%20tab%20bar%20component%20for%20a%20mobile%20app.%0A5%20tabs%3A%20Home%20(house%20icon)%2C%20Courses%20(grid%20icon)%2C%20AI%20(robot%2Fsparkle%20icon)%2C%20Progress%20(chart%20icon)%2C%20Profile%20(person%20icon).%0AActive%20state%3A%20filled%20icon%20%2B%20label%20%2B%20indicator%20dot%20below.%20Inactive%3A%20outline%20icon%20%2B%20label.%0AShow%20at%20375px%20width%2C%2064px%20height.%20Grayscale.%0A%60%60%60%0A%0A%23%23%23%20Prompt%202.3%20%E2%80%94%20Dashboard%20(Web%2FDesktop%20Layout)%0A%60%60%60%0ACreate%20a%20low-fidelity%20wireframe%20for%20a%20web%20app%20dashboard%20in%201280px%20width.%0ALayout%3A%20%0A-%20Left%3A%20sidebar%20240px%20with%20logo%20at%20top%20%2B%208%20nav%20items%20listed%20vertically%20%2B%20user%20info%20at%20bottom%0A-%20Main%20area%3A%20%0A%20%20-%20Top%3A%20greeting%20%2B%20search%20bar%20%2B%20notification%20bell%20%2B%20avatar%0A%20%20-%204%20KPI%20stat%20cards%20in%20a%20row%0A%20%20-%202-column%20grid%3A%20%22Continue%20Learning%22%20card%20(left)%20%2B%20%22Daily%20Quests%22%20card%20(right)%0A%20%20-%20Full-width%20%22Recommended%20Courses%22%20section%20with%204%20course%20cards%20in%20a%20row%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%203%3A%20Course%20Discovery%20Wireframes%0A%0A%23%23%23%20Prompt%203.1%20%E2%80%94%20Course%20Catalog%20%2F%20Browse%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20course%20catalog%2Fbrowse%20screen.%0ALayout%3A%0A-%20Top%3A%20search%20bar%20with%20filter%20icon%0A-%20Category%20horizontal%20scroll%20chips%20(6%20visible%3A%20All%2C%20Technology%2C%20Design%2C%20Business...)%0A-%202-column%20course%20card%20grid%20below%20(each%20card%3A%20thumbnail%20rectangle%2016%3A9%2C%20title%20text%2C%20rating%2C%20price%20tag)%0A-%20Filter%20icon%20leads%20to%20bottom%20sheet%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%203.2%20%E2%80%94%20Filter%20Bottom%20Sheet%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20of%20a%20filter%20bottom%20sheet%20overlay.%0AShow%3A%20handle%20bar%20at%20top.%20%22Filter%20Courses%22%20title.%20Sections%3A%20Level%20(3%20radio%20buttons)%2C%20Duration%20(4%20radio%20buttons)%2C%20Rating%20(3%20options%20with%20stars%20placeholder)%2C%20Price%20(3%20radio%20buttons).%20Two%20buttons%20at%20bottom%3A%20%22Clear%22%20(ghost)%20and%20%22Apply%20Filters%22%20(primary).%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%203.3%20%E2%80%94%20Course%20Detail%20Page%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20course%20detail%20page.%0ALayout%20from%20top%20to%20bottom%3A%0A-%20Hero%20thumbnail%20image%20rectangle%20(16%3A9%20ratio%2C%20full%20width)%0A-%20Course%20title%20(large%20text%2C%202%20lines)%0A-%20Badges%20row%3A%20level%20badge%2C%20duration%20badge%2C%20language%20badge%0A-%20Rating%20row%3A%20stars%20placeholder%20%2B%20%221%2C234%20ratings%22%20%2B%20enrolled%20count%0A-%20Tab%20row%3A%20Overview%20%7C%20Curriculum%20%7C%20Reviews%20%7C%20Instructor%0A-%20Content%20area%20(Overview%20active)%3A%20%22What%20you&#039;ll%20learn%22%20section%20with%205%20bullet%20items%2C%20description%20text%20block%0A-%20Sticky%20bottom%20bar%3A%20price%20text%20%2B%20%22Enroll%20Now%22%20primary%20button%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%203.4%20%E2%80%94%20Curriculum%20Tab%20(Course%20Detail)%0A%60%60%60%0ACreate%20a%20low-fidelity%20wireframe%20for%20the%20curriculum%20tab%20content%20within%20a%20course%20detail%20screen.%0AShow%20accordion%20sections%3A%20%22Section%201%3A%20Introduction%22%20(expanded%2C%20shows%203%20lesson%20rows%20each%20with%3A%20play%20icon%2C%20title%2C%20duration).%20%22Section%202%3A%20Core%20Concepts%22%20(collapsed).%20%22Section%203%3A%20Advanced%22%20(collapsed%20with%20lock%20icon%20%E2%80%94%20locked%20content).%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%204%3A%20Lesson%20Player%20Wireframes%0A%0A%23%23%23%20Prompt%204.1%20%E2%80%94%20Video%20Lesson%20Player%20(Portrait%20Mobile)%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20video%20lesson%20player%20screen.%0ALayout%3A%0A-%20Video%20player%20area%20(16%3A9%20aspect%20ratio%2C%20top%20of%20screen)%3A%20shows%20play%20controls%20overlay%20(play%2Fpause%20circle%2C%20seek%20bar%20with%20progress%2C%20timestamp%20left%2C%20duration%20right%2C%20fullscreen%20icon%20right)%0A-%20Below%20video%3A%20lesson%20title%20text%2C%20breadcrumb%20%22Course%20%3E%20Section%20%3E%20Lesson%22%0A-%203%20tabs%20below%3A%20Notes%20%7C%20Resources%20%7C%20AI%20Help%0A-%20%22Notes%22%20tab%20content%3A%20text%20area%20placeholder%0A-%20Bottom%20sticky%20bar%3A%20Back%20button%20%2B%20lesson%20count%20%223%20of%2012%22%20%2B%20Next%20button%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%204.2%20%E2%80%94%20Video%20Player%20(Landscape%20%2F%20Fullscreen)%0A%60%60%60%0ACreate%20a%20low-fidelity%20landscape%20wireframe%20(812%C3%97375px)%20for%20fullscreen%20video%20lesson%20playback.%0AShow%3A%20Controls%20overlay%20at%20bottom%3A%20left%20side%20(back%2010s%20button%2C%20play%2Fpause%2C%20forward%2010s)%2C%20center%20(progress%20bar%20%2B%20timestamp)%2C%20right%20side%20(volume%2C%20settings%2C%20exit%20fullscreen).%20Top%20left%3A%20back%20arrow%20%2B%20lesson%20title.%20Controls%20auto-hide%20indicator.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%204.3%20%E2%80%94%20Notes%20Panel%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20the%20notes%20panel%20within%20a%20lesson.%0AShow%3A%20Text%20area%20with%20formatted%20note%20entries.%20Toolbar%20above%20textarea%3A%20Bold%20%7C%20Italic%20%7C%20Bullet%20%7C%20Heading%20%7C%20Insert%20timestamp%20buttons.%20%22Add%20note%22%20placeholder%20text%20in%20textarea.%20Below%3A%20list%20of%20saved%20notes%20with%20timestamps%20(e.g.%2C%20%22%5B4%3A32%5D%20Key%20concept%3A%20...%22).%20Export%20button.%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%205%3A%20Quiz%20Wireframes%0A%0A%23%23%23%20Prompt%205.1%20%E2%80%94%20Quiz%20Intro%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20quiz%20introduction%20screen.%0AShow%3A%20Quiz%20title.%204%20info%20cards%20in%202%C3%972%20grid%3A%20Questions%20count%2C%20Time%20limit%2C%20Passing%20score%2C%20Attempts%20remaining.%20%22Start%20Quiz%22%20primary%20button.%20%22Review%20materials%20first%22%20link%20below%20button.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%205.2%20%E2%80%94%20Quiz%20Question%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20multiple-choice%20quiz%20question%20screen.%0ALayout%3A%0A-%20Top%3A%20progress%20%22Q%203%20of%2010%22%20%2B%20timer%20bar%20(full%20width%2C%20shows%20time%20remaining)%0A-%20Question%20card%3A%20large%20question%20text%0A-%204%20answer%20option%20items%20(rounded%20rectangle%2C%20each%20with%20radio%20circle%20left%20%2B%20answer%20text)%0A-%20One%20option%20shown%20selected%20(filled%20circle)%0A-%20%22Next%22%20primary%20button%20at%20bottom%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%205.3%20%E2%80%94%20Quiz%20Results%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20quiz%20results.%0ALayout%3A%0A-%20Large%20circular%20progress%20indicator%20showing%20score%20(e.g.%2C%208%2F10)%20at%20center%0A-%20Below%3A%20pass%2Ffail%20text%2C%20XP%20badge%0A-%20Stats%20row%3A%20Time%20%7C%20Correct%20%7C%20Incorrect%0A-%20Two%20buttons%3A%20%22Review%20Answers%22%20(secondary)%20%2B%20%22Continue%20Course%22%20(primary)%0A-%20%22Explain%20with%20AI%22%20link%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%206%3A%20AI%20Assistant%20Wireframes%0A%0A%23%23%23%20Prompt%206.1%20%E2%80%94%20AI%20Chat%20(Slide-up%20Drawer%2C%20Mobile)%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20slide-up%20AI%20chat%20assistant%20drawer.%0AShow%3A%20handle%20bar%20at%20top.%20Header%3A%20%22AI%20Tutor%22%20title%20%2B%20query%20count%20%228%2F10%20queries%22%20%2B%20close%20X.%20Chat%20messages%20area%3A%202%20user%20message%20bubbles%20(right-aligned%20rectangles)%20and%202%20AI%20response%20bubbles%20(left-aligned%2C%20slightly%20taller%20with%20action%20chips%20below).%20Quick%20suggestions%3A%20horizontal%20scroll%20of%204%20chip%20buttons%20at%20top%20of%20input%20area.%20Bottom%3A%20text%20input%20field%20%2B%20send%20button%20%2B%20mic%20icon.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%206.2%20%E2%80%94%20AI%20Study%20Plan%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20an%20AI-generated%20study%20plan.%0AShow%3A%20%22Your%20Study%20Plan%22%20header.%20Input%20summary%20cards%3A%20Goal%2C%20Time%20available%2C%20Start%20date.%20Below%3A%20weekly%20plan%20list%20(Week%201%2C%20Week%202%2C%20Week%203%20rows%2C%20each%20with%20course%20placeholder%20%2B%20time%20estimate).%20%22Regenerate%20Plan%22%20button.%20%22Start%20Week%201%22%20primary%20button.%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%207%3A%20Gamification%20Wireframes%0A%0A%23%23%23%20Prompt%207.1%20%E2%80%94%20Progress%20%2F%20XP%20Dashboard%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20progress%20and%20XP%20dashboard.%0ALayout%3A%0A-%20Top%20section%3A%20user%20level%20label%2C%20circular%20XP%20progress%20ring%2C%20%22Level%205%20%E2%80%A2%201%2C234%20XP%22%20text%2C%20%22456%20XP%20to%20next%20level%22%20subtext%0A-%20Stats%20row%3A%204%20stat%20boxes%20(Courses%20done%2C%20Hours%2C%20Certificates%2C%20Badges)%0A-%20Streak%20widget%3A%20flame%20icon%20%2B%20%2214%20day%20streak%22%20%2B%20goal%20progress%20bar%0A-%20Weekly%20activity%3A%207%20bar%20chart%20placeholders%20for%20each%20day%20of%20the%20week%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%207.2%20%E2%80%94%20Badge%20Collection%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20badge%20collection%20gallery.%0AShow%3A%20Title%20%22My%20Badges%22.%20Two%20sections%3A%20%22Earned%20(12)%22%20grid%20of%204%C3%973%20filled%20badge%20circles%20with%20labels.%20%22Locked%20(8)%22%20grid%20of%20greyed-out%20circles%20with%20lock%20icon%20overlays.%20Tap%20indicator%20on%20a%20badge%20showing%20a%20modal%20popup%20wireframe%20with%3A%20badge%20name%2C%20description%2C%20criteria%2C%20date%20earned.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%207.3%20%E2%80%94%20Leaderboard%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20leaderboard%20screen.%0ALayout%3A%204%20tab%20chips%3A%20Global%20%7C%20Course%20%7C%20Friends%20%7C%20Institution.%20Top%203%20podium%20visual%20(3%20rectangles%20with%20%221%22%2C%20%222%22%2C%20%223%22%20ranks).%20Below%3A%20ranked%20list%20items%20(rank%20number%20%2B%20avatar%20circle%20%2B%20name%20text%20%2B%20XP%20amount).%20User&#039;s%20own%20rank%20item%20at%20bottom%20(sticky%2C%20highlighted%20with%20border).%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%208%3A%20Membership%20%26%20Payment%20Wireframes%0A%0A%23%23%23%20Prompt%208.1%20%E2%80%94%20Membership%20Plans%20Page%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20subscription%20plans%20page.%0ALayout%3A%0A-%20Toggle%20switch%20row%3A%20%22Monthly%20%7C%20Annual%20(Save%2020%25)%22%0A-%203%20plan%20cards%20stacked%20vertically%20(Free%2C%20Pro%2C%20Premium)%2C%20each%20with%3A%20plan%20name%2C%20price%2C%20divider%2C%20feature%20checklist%20(5%20items%20each%20with%20check%2Fcross%20icons%2C%20text).%20CTA%20button%20in%20each%20card.%0A-%20%22Pro%22%20card%20has%20a%20%22Most%20Popular%22%20badge%20chip%20at%20top%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%208.2%20%E2%80%94%20Payment%20Screen%0A%60%60%60%0ACreate%20a%20low-fidelity%20mobile%20wireframe%20for%20a%20payment%20checkout%20screen.%0ALayout%3A%0A-%20Order%20summary%20card%3A%20plan%20name%2C%20price%2C%20discount%2C%20total%0A-%20Payment%20method%3A%20tab%20row%20(UPI%20%7C%20Card%20%7C%20Net%20Banking)%0A-%20UPI%20section%3A%20text%20input%20%22Enter%20UPI%20ID%22%20%2B%20%22Pay%20via%20app%22%20buttons%20(GPay%2C%20PhonePe%20icons%20placeholder)%0A-%20%22Pay%20%E2%82%B9599%22%20primary%20button%20full%20width%0A-%20Security%20badge%20row%20at%20bottom%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%209%3A%20Admin%20Panel%20Wireframes%0A%0A%23%23%23%20Prompt%209.1%20%E2%80%94%20Admin%20Dashboard%20(Desktop)%0A%60%60%60%0ACreate%20a%20low-fidelity%20desktop%20wireframe%20(1280%C3%97800px)%20for%20an%20admin%20dashboard.%0ALayout%3A%0A-%20Left%20sidebar%20(240px)%3A%20logo%20area%2C%20nav%20items%20list%20(Dashboard%2C%20Users%2C%20Courses%2C%20Payments%2C%20Notifications%2C%20Support%2C%20Settings)%0A-%20Main%20content%3A%0A%20%20-%20Header%3A%20page%20title%20%2B%20notification%20bell%20%2B%20user%20avatar%0A%20%20-%205%20KPI%20stat%20boxes%20in%20a%20row%0A%20%20-%202-column%20charts%20section%3A%20revenue%20bar%20chart%20(left)%20%2B%20user%20growth%20line%20chart%20(right)%0A%20%20-%20Bottom%3A%20data%20table%20with%20columns%20%5BName%2C%20Email%2C%20Role%2C%20Status%2C%20Actions%5D%20%E2%80%94%20show%205%20rows%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%209.2%20%E2%80%94%20User%20Management%20Screen%20(Admin)%0A%60%60%60%0ACreate%20a%20low-fidelity%20desktop%20wireframe%20for%20a%20user%20management%20table.%0AShow%3A%20Page%20title%20%22Users%22.%20Top%20bar%3A%20search%20input%20%2B%20filter%20button%20%2B%20%22Export%22%20button.%0AData%20table%20with%20sortable%20column%20headers%3A%20Checkbox%20%7C%20Name%20%7C%20Email%20%7C%20Role%20%7C%20Plan%20%7C%20Status%20%7C%20Last%20Active%20%7C%20Actions.%0AShow%205%20table%20rows.%20Status%20shown%20as%20badge%20chips.%20Actions%3A%20ellipsis%20menu%20icon.%0APagination%20at%20bottom.%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%209.3%20%E2%80%94%20Trainer%20Course%20Builder%20(Desktop)%0A%60%60%60%0ACreate%20a%20low-fidelity%20desktop%20wireframe%20for%20a%20course%20creation%20wizard.%0ALayout%3A%20Step%20indicator%20at%20top%20(5%20steps%3A%20Details%2C%20Curriculum%2C%20Pricing%2C%20Preview%2C%20Submit)%20with%20step%201%20active.%0AMain%20area%3A%20form%20with%3A%20Course%20title%20input%2C%20Description%20textarea%2C%20Category%20dropdown%2C%20Level%20radio%20buttons%2C%20Thumbnail%20upload%20area%20(dashed%20border%20rectangle)%2C%20Promotional%20video%20upload%20area.%0ARight%20sidebar%3A%20%22Tips%22%20card%20with%20bullet%20tips.%0ABottom%3A%20Back%20%2B%20Next%20buttons.%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Group%2010%3A%20Marketing%20Website%20Wireframes%0A%0A%23%23%23%20Prompt%2010.1%20%E2%80%94%20Marketing%20Website%20Home%20(Desktop)%0A%60%60%60%0ACreate%20a%20low-fidelity%20desktop%20wireframe%20(1280px%20width)%20for%20a%20learning%20platform%20marketing%20homepage.%0ASections%20from%20top%20to%20bottom%3A%0A1.%20Navigation%20bar%3A%20logo%20left%2C%20links%20center%20(Features%2C%20Courses%2C%20Pricing%2C%20About)%2C%20CTAs%20right%20(Log%20In%20%2B%20Get%20Started%20button)%0A2.%20Hero%20section%3A%20Headline%20text%20%2B%20subheadline%20%2B%202%20CTA%20buttons%20%2B%20large%20device%20mockup%20rectangle%20(right%20side)%0A3.%20Social%20proof%20bar%3A%20%22Trusted%20by...%22%20%2B%205%20company%20logo%20placeholders%20in%20a%20row%0A4.%20Features%20section%3A%20%22Why%20LearnFlow%20AI%22%20heading%20%2B%203%20feature%20cards%20in%20a%20row%20(icon%20%2B%20title%20%2B%20description)%0A5.%20Testimonials%3A%20heading%20%2B%203%20testimonial%20cards%0A6.%20App%20download%3A%20heading%20%2B%20App%20Store%20badge%20%2B%20Play%20Store%20badge%0A7.%20Footer%3A%204-column%20link%20grid%20%2B%20copyright%0AGrayscale%20only.%0A%60%60%60%0A%0A%23%23%23%20Prompt%2010.2%20%E2%80%94%20Pricing%20Page%20(Desktop)%0A%60%60%60%0ACreate%20a%20low-fidelity%20desktop%20wireframe%20for%20a%20pricing%20page.%0ALayout%3A%0A-%20Header%3A%20%22Simple%2C%20Transparent%20Pricing%22%20%2B%20Monthly%2FAnnual%20toggle%0A-%203%20plan%20card%20columns%20(Free%2C%20Pro%2C%20Premium)%3A%20price%2C%20divider%2C%208%20feature%20rows%20each%20with%20check%2FX%0A-%20Feature%20comparison%20table%20below%20the%20cards%20with%20checkmarks%0A-%20FAQ%20accordion%20section%3A%205%20question%20rows%20with%20expand%20indicator%0A-%20Enterprise%20CTA%20band%20at%20bottom%0AGrayscale%20only.%0A%60%60%60%0A%0A---%0A%0A%23%23%20Wireframe%20Annotation%20Standards%0A%0AWhen%20adding%20annotations%20to%20all%20wireframes%2C%20use%20this%20convention%3A%0A%60%60%60%0A%5BA%5D%20%3D%20Interactive%20element%20(tappable%2Fclickable)%0A%5BB%5D%20%3D%20Auto-populated%20data%20from%20API%0A%5BC%5D%20%3D%20State-dependent%20element%20(changes%20based%20on%20conditions)%0A%5BD%5D%20%3D%20Accessibility%20label%20required%0A%5BE%5D%20%3D%20Navigation%20destination%0A%60%60%60%0A%0AExample%20annotation%20note%3A%20%60%22%5BA%5D%20Taps%20to%20navigate%20to%20Course%20Detail%20page%20%5BE%5D.%20%5BD%5D%20Requires%20aria-label%3A%20&#039;View%20Python%20Basics%20course%20details&#039;%22%60%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>03 Design System And Ui</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Low-Fidelity Wireframe Prompts</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="low-fidelity-wireframe-prompts" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Low-Fidelity Wireframe Prompts</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-how-to-use-these-prompts" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-how-to-use-these-prompts" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>How to Use These Prompts</h2>
+<p>These prompts are designed for AI design tools (Figma AI, Galileo AI, Visily, Uizard, Midjourney, DALL·E) and Figma FigJam rapid wireframing workflows. Use them in sequence to build out the full wireframe set for the platform. All wireframes should:</p>
+<ul>
+<li>Be in grayscale only (no color)</li>
+<li>Use placeholder text (“Lorem Ipsum” or “[Course Title]”)</li>
+<li>Show structural hierarchy clearly</li>
+<li>Include navigation elements</li>
+<li>Mark interactive elements with simple annotations</li>
+</ul>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 1: Authentication &amp; Onboarding Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-11-splash-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-11-splash-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.1 — Splash Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile <span class="hljs-title function_">wireframe</span> (<span class="hljs-number">375</span>×812px, iPhone frame) <span class="hljs-keyword">for</span> an app splash screen.
+Layout<span class="hljs-punctuation">:</span> Full<span class="hljs-punctuation">-</span>screen centered layout <span class="hljs-keyword">with</span> a placeholder logo box at <span class="hljs-title function_">center</span> (<span class="hljs-number">80</span>×80px), a wordmark text placeholder below it, a tagline text line below that, and two stacked button rectangles at the <span class="hljs-title function_">bottom</span> (primary button <span class="hljs-string">&quot;Get Started&quot;</span> and ghost button <span class="hljs-string">&quot;Log In&quot;</span>). 
+Add a subtle placeholder background pattern or lines. 
+Use only grayscale. No color. Label all elements.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-12-register-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-12-register-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.2 — Register Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile <span class="hljs-title function_">wireframe</span> (<span class="hljs-number">375</span>×812px) <span class="hljs-keyword">for</span> a user registration form screen.
+Layout<span class="hljs-punctuation">:</span> Back arrow <span class="hljs-keyword">top</span> left. Title <span class="hljs-string">&quot;Create Account&quot;</span> (large text). Below<span class="hljs-punctuation">:</span> email input field, password input field <span class="hljs-keyword">with</span> eye icon on right, confirm password field. Primary button <span class="hljs-string">&quot;Create Account&quot;</span> full width. Horizontal <span class="hljs-string">&quot;OR&quot;</span> divider. Two social login buttons <span class="hljs-title function_">stacked</span> (Google icon placeholder, Apple icon placeholder). Footer text <span class="hljs-string">&quot;Already have an account? Log In&quot;</span>.
+Use only grayscale. Show field labels above each input. Mark the submit button <span class="hljs-keyword">as</span> primary <span class="hljs-keyword">with</span> darker fill.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-13-otp-verification" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-13-otp-verification" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.3 — OTP Verification</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> an OTP verification screen.
+Layout<span class="hljs-punctuation">:</span> Large icon at <span class="hljs-keyword">top</span> (phone<span class="hljs-punctuation">/</span>email icon circle placeholder). Title <span class="hljs-string">&quot;Enter verification code&quot;</span>. Subtitle text <span class="hljs-string">&quot;Sent to [email@example.com]&quot;</span>. Six square input boxes side by side <span class="hljs-keyword">in</span> a <span class="hljs-title function_">row</span> (OTP input). Below<span class="hljs-punctuation">:</span> resend countdown text <span class="hljs-string">&quot;Resend in 00:28&quot;</span>. Skip link at bottom.
+Use only grayscale.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-14-onboarding-step-1-role-selection" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-14-onboarding-step-1-role-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.4 — Onboarding Step 1: Role Selection</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> an onboarding role selection screen.
+Layout<span class="hljs-punctuation">:</span> Progress indicator at <span class="hljs-keyword">top</span> (<span class="hljs-number">5</span> dots, <span class="hljs-number">1</span> filled). Title <span class="hljs-string">&quot;How will you use the app?&quot;</span>. <span class="hljs-number">2</span>×<span class="hljs-number">2</span> grid <span class="hljs-keyword">of</span> selection cards, each card has<span class="hljs-punctuation">:</span> a square icon placeholder, a title, and <span class="hljs-number">1</span> line <span class="hljs-keyword">of</span> description text. Cards have a border. <span class="hljs-string">&quot;Continue&quot;</span> primary button at bottom. Skip text link.
+Use only grayscale.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-15-onboarding-step-2-goal-selection" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-15-onboarding-step-2-goal-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.5 — Onboarding Step 2: Goal Selection</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a goal selection screen.
+Layout<span class="hljs-punctuation">:</span> Progress <span class="hljs-title function_">dots</span> (<span class="hljs-number">2</span> <span class="hljs-keyword">of</span> <span class="hljs-number">5</span> filled). Title <span class="hljs-string">&quot;What&#039;s your main goal?&quot;</span>. <span class="hljs-number">2</span>×<span class="hljs-number">3</span> grid <span class="hljs-keyword">of</span> goal <span class="hljs-title function_">cards</span> (icon placeholder <span class="hljs-punctuation">+</span> label). Multiple selection allowed. <span class="hljs-string">&quot;Continue&quot;</span> primary button. Skip link.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-16-onboarding-step-3-interest-selection" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-16-onboarding-step-3-interest-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.6 — Onboarding Step 3: Interest Selection</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> topic<span class="hljs-punctuation">/</span>interest selection.
+Layout<span class="hljs-punctuation">:</span> Progress <span class="hljs-title function_">dots</span> (<span class="hljs-number">3</span><span class="hljs-punctuation">/</span><span class="hljs-number">5</span>). Title <span class="hljs-string">&quot;What topics interest you?&quot;</span>. Wrapping chip grid <span class="hljs-keyword">of</span> <span class="hljs-number">12</span> chips <span class="hljs-keyword">with</span> <span class="hljs-title function_">labels</span> (Technology, Design, Business, Finance, etc.). Chips are rounded rectangles. Selected state<span class="hljs-punctuation">:</span> darker fill. Counter<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;3 selected (min 2)&quot;</span>. Continue button.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-17-onboarding-step-4-daily-schedule" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-17-onboarding-step-4-daily-schedule" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.7 — Onboarding Step 4: Daily Schedule</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a daily learning schedule setup screen.
+Layout<span class="hljs-punctuation">:</span> Progress <span class="hljs-title function_">dots</span> (<span class="hljs-number">4</span><span class="hljs-punctuation">/</span><span class="hljs-number">5</span>). Title <span class="hljs-string">&quot;How much time per day?&quot;</span>. Row <span class="hljs-keyword">of</span> <span class="hljs-number">5</span> option <span class="hljs-title function_">buttons</span> (pill shape)<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5min&quot;</span>, <span class="hljs-string">&quot;15min&quot;</span>, <span class="hljs-string">&quot;30min&quot;</span>, <span class="hljs-string">&quot;1hr&quot;</span>, <span class="hljs-string">&quot;AI Pick&quot;</span>. One selected state shown. Descriptive text below selection. Continue button.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-18-onboarding-step-5-profile-setup" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-18-onboarding-step-5-profile-setup" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.8 — Onboarding Step 5: Profile Setup</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> profile setup.
+Layout<span class="hljs-punctuation">:</span> Progress <span class="hljs-title function_">dots</span> (<span class="hljs-number">5</span><span class="hljs-punctuation">/</span><span class="hljs-number">5</span>). Large circular avatar placeholder <span class="hljs-keyword">with</span> <span class="hljs-string">&quot;+&quot;</span> add icon. Name text input below. Age range dropdown field. <span class="hljs-string">&quot;Complete Setup&quot;</span> primary button. <span class="hljs-string">&quot;Skip for now&quot;</span> link.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-19-personalized-recommendations-preview" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-19-personalized-recommendations-preview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 1.9 — Personalized Recommendations Preview</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a post<span class="hljs-punctuation">-</span>onboarding course recommendation screen.
+Layout<span class="hljs-punctuation">:</span> Celebratory header area <span class="hljs-keyword">with</span> sparkles<span class="hljs-punctuation">/</span>stars placeholder icons. Title text <span class="hljs-string">&quot;We found courses for you!&quot;</span> Horizontal scroll row <span class="hljs-keyword">of</span> <span class="hljs-number">5</span> course <span class="hljs-title function_">cards</span> (each<span class="hljs-punctuation">:</span> rectangle thumbnail <span class="hljs-punctuation">+</span> title text <span class="hljs-punctuation">+</span> small chip tag). <span class="hljs-string">&quot;Start Learning&quot;</span> primary button. <span class="hljs-string">&quot;Explore All Courses&quot;</span> secondary link.
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 2: Dashboard &amp; Navigation Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-21-dashboard-home-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-21-dashboard-home-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 2.1 — Dashboard (Home Screen)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a learning app home<span class="hljs-punctuation">/</span>dashboard screen.
+Layout <span class="hljs-keyword">from</span> <span class="hljs-keyword">top</span> to bottom<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Top bar<span class="hljs-punctuation">:</span> avatar <span class="hljs-title function_">circle</span> (left), title <span class="hljs-string">&quot;Good morning [Name]&quot;</span>, bell <span class="hljs-title function_">icon</span> (right)
+<span class="hljs-punctuation">-</span> Streak banner card<span class="hljs-punctuation">:</span> flame icon <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;7 day streak&quot;</span> <span class="hljs-punctuation">+</span> goal progress bar
+<span class="hljs-punctuation">-</span> Section <span class="hljs-string">&quot;Continue Learning&quot;</span><span class="hljs-punctuation">:</span> single large course card <span class="hljs-keyword">with</span> progress bar
+<span class="hljs-punctuation">-</span> Section header <span class="hljs-string">&quot;Daily Quests&quot;</span> <span class="hljs-keyword">with</span> <span class="hljs-string">&quot;See all&quot;</span> link<span class="hljs-punctuation">:</span> <span class="hljs-number">3</span> small quest item rows
+<span class="hljs-punctuation">-</span> Section header <span class="hljs-string">&quot;For You&quot;</span><span class="hljs-punctuation">:</span> horizontal scroll <span class="hljs-keyword">of</span> <span class="hljs-number">3</span> course <span class="hljs-title function_">cards</span> (each<span class="hljs-punctuation">:</span> thumbnail rectangle <span class="hljs-punctuation">+</span> title <span class="hljs-punctuation">+</span> rating)
+<span class="hljs-punctuation">-</span> Section header <span class="hljs-string">&quot;New Courses&quot;</span><span class="hljs-punctuation">:</span> horizontal scroll <span class="hljs-keyword">of</span> <span class="hljs-number">3</span> course cards
+<span class="hljs-punctuation">-</span> Bottom<span class="hljs-punctuation">:</span> tab bar <span class="hljs-keyword">with</span> <span class="hljs-number">5</span> <span class="hljs-title function_">icons</span> (home, courses, AI robot, chart, person)
+Grayscale only. Label each section.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-22-tab-bar-navigation" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-22-tab-bar-navigation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 2.2 — Tab Bar Navigation</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity wireframe showing the bottom tab bar component <span class="hljs-keyword">for</span> a mobile app.
+<span class="hljs-number">5</span> tabs<span class="hljs-punctuation">:</span> <span class="hljs-title function_">Home</span> (house icon), <span class="hljs-title function_">Courses</span> (grid icon), <span class="hljs-title function_">AI</span> (robot<span class="hljs-punctuation">/</span>sparkle icon), <span class="hljs-title function_">Progress</span> (chart icon), <span class="hljs-title function_">Profile</span> (person icon).
+Active state<span class="hljs-punctuation">:</span> filled icon <span class="hljs-punctuation">+</span> label <span class="hljs-punctuation">+</span> indicator dot below. Inactive<span class="hljs-punctuation">:</span> outline icon <span class="hljs-punctuation">+</span> label.
+Show at 375px width, 64px height. Grayscale.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-23-dashboard-webdesktop-layout" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-23-dashboard-webdesktop-layout" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 2.3 — Dashboard (Web/Desktop Layout)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity wireframe <span class="hljs-keyword">for</span> a web app dashboard <span class="hljs-keyword">in</span> 1280px width.
+Layout<span class="hljs-punctuation">:</span> 
+<span class="hljs-punctuation">-</span> Left<span class="hljs-punctuation">:</span> sidebar 240px <span class="hljs-keyword">with</span> logo at <span class="hljs-keyword">top</span> <span class="hljs-punctuation">+</span> <span class="hljs-number">8</span> nav items listed vertically <span class="hljs-punctuation">+</span> user info at bottom
+<span class="hljs-punctuation">-</span> Main area<span class="hljs-punctuation">:</span> 
+  <span class="hljs-punctuation">-</span> Top<span class="hljs-punctuation">:</span> greeting <span class="hljs-punctuation">+</span> search bar <span class="hljs-punctuation">+</span> notification bell <span class="hljs-punctuation">+</span> avatar
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">4</span> KPI stat cards <span class="hljs-keyword">in</span> a row
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">2</span><span class="hljs-punctuation">-</span>column grid<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Continue Learning&quot;</span> <span class="hljs-title function_">card</span> (left) <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;Daily Quests&quot;</span> <span class="hljs-title function_">card</span> (right)
+  <span class="hljs-punctuation">-</span> Full<span class="hljs-punctuation">-</span>width <span class="hljs-string">&quot;Recommended Courses&quot;</span> section <span class="hljs-keyword">with</span> <span class="hljs-number">4</span> course cards <span class="hljs-keyword">in</span> a row
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 3: Course Discovery Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-31-course-catalog-browse" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-31-course-catalog-browse" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 3.1 — Course Catalog / Browse</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a course catalog<span class="hljs-punctuation">/</span>browse screen.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Top<span class="hljs-punctuation">:</span> search bar <span class="hljs-keyword">with</span> filter icon
+<span class="hljs-punctuation">-</span> Category horizontal scroll <span class="hljs-title function_">chips</span> (<span class="hljs-number">6</span> visible<span class="hljs-punctuation">:</span> All, Technology, Design, Business...)
+<span class="hljs-punctuation">-</span> <span class="hljs-number">2</span><span class="hljs-punctuation">-</span>column course card grid <span class="hljs-title function_">below</span> (each card<span class="hljs-punctuation">:</span> thumbnail rectangle <span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span>, title text, rating, price tag)
+<span class="hljs-punctuation">-</span> Filter icon leads to bottom sheet
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-32-filter-bottom-sheet" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-32-filter-bottom-sheet" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 3.2 — Filter Bottom Sheet</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">of</span> a filter bottom sheet overlay.
+Show<span class="hljs-punctuation">:</span> handle bar at <span class="hljs-keyword">top</span>. <span class="hljs-string">&quot;Filter Courses&quot;</span> title. Sections<span class="hljs-punctuation">:</span> <span class="hljs-title function_">Level</span> (<span class="hljs-number">3</span> radio buttons), <span class="hljs-title function_">Duration</span> (<span class="hljs-number">4</span> radio buttons), <span class="hljs-title function_">Rating</span> (<span class="hljs-number">3</span> options <span class="hljs-keyword">with</span> stars placeholder), <span class="hljs-title function_">Price</span> (<span class="hljs-number">3</span> radio buttons). Two buttons at bottom<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Clear&quot;</span> (ghost) and <span class="hljs-string">&quot;Apply Filters&quot;</span> (primary).
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-33-course-detail-page" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-33-course-detail-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 3.3 — Course Detail Page</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a course detail page.
+Layout <span class="hljs-keyword">from</span> <span class="hljs-keyword">top</span> to bottom<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Hero thumbnail image <span class="hljs-title function_">rectangle</span> (<span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span> ratio, full width)
+<span class="hljs-punctuation">-</span> Course <span class="hljs-title function_">title</span> (large text, <span class="hljs-number">2</span> lines)
+<span class="hljs-punctuation">-</span> Badges row<span class="hljs-punctuation">:</span> level badge, duration badge, language badge
+<span class="hljs-punctuation">-</span> Rating row<span class="hljs-punctuation">:</span> stars placeholder <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;1,234 ratings&quot;</span> <span class="hljs-punctuation">+</span> enrolled count
+<span class="hljs-punctuation">-</span> Tab row<span class="hljs-punctuation">:</span> Overview <span class="hljs-punctuation">|</span> Curriculum <span class="hljs-punctuation">|</span> Reviews <span class="hljs-punctuation">|</span> Instructor
+<span class="hljs-punctuation">-</span> Content <span class="hljs-title function_">area</span> (Overview active)<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What you&#039;ll learn&quot;</span> section <span class="hljs-keyword">with</span> <span class="hljs-number">5</span> bullet items, description text block
+<span class="hljs-punctuation">-</span> Sticky bottom bar<span class="hljs-punctuation">:</span> price text <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;Enroll Now&quot;</span> primary button
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-34-curriculum-tab-course-detail" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-34-curriculum-tab-course-detail" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 3.4 — Curriculum Tab (Course Detail)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity wireframe <span class="hljs-keyword">for</span> the curriculum tab content within a course detail screen.
+Show accordion sections<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Section 1: Introduction&quot;</span> (expanded, shows <span class="hljs-number">3</span> lesson rows each <span class="hljs-keyword">with</span><span class="hljs-punctuation">:</span> play icon, title, duration). <span class="hljs-string">&quot;Section 2: Core Concepts&quot;</span> (collapsed). <span class="hljs-string">&quot;Section 3: Advanced&quot;</span> (collapsed <span class="hljs-keyword">with</span> lock icon — locked content).
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 4: Lesson Player Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-41-video-lesson-player-portrait-mobile" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-41-video-lesson-player-portrait-mobile" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 4.1 — Video Lesson Player (Portrait Mobile)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a video lesson player screen.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Video player <span class="hljs-title function_">area</span> (<span class="hljs-number">16</span><span class="hljs-punctuation">:</span><span class="hljs-number">9</span> aspect ratio, <span class="hljs-keyword">top</span> <span class="hljs-keyword">of</span> screen)<span class="hljs-punctuation">:</span> shows play controls <span class="hljs-title function_">overlay</span> (play<span class="hljs-punctuation">/</span>pause circle, seek bar <span class="hljs-keyword">with</span> progress, timestamp left, duration right, fullscreen icon right)
+<span class="hljs-punctuation">-</span> Below video<span class="hljs-punctuation">:</span> lesson title text, breadcrumb <span class="hljs-string">&quot;Course &gt; Section &gt; Lesson&quot;</span>
+<span class="hljs-punctuation">-</span> <span class="hljs-number">3</span> tabs below<span class="hljs-punctuation">:</span> Notes <span class="hljs-punctuation">|</span> Resources <span class="hljs-punctuation">|</span> AI Help
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Notes&quot;</span> tab content<span class="hljs-punctuation">:</span> text area placeholder
+<span class="hljs-punctuation">-</span> Bottom sticky bar<span class="hljs-punctuation">:</span> Back button <span class="hljs-punctuation">+</span> lesson count <span class="hljs-string">&quot;3 of 12&quot;</span> <span class="hljs-punctuation">+</span> Next button
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-42-video-player-landscape-fullscreen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-42-video-player-landscape-fullscreen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 4.2 — Video Player (Landscape / Fullscreen)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity landscape <span class="hljs-title function_">wireframe</span> (<span class="hljs-number">812</span>×375px) <span class="hljs-keyword">for</span> fullscreen video lesson playback.
+Show<span class="hljs-punctuation">:</span> Controls overlay at bottom<span class="hljs-punctuation">:</span> left <span class="hljs-title function_">side</span> (back 10s button, play<span class="hljs-punctuation">/</span>pause, forward 10s), <span class="hljs-title function_">center</span> (progress bar <span class="hljs-punctuation">+</span> timestamp), right <span class="hljs-title function_">side</span> (volume, settings, exit fullscreen). Top left<span class="hljs-punctuation">:</span> back arrow <span class="hljs-punctuation">+</span> lesson title. Controls auto<span class="hljs-punctuation">-</span>hide indicator.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-43-notes-panel" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-43-notes-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 4.3 — Notes Panel</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> the notes panel within a lesson.
+Show<span class="hljs-punctuation">:</span> Text area <span class="hljs-keyword">with</span> formatted note entries. Toolbar above textarea<span class="hljs-punctuation">:</span> Bold <span class="hljs-punctuation">|</span> Italic <span class="hljs-punctuation">|</span> Bullet <span class="hljs-punctuation">|</span> Heading <span class="hljs-punctuation">|</span> Insert timestamp buttons. <span class="hljs-string">&quot;Add note&quot;</span> placeholder text <span class="hljs-keyword">in</span> textarea. Below<span class="hljs-punctuation">:</span> list <span class="hljs-keyword">of</span> saved notes <span class="hljs-keyword">with</span> <span class="hljs-title function_">timestamps</span> (e.<span class="hljs-attr">g</span>., <span class="hljs-string">&quot;[4:32] Key concept: ...&quot;</span>). Export button.
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-5-quiz-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 5: Quiz Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-51-quiz-intro-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-51-quiz-intro-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 5.1 — Quiz Intro Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a quiz introduction screen.
+Show<span class="hljs-punctuation">:</span> Quiz title. <span class="hljs-number">4</span> info cards <span class="hljs-keyword">in</span> <span class="hljs-number">2</span>×<span class="hljs-number">2</span> grid<span class="hljs-punctuation">:</span> Questions count, Time limit, Passing score, Attempts remaining. <span class="hljs-string">&quot;Start Quiz&quot;</span> primary button. <span class="hljs-string">&quot;Review materials first&quot;</span> link below button.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-52-quiz-question-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-52-quiz-question-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 5.2 — Quiz Question Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a multiple<span class="hljs-punctuation">-</span>choice quiz question screen.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Top<span class="hljs-punctuation">:</span> progress <span class="hljs-string">&quot;Q 3 of 10&quot;</span> <span class="hljs-punctuation">+</span> timer <span class="hljs-title function_">bar</span> (full width, shows time remaining)
+<span class="hljs-punctuation">-</span> Question card<span class="hljs-punctuation">:</span> large question text
+<span class="hljs-punctuation">-</span> <span class="hljs-number">4</span> answer option <span class="hljs-title function_">items</span> (rounded rectangle, each <span class="hljs-keyword">with</span> radio circle left <span class="hljs-punctuation">+</span> answer text)
+<span class="hljs-punctuation">-</span> One option shown <span class="hljs-title function_">selected</span> (filled circle)
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Next&quot;</span> primary button at bottom
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-53-quiz-results-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-53-quiz-results-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 5.3 — Quiz Results Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> quiz results.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Large circular progress indicator showing <span class="hljs-title function_">score</span> (e.<span class="hljs-attr">g</span>., <span class="hljs-number">8</span><span class="hljs-punctuation">/</span><span class="hljs-number">10</span>) at center
+<span class="hljs-punctuation">-</span> Below<span class="hljs-punctuation">:</span> <span class="hljs-keyword">pass</span><span class="hljs-punctuation">/</span>fail text, XP badge
+<span class="hljs-punctuation">-</span> Stats row<span class="hljs-punctuation">:</span> Time <span class="hljs-punctuation">|</span> Correct <span class="hljs-punctuation">|</span> Incorrect
+<span class="hljs-punctuation">-</span> Two buttons<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Review Answers&quot;</span> (secondary) <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;Continue Course&quot;</span> (primary)
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Explain with AI&quot;</span> link
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 6: AI Assistant Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-61-ai-chat-slide-up-drawer-mobile" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-61-ai-chat-slide-up-drawer-mobile" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 6.1 — AI Chat (Slide-up Drawer, Mobile)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a slide<span class="hljs-punctuation">-</span>up AI chat assistant drawer.
+Show<span class="hljs-punctuation">:</span> handle bar at <span class="hljs-keyword">top</span>. Header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;AI Tutor&quot;</span> title <span class="hljs-punctuation">+</span> query count <span class="hljs-string">&quot;8/10 queries&quot;</span> <span class="hljs-punctuation">+</span> close X. Chat messages area<span class="hljs-punctuation">:</span> <span class="hljs-number">2</span> user message <span class="hljs-title function_">bubbles</span> (right<span class="hljs-punctuation">-</span>aligned rectangles) and <span class="hljs-number">2</span> AI response <span class="hljs-title function_">bubbles</span> (left<span class="hljs-punctuation">-</span>aligned, slightly taller <span class="hljs-keyword">with</span> action chips below). Quick suggestions<span class="hljs-punctuation">:</span> horizontal scroll <span class="hljs-keyword">of</span> <span class="hljs-number">4</span> chip buttons at <span class="hljs-keyword">top</span> <span class="hljs-keyword">of</span> input area. Bottom<span class="hljs-punctuation">:</span> text input field <span class="hljs-punctuation">+</span> send button <span class="hljs-punctuation">+</span> mic icon.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-62-ai-study-plan-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-62-ai-study-plan-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 6.2 — AI Study Plan Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> an AI<span class="hljs-punctuation">-</span>generated study plan.
+Show<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your Study Plan&quot;</span> header. Input summary cards<span class="hljs-punctuation">:</span> Goal, Time available, Start date. Below<span class="hljs-punctuation">:</span> weekly plan <span class="hljs-title function_">list</span> (Week <span class="hljs-number">1</span>, Week <span class="hljs-number">2</span>, Week <span class="hljs-number">3</span> rows, each <span class="hljs-keyword">with</span> course placeholder <span class="hljs-punctuation">+</span> time estimate). <span class="hljs-string">&quot;Regenerate Plan&quot;</span> button. <span class="hljs-string">&quot;Start Week 1&quot;</span> primary button.
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-7-gamification-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 7: Gamification Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-71-progress-xp-dashboard" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-71-progress-xp-dashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 7.1 — Progress / XP Dashboard</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a progress and XP dashboard.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Top section<span class="hljs-punctuation">:</span> user level label, circular XP progress ring, <span class="hljs-string">&quot;Level 5 • 1,234 XP&quot;</span> text, <span class="hljs-string">&quot;456 XP to next level&quot;</span> subtext
+<span class="hljs-punctuation">-</span> Stats row<span class="hljs-punctuation">:</span> <span class="hljs-number">4</span> stat <span class="hljs-title function_">boxes</span> (Courses done, Hours, Certificates, Badges)
+<span class="hljs-punctuation">-</span> Streak widget<span class="hljs-punctuation">:</span> flame icon <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;14 day streak&quot;</span> <span class="hljs-punctuation">+</span> goal progress bar
+<span class="hljs-punctuation">-</span> Weekly activity<span class="hljs-punctuation">:</span> <span class="hljs-number">7</span> bar chart placeholders <span class="hljs-keyword">for</span> each day <span class="hljs-keyword">of</span> the week
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-72-badge-collection-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-72-badge-collection-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 7.2 — Badge Collection Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a badge collection gallery.
+Show<span class="hljs-punctuation">:</span> Title <span class="hljs-string">&quot;My Badges&quot;</span>. Two sections<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Earned (12)&quot;</span> grid <span class="hljs-keyword">of</span> <span class="hljs-number">4</span>×<span class="hljs-number">3</span> filled badge circles <span class="hljs-keyword">with</span> labels. <span class="hljs-string">&quot;Locked (8)&quot;</span> grid <span class="hljs-keyword">of</span> greyed<span class="hljs-punctuation">-</span>out circles <span class="hljs-keyword">with</span> lock icon overlays. Tap indicator on a badge showing a modal popup wireframe <span class="hljs-keyword">with</span><span class="hljs-punctuation">:</span> badge name, description, criteria, date earned.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-73-leaderboard-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-73-leaderboard-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 7.3 — Leaderboard Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a leaderboard screen.
+Layout<span class="hljs-punctuation">:</span> <span class="hljs-number">4</span> tab chips<span class="hljs-punctuation">:</span> Global <span class="hljs-punctuation">|</span> Course <span class="hljs-punctuation">|</span> Friends <span class="hljs-punctuation">|</span> Institution. Top <span class="hljs-number">3</span> podium <span class="hljs-title function_">visual</span> (<span class="hljs-number">3</span> rectangles <span class="hljs-keyword">with</span> <span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-string">&quot;3&quot;</span> ranks). Below<span class="hljs-punctuation">:</span> ranked list <span class="hljs-title function_">items</span> (rank number <span class="hljs-punctuation">+</span> avatar circle <span class="hljs-punctuation">+</span> name text <span class="hljs-punctuation">+</span> XP amount). User&#039;s own rank item at <span class="hljs-title function_">bottom</span> (sticky, highlighted <span class="hljs-keyword">with</span> border).
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 8: Membership &amp; Payment Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-81-membership-plans-page" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-81-membership-plans-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 8.1 — Membership Plans Page</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a subscription plans page.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Toggle <span class="hljs-keyword">switch</span> row<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Monthly | Annual (Save 20%)&quot;</span>
+<span class="hljs-punctuation">-</span> <span class="hljs-number">3</span> plan cards stacked <span class="hljs-title function_">vertically</span> (Free, Pro, Premium), each <span class="hljs-keyword">with</span><span class="hljs-punctuation">:</span> plan name, price, divider, feature <span class="hljs-title function_">checklist</span> (<span class="hljs-number">5</span> items each <span class="hljs-keyword">with</span> check<span class="hljs-punctuation">/</span>cross icons, text). CTA button <span class="hljs-keyword">in</span> each card.
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Pro&quot;</span> card has a <span class="hljs-string">&quot;Most Popular&quot;</span> badge chip at <span class="hljs-keyword">top</span>
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-82-payment-screen" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-82-payment-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 8.2 — Payment Screen</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity mobile wireframe <span class="hljs-keyword">for</span> a payment checkout screen.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Order summary card<span class="hljs-punctuation">:</span> plan name, price, discount, total
+<span class="hljs-punctuation">-</span> Payment method<span class="hljs-punctuation">:</span> tab <span class="hljs-title function_">row</span> (UPI <span class="hljs-punctuation">|</span> Card <span class="hljs-punctuation">|</span> Net Banking)
+<span class="hljs-punctuation">-</span> UPI section<span class="hljs-punctuation">:</span> text input <span class="hljs-string">&quot;Enter UPI ID&quot;</span> <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;Pay via app&quot;</span> <span class="hljs-title function_">buttons</span> (GPay, PhonePe icons placeholder)
+<span class="hljs-punctuation">-</span> <span class="hljs-string">&quot;Pay ₹599&quot;</span> primary button full width
+<span class="hljs-punctuation">-</span> Security badge row at bottom
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 9: Admin Panel Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-91-admin-dashboard-desktop" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-91-admin-dashboard-desktop" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 9.1 — Admin Dashboard (Desktop)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity desktop <span class="hljs-title function_">wireframe</span> (<span class="hljs-number">1280</span>×800px) <span class="hljs-keyword">for</span> an admin dashboard.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Left <span class="hljs-title function_">sidebar</span> (240px)<span class="hljs-punctuation">:</span> logo area, nav items <span class="hljs-title function_">list</span> (Dashboard, Users, Courses, Payments, Notifications, Support, Settings)
+<span class="hljs-punctuation">-</span> Main content<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> Header<span class="hljs-punctuation">:</span> page title <span class="hljs-punctuation">+</span> notification bell <span class="hljs-punctuation">+</span> user avatar
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">5</span> KPI stat boxes <span class="hljs-keyword">in</span> a row
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">2</span><span class="hljs-punctuation">-</span>column charts section<span class="hljs-punctuation">:</span> revenue bar <span class="hljs-title function_">chart</span> (left) <span class="hljs-punctuation">+</span> user growth line <span class="hljs-title function_">chart</span> (right)
+  <span class="hljs-punctuation">-</span> Bottom<span class="hljs-punctuation">:</span> data table <span class="hljs-keyword">with</span> columns [Name, Email, Role, Status, Actions] — show <span class="hljs-number">5</span> rows
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-92-user-management-screen-admin" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-92-user-management-screen-admin" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 9.2 — User Management Screen (Admin)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity desktop wireframe <span class="hljs-keyword">for</span> a user management table.
+Show<span class="hljs-punctuation">:</span> Page title <span class="hljs-string">&quot;Users&quot;</span>. Top bar<span class="hljs-punctuation">:</span> search input <span class="hljs-punctuation">+</span> filter button <span class="hljs-punctuation">+</span> <span class="hljs-string">&quot;Export&quot;</span> button.
+Data table <span class="hljs-keyword">with</span> sortable column headers<span class="hljs-punctuation">:</span> Checkbox <span class="hljs-punctuation">|</span> Name <span class="hljs-punctuation">|</span> Email <span class="hljs-punctuation">|</span> Role <span class="hljs-punctuation">|</span> Plan <span class="hljs-punctuation">|</span> Status <span class="hljs-punctuation">|</span> Last Active <span class="hljs-punctuation">|</span> Actions.
+Show <span class="hljs-number">5</span> table rows. Status shown <span class="hljs-keyword">as</span> badge chips. Actions<span class="hljs-punctuation">:</span> ellipsis menu icon.
+Pagination at bottom.
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-93-trainer-course-builder-desktop" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-93-trainer-course-builder-desktop" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 9.3 — Trainer Course Builder (Desktop)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity desktop wireframe <span class="hljs-keyword">for</span> a course creation wizard.
+Layout<span class="hljs-punctuation">:</span> Step indicator at <span class="hljs-keyword">top</span> (<span class="hljs-number">5</span> steps<span class="hljs-punctuation">:</span> Details, Curriculum, Pricing, Preview, Submit) <span class="hljs-keyword">with</span> step <span class="hljs-number">1</span> active.
+Main area<span class="hljs-punctuation">:</span> form <span class="hljs-keyword">with</span><span class="hljs-punctuation">:</span> Course title input, Description textarea, Category dropdown, Level radio buttons, Thumbnail upload <span class="hljs-title function_">area</span> (dashed border rectangle), Promotional video upload area.
+Right sidebar<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Tips&quot;</span> card <span class="hljs-keyword">with</span> bullet tips.
+Bottom<span class="hljs-punctuation">:</span> Back <span class="hljs-punctuation">+</span> Next buttons.
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Group 10: Marketing Website Wireframes</h2>
+<h3 id="low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-101-marketing-website-home-desktop" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-101-marketing-website-home-desktop" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 10.1 — Marketing Website Home (Desktop)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity desktop <span class="hljs-title function_">wireframe</span> (1280px width) <span class="hljs-keyword">for</span> a learning platform marketing homepage.
+Sections <span class="hljs-keyword">from</span> <span class="hljs-keyword">top</span> to bottom<span class="hljs-punctuation">:</span>
+<span class="hljs-number">1</span>. Navigation bar<span class="hljs-punctuation">:</span> logo left, links <span class="hljs-title function_">center</span> (Features, Courses, Pricing, About), CTAs <span class="hljs-title function_">right</span> (Log In <span class="hljs-punctuation">+</span> Get Started button)
+<span class="hljs-number">2</span>. Hero section<span class="hljs-punctuation">:</span> Headline text <span class="hljs-punctuation">+</span> subheadline <span class="hljs-punctuation">+</span> <span class="hljs-number">2</span> CTA buttons <span class="hljs-punctuation">+</span> large device mockup <span class="hljs-title function_">rectangle</span> (right side)
+<span class="hljs-number">3</span>. Social proof bar<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Trusted by...&quot;</span> <span class="hljs-punctuation">+</span> <span class="hljs-number">5</span> company logo placeholders <span class="hljs-keyword">in</span> a row
+<span class="hljs-number">4</span>. Features section<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Why LearnFlow AI&quot;</span> heading <span class="hljs-punctuation">+</span> <span class="hljs-number">3</span> feature cards <span class="hljs-keyword">in</span> a <span class="hljs-title function_">row</span> (icon <span class="hljs-punctuation">+</span> title <span class="hljs-punctuation">+</span> description)
+<span class="hljs-number">5</span>. Testimonials<span class="hljs-punctuation">:</span> heading <span class="hljs-punctuation">+</span> <span class="hljs-number">3</span> testimonial cards
+<span class="hljs-number">6</span>. App download<span class="hljs-punctuation">:</span> heading <span class="hljs-punctuation">+</span> App Store badge <span class="hljs-punctuation">+</span> Play Store badge
+<span class="hljs-number">7</span>. Footer<span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">-</span>column link grid <span class="hljs-punctuation">+</span> copyright
+Grayscale only.
+</code></pre>
+<h3 id="low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-102-pricing-page-desktop" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-102-pricing-page-desktop" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prompt 10.2 — Pricing Page (Desktop)</h3>
+<pre class="hljs"><code>Create a low<span class="hljs-punctuation">-</span>fidelity desktop wireframe <span class="hljs-keyword">for</span> a pricing page.
+Layout<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Header<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Simple, Transparent Pricing&quot;</span> <span class="hljs-punctuation">+</span> Monthly<span class="hljs-punctuation">/</span>Annual toggle
+<span class="hljs-punctuation">-</span> <span class="hljs-number">3</span> plan card <span class="hljs-title function_">columns</span> (Free, Pro, Premium)<span class="hljs-punctuation">:</span> price, divider, <span class="hljs-number">8</span> feature rows each <span class="hljs-keyword">with</span> check<span class="hljs-punctuation">/</span>X
+<span class="hljs-punctuation">-</span> Feature comparison table below the cards <span class="hljs-keyword">with</span> checkmarks
+<span class="hljs-punctuation">-</span> FAQ accordion section<span class="hljs-punctuation">:</span> <span class="hljs-number">5</span> question rows <span class="hljs-keyword">with</span> expand indicator
+<span class="hljs-punctuation">-</span> Enterprise CTA band at bottom
+Grayscale only.
+</code></pre>
+<hr>
+<h2 id="low-fidelity-wireframe-prompts-wireframe-annotation-standards" class="docmd-heading"><a href="#low-fidelity-wireframe-prompts-wireframe-annotation-standards" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Wireframe Annotation Standards</h2>
+<p>When adding annotations to all wireframes, use this convention:</p>
+<pre class="hljs"><code>[A] <span class="hljs-punctuation">=</span> Interactive <span class="hljs-title function_">element</span> (tappable<span class="hljs-punctuation">/</span>clickable)
+[B] <span class="hljs-punctuation">=</span> Auto<span class="hljs-punctuation">-</span>populated data <span class="hljs-keyword">from</span> API
+[C] <span class="hljs-punctuation">=</span> State<span class="hljs-punctuation">-</span>dependent <span class="hljs-title function_">element</span> (changes based on conditions)
+[D] <span class="hljs-punctuation">=</span> Accessibility label required
+[E] <span class="hljs-punctuation">=</span> Navigation destination
+</code></pre>
+<p>Example annotation note: <code>&quot;[A] Taps to navigate to Course Detail page [E]. [D] Requires aria-label: 'View Python Basics course details'&quot;</code></p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            High-Fidelity UI Design Prompts
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Screen-by-Screen UI Specification
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#low-fidelity-wireframe-prompts" class="toc-link">Low-Fidelity Wireframe Prompts</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-how-to-use-these-prompts" class="toc-link">How to Use These Prompts</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes" class="toc-link">Group 1: Authentication &amp; Onboarding Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-11-splash-screen" class="toc-link">Prompt 1.1 — Splash Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-12-register-screen" class="toc-link">Prompt 1.2 — Register Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-13-otp-verification" class="toc-link">Prompt 1.3 — OTP Verification</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-14-onboarding-step-1-role-selection" class="toc-link">Prompt 1.4 — Onboarding Step 1: Role Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-15-onboarding-step-2-goal-selection" class="toc-link">Prompt 1.5 — Onboarding Step 2: Goal Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-16-onboarding-step-3-interest-selection" class="toc-link">Prompt 1.6 — Onboarding Step 3: Interest Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-17-onboarding-step-4-daily-schedule" class="toc-link">Prompt 1.7 — Onboarding Step 4: Daily Schedule</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-18-onboarding-step-5-profile-setup" class="toc-link">Prompt 1.8 — Onboarding Step 5: Profile Setup</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-1-authentication-onboarding-wireframes-prompt-19-personalized-recommendations-preview" class="toc-link">Prompt 1.9 — Personalized Recommendations Preview</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes" class="toc-link">Group 2: Dashboard &amp; Navigation Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-21-dashboard-home-screen" class="toc-link">Prompt 2.1 — Dashboard (Home Screen)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-22-tab-bar-navigation" class="toc-link">Prompt 2.2 — Tab Bar Navigation</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-2-dashboard-navigation-wireframes-prompt-23-dashboard-webdesktop-layout" class="toc-link">Prompt 2.3 — Dashboard (Web/Desktop Layout)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes" class="toc-link">Group 3: Course Discovery Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-31-course-catalog-browse" class="toc-link">Prompt 3.1 — Course Catalog / Browse</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-32-filter-bottom-sheet" class="toc-link">Prompt 3.2 — Filter Bottom Sheet</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-33-course-detail-page" class="toc-link">Prompt 3.3 — Course Detail Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-3-course-discovery-wireframes-prompt-34-curriculum-tab-course-detail" class="toc-link">Prompt 3.4 — Curriculum Tab (Course Detail)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes" class="toc-link">Group 4: Lesson Player Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-41-video-lesson-player-portrait-mobile" class="toc-link">Prompt 4.1 — Video Lesson Player (Portrait Mobile)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-42-video-player-landscape-fullscreen" class="toc-link">Prompt 4.2 — Video Player (Landscape / Fullscreen)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-4-lesson-player-wireframes-prompt-43-notes-panel" class="toc-link">Prompt 4.3 — Notes Panel</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes" class="toc-link">Group 5: Quiz Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-51-quiz-intro-screen" class="toc-link">Prompt 5.1 — Quiz Intro Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-52-quiz-question-screen" class="toc-link">Prompt 5.2 — Quiz Question Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-5-quiz-wireframes-prompt-53-quiz-results-screen" class="toc-link">Prompt 5.3 — Quiz Results Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes" class="toc-link">Group 6: AI Assistant Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-61-ai-chat-slide-up-drawer-mobile" class="toc-link">Prompt 6.1 — AI Chat (Slide-up Drawer, Mobile)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-6-ai-assistant-wireframes-prompt-62-ai-study-plan-screen" class="toc-link">Prompt 6.2 — AI Study Plan Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes" class="toc-link">Group 7: Gamification Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-71-progress-xp-dashboard" class="toc-link">Prompt 7.1 — Progress / XP Dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-72-badge-collection-screen" class="toc-link">Prompt 7.2 — Badge Collection Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-7-gamification-wireframes-prompt-73-leaderboard-screen" class="toc-link">Prompt 7.3 — Leaderboard Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes" class="toc-link">Group 8: Membership &amp; Payment Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-81-membership-plans-page" class="toc-link">Prompt 8.1 — Membership Plans Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-8-membership-payment-wireframes-prompt-82-payment-screen" class="toc-link">Prompt 8.2 — Payment Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes" class="toc-link">Group 9: Admin Panel Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-91-admin-dashboard-desktop" class="toc-link">Prompt 9.1 — Admin Dashboard (Desktop)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-92-user-management-screen-admin" class="toc-link">Prompt 9.2 — User Management Screen (Admin)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-9-admin-panel-wireframes-prompt-93-trainer-course-builder-desktop" class="toc-link">Prompt 9.3 — Trainer Course Builder (Desktop)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes" class="toc-link">Group 10: Marketing Website Wireframes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-101-marketing-website-home-desktop" class="toc-link">Prompt 10.1 — Marketing Website Home (Desktop)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#low-fidelity-wireframe-prompts-group-10-marketing-website-wireframes-prompt-102-pricing-page-desktop" class="toc-link">Prompt 10.2 — Pricing Page (Desktop)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#low-fidelity-wireframe-prompts-wireframe-annotation-standards" class="toc-link">Wireframe Annotation Standards</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TRAINER
+  ADMIN
+}
+
+model User {
+  id                  String          @id @default(uuid())
+  email               String          @unique
+  emailVerified       Boolean         @default(false)
+  phone               String?         @unique
+  phoneVerified       Boolean         @default(false)
+  passwordHash        String?
+  displayName         String
+  avatarUrl           String?
+  role                Role            @default(STUDENT)
+  onboardingCompleted Boolean         @default(false)
+  isMfaEnabled        Boolean         @default(false)
+  mfaSecret           String?
+  mfaBackupCodes      String[]        
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  deletedAt           DateTime?
+  
+  profile             UserProfile?
+  socialAccounts      SocialAccount[]
+  refreshTokens       RefreshToken[]
+  devices             Device[]
+  otps                Otp[]
+  auditLogs           AuditLog[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio        String?
+  interests  String[]
+  goals      String[]
+  roleSelect String?  
+  updatedAt  DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+model SocialAccount {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   String   
+  providerId String
+  email      String?
+  createdAt  DateTime @default(now())
+
+  @@unique([provider, providerId])
+  @@map("social_accounts")
+}
+
+model RefreshToken {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  deviceId    String?
+  deviceInfo  String?
+  ipAddress   String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  revokedAt   DateTime?
+
+  @@map("refresh_tokens")
+}
+
+model Device {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fingerprint  String    
+  deviceName   String    
+  ipAddress    String
+  isVerified   Boolean   @default(false)
+  verifiedAt   DateTime?
+  lastUsedAt   DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+
+  @@unique([userId, fingerprint])
+  @@map("devices")
+}
+
+enum OtpType {
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
+  LOGIN
+  PASSWORD_RESET
+  MFA_RECOVERY
+  DEVICE_VERIFICATION
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String   
+  type      OtpType
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("otps")
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  SIGNUP
+  MFA_ENABLE
+  MFA_DISABLE
+  PASSWORD_RESET
+  DEVICE_VERIFIED
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String?
+  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     AuditAction
+  ipAddress  String?
+  userAgent  String?
+  details    Json?       
+  createdAt  DateTime    @default(now())
+
+  @@map("audit_logs")
+}

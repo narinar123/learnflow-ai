@@ -1,0 +1,2301 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      Screen-by-Screen UI Specification : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/03_design_system_and_ui/screen_by_screen_ui_spec/">
+<meta property="og:title" content="Screen-by-Screen UI Specification - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/03_design_system_and_ui/screen_by_screen_ui_spec/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Screen-by-Screen UI Specification - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/03_design_system_and_ui/screen_by_screen_ui_spec.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Screen-by-Screen UI Specification
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Screen-by-Screen%20UI%20Specification%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%20Overview%0A%0AThis%20document%20specifies%20the%20layout%2C%20content%2C%20and%20interaction%20requirements%20for%20every%20screen%20in%20the%20platform%2C%20organized%20by%20section.%20Each%20screen%20spec%20includes%3A%0A-%20**Purpose%3A**%20Why%20this%20screen%20exists%0A-%20**Layout%3A**%20Structural%20breakdown%0A-%20**Key%20Elements%3A**%20Required%20UI%20components%0A-%20**States%3A**%20Empty%2C%20loading%2C%20error%2C%20success%20variants%0A-%20**Interactions%3A**%20Tap%2Fclick%2C%20swipe%2C%20scroll%20behaviors%0A-%20**Responsive%20Notes%3A**%20Differences%20between%20mobile%2C%20tablet%2C%20web%2C%20and%20desktop%0A%0A---%0A%0A%23%23%201.%20Authentication%20Screens%0A%0A%23%23%23%201.1%20Splash%20Screen%0A**Purpose%3A**%20Brand%20reinforcement%20and%20routing%20(returning%20vs%20new%20user)%0A%0A**Layout%20(Mobile)%3A**%0A-%20Full-screen%20gradient%20background%3A%20%60primary.600%60%20%E2%86%92%20%60secondary.500%60%20(top-left%20to%20bottom-right)%0A-%20Center%3A%20Animated%20logo%20(scale-in%200.8%E2%86%921%2C%20600ms%20spring)%20%2B%20wordmark%20%22LearnFlow%20AI%22%0A-%20Sub-text%3A%20Tagline%20fades%20in%20400ms%20after%20logo%0A-%20Bottom%3A%20%22Get%20Started%22%20(primary%20button)%20%2B%20%22Log%20In%22%20(ghost%20button)%0A-%20Loading%20indicator%3A%20Bottom%20progress%20bar%20if%20checking%20auth%20state%0A%0A**Key%20Elements%3A**%0A-%20Animated%20logo%20SVG%20(Framer%20Motion)%0A-%20Hero%20gradient%20background%0A-%20Two%20action%20buttons%0A-%20Background%20particle%20animation%20(subtle%20floating%20orbs)%0A%0A**States%3A**%0A-%20Auto-login%3A%20If%20valid%20refresh%20token%20exists%20%E2%86%92%20skip%20to%20Dashboard%20(no%20user%20interaction)%0A-%20New%20user%3A%20Show%20full%20splash%20with%20CTAs%0A-%20Network%20error%3A%20Show%20offline%20banner%2C%20retry%20button%0A%0A**Responsive%3A**%20On%20web%2Fdesktop%2C%20center%20column%20(480px)%20with%20left%2Fright%20decorative%20visual%20panels%0A%0A---%0A%0A%23%23%23%201.2%20Register%20Screen%0A**Purpose%3A**%20New%20user%20account%20creation%0A%0A**Layout%3A**%0A-%20Header%3A%20%22Create%20your%20account%22%2C%20back%20arrow%0A-%20Form%3A%20Email%20input%20%E2%86%92%20Password%20input%20%E2%86%92%20Confirm%20password%20%E2%86%92%20%22Create%20Account%22%20button%0A-%20OR%20divider%0A-%20Social%3A%20%22Continue%20with%20Google%22%20%2B%20%22Continue%20with%20Apple%22%20(iOS%20only)%0A-%20Footer%3A%20%22Already%20have%20an%20account%3F%20Log%20In%22%20link%0A-%20Legal%3A%20%22By%20registering%2C%20you%20agree%20to%20our%20Terms%20%26%20Privacy%20Policy%22%20(12px%20below%20button)%0A%0A**Key%20Elements%3A**%0A-%20Email%20input%20with%20real-time%20validation%20(format%20check)%0A-%20Password%20strength%20indicator%20(5%20levels%3A%20very%20weak%20%E2%86%92%20very%20strong)%0A-%20Show%2Fhide%20password%20toggle%0A-%20Primary%20CTA%3A%20%22Create%20Account%22%20(disabled%20until%20all%20fields%20valid)%0A-%20Social%20auth%20buttons%20with%20brand%20logos%0A%0A**States%3A**%0A-%20Default%3A%20Empty%20form%0A-%20Validating%3A%20Input%20borders%20show%20validation%20state%0A-%20Error%3A%20%22This%20email%20is%20already%20registered.%20Log%20In%3F%22%20inline%20error%0A-%20Success%3A%20Transition%20to%20OTP%20screen%0A%0A**Interactions%3A**%0A-%20Form%20auto-scrolls%20to%20first%20error%20on%20submit%0A-%20Keyboard%20%22Next%22%20on%20email%20field%20moves%20focus%20to%20password%0A%0A---%0A%0A%23%23%23%201.3%20OTP%20Verification%20Screen%0A**Purpose%3A**%20Verify%20phone%20number%20or%20email%20ownership%0A%0A**Layout%3A**%0A-%20Icon%3A%20Mobile%2FEmail%20icon%20in%20colored%20circle%0A-%20Title%3A%20%22Enter%20verification%20code%22%0A-%20Subtitle%3A%20%22We%20sent%20a%206-digit%20code%20to%20%5Bemail%2Fphone%5D%22%0A-%20OTP%20Input%3A%206%20individual%20character%20boxes%20side-by-side%0A-%20Resend%3A%20%22Didn&#039;t%20receive%20it%3F%20Resend%20in%2000%3A28%22%20(countdown%20timer)%0A-%20Change%20method%3A%20%22Use%20a%20different%20email%22%20link%0A%0A**Key%20Elements%3A**%0A-%206-box%20OTP%20input%20component%20(auto-advance%20on%20each%20digit%2C%20auto-submit%20on%20last%20digit)%0A-%20Countdown%20timer%20for%20resend%0A-%20Auto-paste%20from%20clipboard%2FSMS%20(iOS%2FAndroid)%0A%0A**States%3A**%0A-%20Default%3A%20Empty%20boxes%0A-%20Filling%3A%20Character%20by%20character%20highlight%0A-%20Error%3A%20Boxes%20turn%20red%2C%20%22Incorrect%20code.%202%20attempts%20remaining%22%0A-%20Expired%3A%20%22Code%20expired.%20Tap%20resend.%22%20timer%20shows%200%3A00%0A-%20Success%3A%20Green%20checkmark%20animation%20%E2%86%92%20navigate%20to%20next%20step%0A%0A---%0A%0A%23%23%23%201.4%20Login%20Screen%0A**Purpose%3A**%20Returning%20user%20authentication%0A%0A**Layout%3A**%0A-%20Title%3A%20%22Welcome%20back%22%0A-%20Form%3A%20Email%2FPhone%20input%20%E2%86%92%20Password%20input%20%E2%86%92%20%22Log%20In%22%20button%0A-%20%22Forgot%20Password%3F%22%20link%20(right-aligned%20below%20password)%0A-%20OR%20divider%0A-%20Social%20login%20buttons%0A-%20Footer%3A%20%22New%20here%3F%20Create%20an%20account%22%20link%0A%0A**States%3A**%0A-%20Default%2C%20validating%2C%20locked%20(after%205%20failures%20with%20countdown)%2C%20success%0A%0A---%0A%0A%23%23%23%201.5%20Forgot%20%2F%20Reset%20Password%0A**Step%201%3A**%20Email%20entry%20%E2%86%92%20%22Send%20Reset%20Link%22%20button%0A**Step%202%3A**%20%22Check%20your%20email%22%20confirmation%20screen%2C%20resend%20option%0A**Step%203%3A**%20New%20password%20form%20(from%20email%20link)%20%E2%86%92%20success%20%E2%86%92%20auto-login%0A%0A---%0A%0A%23%23%202.%20Onboarding%20Screens%0A%0A%23%23%23%202.1%20Role%20Selection%0A**Layout%3A**%0A-%20Progress%3A%201%2F5%20progress%20dots%0A-%20Title%3A%20%22How%20will%20you%20use%20LearnFlow%20AI%3F%22%0A-%20Grid%3A%202%C3%972%20card%20grid%2C%20each%20card%20has%20icon%20%2B%20title%20%2B%20short%20description%0A-%20Cards%3A%20Student%2C%20Professional%2C%20Job%20Seeker%2C%20Trainer%0A-%20CTA%3A%20%22Continue%22%20(enabled%20after%20selection)%0A%0A**Interactions%3A**%0A-%20Card%20tap%3A%20instant%20selection%20highlight%20(border%20%2B%20background%20tint)%0A-%20Only%201%20selection%20allowed%3B%20selecting%20new%20deselects%20old%0A%0A---%0A%0A%23%23%23%202.2%20Goal%20Selection%0A**Layout%3A**%0A-%20Progress%3A%202%2F5%20dots%0A-%20Title%3A%20%22What&#039;s%20your%20main%20goal%3F%22%0A-%20Grid%3A%202%C3%973%20visual%20goal%20cards%20(icon%20%2B%20short%20label)%0A-%20Select%20up%20to%202%20goals%0A-%20Skip%20link%20bottom%0A%0A---%0A%0A%23%23%23%202.3%20Interest%20Category%20Selection%0A**Layout%3A**%0A-%20Progress%3A%203%2F5%20dots%0A-%20Title%3A%20%22What%20topics%20interest%20you%3F%22%0A-%20Wrapping%20chip%20grid%20(3%20columns%20on%20mobile)%0A-%20Chips%3A%20icon%20%2B%20category%20name%0A-%20Counter%3A%20%22Select%20at%20least%202%20(X%20selected)%22%0A-%20Selected%20chips%3A%20filled%20with%20%60primary.500%60%0A%0A---%0A%0A%23%23%23%202.4%20Schedule%20%2F%20Daily%20Goal%0A**Layout%3A**%0A-%20Progress%3A%204%2F5%20dots%0A-%20Title%3A%20%22How%20much%20time%20can%20you%20dedicate%20daily%3F%22%0A-%20Row%20of%205%20option%20buttons%3A%20%225%20min%22%2C%20%2215%20min%22%2C%20%2230%20min%22%2C%20%221%20hour%22%2C%20%22Let%20AI%20decide%22%0A-%20Visual%20time%20analogy%20below%20selection%20(%22That&#039;s%20like%201%20TED%20Talk%20a%20day%22)%0A-%20Skip%20link%0A%0A---%0A%0A%23%23%23%202.5%20Profile%20Setup%0A**Layout%3A**%0A-%20Progress%3A%205%2F5%20dots%0A-%20Avatar%20circle%20with%20%22%2B%22%20add%20photo%20icon%0A-%20Name%20input%20field%20(required)%0A-%20Age%20range%20dropdown%20(optional)%0A-%20CTA%3A%20%22Complete%20Setup%22%0A-%20Skip%3A%20%22Skip%20for%20now%22%20(photo%20and%20age%20only)%0A%0A---%0A%0A%23%23%23%202.6%20Recommendations%20Preview%20(Post-Onboarding)%0A**Layout%3A**%0A-%20Full-screen%20celebration%20background%0A-%20%22We%20found%205%20courses%20for%20you%2C%20%5BName%5D!%22%20title%0A-%20Horizontal%20scroll%20of%205%20course%20cards%0A-%20Each%20card%3A%20Thumbnail%20%2B%20title%20%2B%20%22Why%20we%20picked%20this%22%20chip%0A-%20Primary%20CTA%3A%20%22Start%20Learning%22%20(enrolls%20in%20top%20recommended%20course)%0A-%20Secondary%3A%20%22Explore%20All%20Courses%22%0A%0A---%0A%0A%23%23%203.%20Home%20%2F%20Dashboard%0A%0A%23%23%23%203.1%20Dashboard%20(Learner)%0A**Layout%20(Mobile)%3A**%0A-%20Top%3A%20Greeting%20(%22Good%20morning%2C%20Priya!%20%F0%9F%8C%85%22)%20%2B%20notification%20bell%20%2B%20avatar%0A-%20Banner%3A%20Streak%20widget%20(flame%20icon%20%2B%20day%20count%20%2B%20daily%20goal%20progress%20bar)%0A-%20Section%3A%20%22Continue%20Learning%22%20%E2%80%94%20single%20course%20card%20(large%2C%20with%20progress%20%25)%0A-%20Section%3A%20%22Daily%20Quests%22%20%E2%80%94%203%20quest%20chips%20with%20XP%20value%20%2B%20completion%20state%0A-%20Section%3A%20%22Recommended%20for%20You%22%20%E2%80%94%20horizontal%20scroll%20of%205%20course%20cards%0A-%20Section%3A%20%22New%20Courses%22%20%E2%80%94%20horizontal%20scroll%0A-%20Section%3A%20%22Trending%20Now%22%20%E2%80%94%20horizontal%20scroll%0A-%20Bottom%3A%20Tab%20bar%20navigation%0A%0A**Layout%20(Web%2FDesktop)%3A**%0A-%20Left%20sidebar%20navigation%20(240px)%0A-%20Main%20content%3A%203-column%20grid%20(macOS-style%20dashboard)%0A-%20Right%20panel%3A%20AI%20assistant%20quick-open%2C%20upcoming%20reminders%0A%0A**States%3A**%0A-%20New%20user%3A%20%22Start%20your%20first%20course%22%20hero%20CTA%0A-%20Active%20learner%3A%20Current%20course%20progress%20prominent%0A-%20All%20courses%20complete%3A%20%22Explore%20more%22%20%E2%86%92%20course%20catalog%0A%0A**Interactions%3A**%0A-%20Pull-to-refresh%20(mobile)%0A-%20Course%20card%20tap%20%E2%86%92%20course%20detail%20page%0A-%20Streak%20widget%20tap%20%E2%86%92%20gamification%20overview%0A%0A---%0A%0A%23%23%204.%20Course%20Screens%0A%0A%23%23%23%204.1%20Course%20Catalog%20%2F%20Browse%0A**Layout%3A**%0A-%20Search%20bar%20(top%2C%20sticky)%20with%20filter%20icon%0A-%20Category%20horizontal%20scroll%20chips%20below%20search%0A-%20Course%20grid%3A%202%20columns%20(mobile)%2C%203%20columns%20(tablet)%2C%204%20columns%20(desktop)%0A-%20Sort%3A%20Newest%2C%20Most%20Popular%2C%20Highest%20Rated%2C%20Price%0A%0A**Filters%20(Bottom%20Sheet%20%2F%20Side%20Panel)%3A**%0A-%20Level%3A%20Beginner%2C%20Intermediate%2C%20Advanced%0A-%20Duration%3A%20%3C%201h%2C%201%E2%80%935h%2C%205%E2%80%9310h%2C%2010h%2B%0A-%20Rating%3A%203%E2%98%85%2B%2C%204%E2%98%85%2B%2C%204.5%E2%98%85%2B%0A-%20Price%3A%20Free%2C%20Paid%2C%20My%20Plan%20Includes%0A-%20Category%3A%20multi-select%0A-%20Apply%20%2B%20Clear%20buttons%0A%0A**States%3A**%0A-%20Loading%3A%20Skeleton%20cards%20(shimmer%20animation)%0A-%20No%20results%3A%20Illustration%20%2B%20%22Try%20different%20keywords%22%20%2B%20CTA%0A-%20Network%20error%3A%20Retry%20button%0A%0A---%0A%0A%23%23%23%204.2%20Course%20Detail%20Page%0A**Layout%3A**%0A-%20Hero%20image%2Fvideo%20thumbnail%20(16%3A9%2C%20full%20width)%0A-%20Title%20(h1)%2C%20instructor%20line%2C%20star%20rating%20%2B%20review%20count%2C%20enrollment%20count%0A-%20Tab%20navigation%3A%20Overview%20%7C%20Curriculum%20%7C%20Reviews%20%7C%20Instructor%0A-%20Sticky%20bottom%20bar%3A%20Price%20%2F%20%22Enroll%20Free%22%20CTA%20(or%20%22Included%20in%20Pro%22%20badge)%0A-%20Badges%20row%3A%20Level%2C%20Duration%2C%20Language%2C%20Certificate%2C%20Last%20Updated%0A%0A**Overview%20Tab%20Content%3A**%0A-%20%22What%20you&#039;ll%20learn%22%20checklist%20(5%E2%80%938%20items)%0A-%20Description%20text%20(expandable%20%22Show%20more%22%20if%20%3E%203%20lines)%0A-%20Requirements%2Fprerequisites%0A-%20Target%20audience%0A%0A**Curriculum%20Tab%20Content%3A**%0A-%20Section%20accordions%20%E2%86%92%20Lesson%20list%0A-%20Each%20lesson%3A%20type%20icon%20%2B%20title%20%2B%20duration%20%2B%20lock%20icon%20if%20not%20enrolled%0A-%20Free%20preview%20lessons%3A%20%22Preview%22%20chip%0A%0A**Reviews%20Tab%20Content%3A**%0A-%20Overall%20rating%20(large)%20%2B%20breakdown%20bars%20(5%E2%98%85%20%E2%86%92%201%E2%98%85)%0A-%20Review%20cards%3A%20avatar%20%2B%20name%20%2B%20date%20%2B%20star%20%2B%20text%0A-%20%22See%20all%20reviews%22%20link%0A%0A**Instructor%20Tab%3A**%0A-%20Large%20avatar%20%2B%20bio%20%2B%20course%20count%20%2B%20student%20count%20%2B%20rating%0A%0A---%0A%0A%23%23%23%204.3%20My%20Courses%20(Library)%0A**Layout%3A**%0A-%20Tabs%3A%20In%20Progress%20%7C%20Completed%20%7C%20Wishlist%0A-%20Course%20cards%20with%20progress%20bars%20(in%20progress)%2C%20completion%20date%20(completed)%0A-%20Search%20within%20library%0A-%20Sort%3A%20Recently%20Accessed%2C%20Alphabetical%2C%20Progress%20%25%0A%0A---%0A%0A%23%23%205.%20Lesson%20Player%0A%0A%23%23%23%205.1%20Video%20Lesson%20Player%0A**Layout%20(Portrait%20Mobile)%3A**%0A-%20Video%20player%3A%2016%3A9%20top%20area%0A-%20Controls%20overlay%3A%20play%2Fpause%2C%20seek%20bar%2C%20timestamp%2C%20fullscreen%2C%20settings%0A-%20Below%20player%3A%20lesson%20title%2C%20course%20breadcrumb%0A-%20Tabs%3A%20Notes%20%7C%20Resources%20%7C%20AI%20Help%0A-%20Bottom%3A%20%22Mark%20as%20Complete%22%20%2B%20%22Next%20Lesson%22%20button%0A%0A**Video%20Controls%3A**%0A-%20Double-tap%20left%2Fright%3A%20%C2%B110%20seconds%0A-%20Single%20tap%3A%20show%2Fhide%20controls%20(3s%20auto-hide)%0A-%20Long%20press%3A%20playback%20speed%20menu%0A-%20Settings%3A%20Quality%20(Auto%2F720p%2F480p%2F360p)%2C%20Playback%20speed%2C%20Captions%20toggle%0A-%20PiP%20(Picture-in-Picture)%20mode%3A%20floating%20window%20while%20using%20other%20app%0A%0A**Fullscreen%20(Landscape)%3A**%0A-%20Immersive%20player%2C%20controls%20overlay%0A-%20Gesture%3A%20swipe%20down%20to%20exit%20fullscreen%0A%0A**Desktop%20%2F%20Web%3A**%0A-%20Side%20panel%3A%20Chapter%20list%20(left)%2C%20Notes%20(right%2C%20collapsible)%0A-%20No%20bottom%20sheet%3B%20lesson%20title%20in%20header%0A%0A**States%3A**%0A-%20Buffering%3A%20spinner%20overlay%2C%20video%20paused%0A-%20Error%3A%20%22Video%20unavailable%22%20with%20retry%0A-%20Completed%3A%20checkmark%20overlay%2C%20auto-advance%20countdown%20(5s)%20to%20next%20lesson%0A-%20Offline%3A%20plays%20from%20local%20storage%2C%20offline%20indicator%20chip%0A%0A---%0A%0A%23%23%23%205.2%20PDF%20%2F%20Document%20Lesson%0A-%20PDF%20rendered%20inline%20using%20native%20PDF%20viewer%20(no%20browser%20launch)%0A-%20Scroll%20navigation%0A-%20Zoom%3A%20pinch-to-zoom%20(mobile)%2C%20%2B%2F-%20buttons%20(web)%0A-%20Page%20count%20indicator%0A-%20Download%20button%20(Pro%20plan%20users)%0A%0A---%0A%0A%23%23%23%205.3%20Notes%20Panel%0A-%20Markdown-lite%20text%20editor%20(bold%2C%20italic%2C%20bullet%20list%2C%20heading)%0A-%20Auto-saves%20every%2030%20seconds%0A-%20%22Copy%20lesson%20timestamp%22%20button%20(inserts%20%5B4%3A32%5D%20marker%20in%20note)%0A-%20Export%3A%20%22Download%20notes%20as%20PDF%22%20%0A-%20All%20notes%20searchable%20in%20Profile%20%E2%86%92%20Notes%20section%0A%0A---%0A%0A%23%23%206.%20Quiz%20%26%20Assessment%20Screens%0A%0A%23%23%23%206.1%20Quiz%20Intro%20Screen%0A**Layout%3A**%0A-%20Course%20%2B%20quiz%20name%20header%0A-%20Info%20cards%3A%20Question%20count%2C%20Time%20limit%2C%20Passing%20score%2C%20Attempts%20remaining%0A-%20%22Start%20Quiz%22%20button%0A-%20%22Review%20materials%20first%22%20link%20(goes%20back%20to%20lesson)%0A%0A%23%23%23%206.2%20Quiz%20Question%20Screen%0A**Layout%3A**%0A-%20Question%20counter%3A%20%22Question%203%20of%2010%22%0A-%20Timer%20bar%20(top%2C%20full%20width%2C%20shrinks%20left%E2%86%92right%2C%20turns%20red%20at%2020%25)%0A-%20Question%20card%3A%20question%20text%20%2B%20optional%20image%0A-%20Options%20list%3A%20radio%20buttons%20(MCQ)%20or%20checkboxes%20(multi-select)%20or%20text%20input%20(fill-blank)%0A-%20%22Next%22%20button%20(disabled%20until%20answer%20selected)%0A-%20%22Skip%22%20button%20(available%20for%20non-required%20quizzes)%0A%0A**Interactions%3A**%0A-%20Option%20tap%3A%20immediate%20visual%20selection%0A-%20%22Next%22%20%E2%86%92%20auto-advance%3B%20%22Back%22%20if%20previous%20navigation%20enabled%0A-%20Timer%20expired%3A%20auto-submit%20current%20answer%2C%20move%20to%20next%20or%20submit%20quiz%0A%0A%23%23%23%206.3%20Quiz%20Results%20Screen%0A**Layout%3A**%0A-%20Large%20circular%20score%20indicator%20(correct%2Ftotal)%20with%20pass%2Ffail%20color%0A-%20Grade%20message%3A%20%22Excellent!%20%F0%9F%8E%89%22%20%2F%20%22Good%20Job!%22%20%2F%20%22Keep%20Practicing%22%0A-%20XP%20awarded%3A%20amber%20pill%20badge%20(animated%20in)%0A-%20Badge%20earned%20notification%20(if%20criteria%20met)%0A-%20Stats%3A%20Time%20taken%2C%20Correct%20%2F%20Incorrect%2C%20Skipped%0A-%20Action%20buttons%3A%20%22Review%20Answers%22%20%7C%20%22Retry%22%20(with%20cooldown%20timer%20if%20active)%20%7C%20%22Continue%20Course%22%0A-%20AI%20explanation%20prompt%3A%20%22Get%20AI%20to%20explain%20any%20answer%20%E2%86%92%22%0A%0A%23%23%23%206.4%20Answer%20Review%20Screen%0A-%20All%20questions%20listed%20with%3A%20your%20answer%2C%20correct%20answer%2C%20correct%2Fincorrect%20indicator%0A-%20%22Explain%20this%22%20button%20per%20question%20%E2%86%92%20opens%20AI%20panel%20with%20explanation%0A-%20Filter%3A%20%22Show%20incorrect%20only%22%0A%0A---%0A%0A%23%23%207.%20AI%20Assistant%0A%0A%23%23%23%207.1%20AI%20Chat%20Interface%0A**Layout%20(Mobile%20%E2%80%94%20Slide-up%20Drawer)%3A**%0A-%20Handle%20bar%20at%20top%0A-%20Header%3A%20%22LearnFlow%20AI%22%20%2B%20query%20quota%20(e.g.%2C%20%2212%2F50%20queries%20today%22)%0A-%20Chat%20message%20list%20(scroll)%0A-%20User%20message%3A%20right-aligned%20bubble%2C%20primary%20tint%0A-%20AI%20message%3A%20left-aligned%20bubble%2C%20glass%20card%20style%2C%20with%20%22Explain%20more%22%20and%20%22Related%20course%22%20chips%0A-%20Input%3A%20text%20field%20%2B%20send%20button%20%2B%20voice%20button%0A-%20Quick%20suggestions%3A%20horizontal%20scroll%20of%204%20pre-set%20prompts%20(%22Explain%20this%20concept%22%2C%20%22Give%20me%20a%20quiz%22%2C%20%22Study%20plan%22%2C%20%22What&#039;s%20next%3F%22)%0A%0A**Layout%20(Web%2FDesktop%20%E2%80%94%20Side%20Panel)%3A**%0A-%20Persistent%20right%20panel%20(320px%20wide%2C%20collapsible)%0A-%20Full%20conversation%20history%0A-%20History%20sidebar%3A%20past%2010%20conversations%0A%0A**AI%20Response%20Features%3A**%0A-%20Markdown%20rendering%20(bold%2C%20code%20blocks%2C%20lists)%0A-%20%22Copy%20response%22%20button%0A-%20%22This%20is%20helpful%20%2F%20Not%20helpful%22%20thumbs%20up%2Fdown%0A-%20%22Save%20to%20Notes%22%20option%0A-%20Source%20citation%3A%20%22Based%20on%20%5BLesson%20Name%5D%20in%20%5BCourse%20Name%5D%22%0A%0A**States%3A**%0A-%20Typing%20indicator%3A%20animated%203-dot%20bubble%0A-%20Error%3A%20%22Something%20went%20wrong.%20Try%20again%22%20with%20retry%0A-%20Quota%20reached%20(free%20plan)%3A%20%22You&#039;ve%20used%20all%2010%20daily%20queries.%20Upgrade%20to%20Pro%20for%20unlimited%20AI%22%20%0A-%20Off-topic%20refusal%3A%20Friendly%20message%20with%20redirect%0A%0A---%0A%0A%23%23%208.%20Progress%20%26%20Analytics%0A%0A%23%23%23%208.1%20Progress%20Dashboard%0A**Layout%3A**%0A-%20Top%3A%20Level%20badge%20%2B%20XP%20bar%20(current%20%E2%86%92%20next%20level)%0A-%20Stats%20row%3A%20Courses%20Completed%20%7C%20Lessons%20Done%20%7C%20Hours%20Learned%20%7C%20Certificates%20Earned%0A-%20Current%20streak%20widget%0A-%20Weekly%20learning%20chart%20(bar%20graph%2C%207%20days)%0A-%20Enrolled%20courses%20with%20individual%20progress%20bars%0A-%20Recent%20activity%20feed%0A%0A%23%23%23%208.2%20Badge%20Collection%0A-%20Grid%20of%20all%20badges%20(earned%3A%20full%20color%3B%20unearned%3A%20greyed%20out%20with%20%22%3F%22%20icon)%0A-%20Tap%20badge%3A%20modal%20with%20description%2C%20criteria%2C%20date%20earned%0A-%20Progress%20on%20near-completion%20badges%3A%20%222%2F5%20reviews%20written%22%0A%0A%23%23%23%208.3%20Leaderboard%0A-%20Tab%20selector%3A%20Global%20%7C%20Course%20%7C%20Friends%20%7C%20Institution%0A-%20Rank%20list%3A%20user%20avatar%20%2B%20name%20%2B%20XP%20%2B%20rank%20number%0A-%20User&#039;s%20own%20rank%3A%20sticky%20at%20bottom%20if%20not%20in%20top%2010%0A-%20Reset%20timer%3A%20%22Resets%20in%203%20days%2014h%22%0A%0A---%0A%0A%23%23%209.%20Membership%20%26%20Payments%0A%0A%23%23%23%209.1%20Membership%20Plans%20Page%0A**Layout%3A**%0A-%20Toggle%3A%20Monthly%20%2F%20Annual%20(annual%20shows%20%22Save%2020%25%22%20badge)%0A-%20Plan%20cards%20(vertical%20stack%20mobile%2C%20horizontal%20desktop)%3A%0A%20%20-%20Plan%20name%2C%20price%2C%20billing%20period%0A%20%20-%20Feature%20checklist%20(%E2%9C%93%20included%2C%20%E2%9C%97%20not%20included)%0A%20%20-%20%22Current%20Plan%22%20badge%20(if%20active)%0A%20%20-%20CTA%3A%20%22Upgrade%22%20%2F%20%22Start%20Free%20Trial%22%20%2F%20%22Contact%20Sales%22%0A-%20%22Most%20Popular%22%20badge%20on%20Pro%20plan%0A-%20FAQ%20section%20at%20bottom%0A-%20%22Money-back%20guarantee%22%20trust%20badge%0A%0A%23%23%23%209.2%20Payment%20Screen%0A**Layout%3A**%0A-%20Order%20summary%3A%20Plan%20name%2C%20price%2C%20discount%20applied%2C%20total%0A-%20Payment%20method%20selector%3A%20UPI%20(Razorpay)%2C%20Card%2C%20Net%20Banking%2C%20Wallet%0A-%20UPI%3A%20Enter%20UPI%20ID%20field%20or%20%22Pay%20with%20GPay%2FPhonePe%22%20app%20buttons%0A-%20Card%3A%20Card%20number%2C%20expiry%2C%20CVV%2C%20name%0A-%20%22Pay%20%E2%82%B9%5Bamount%5D%22%20button%20(disabled%20until%20valid%20payment%20info)%0A-%20Security%20badges%3A%20%22256-bit%20SSL%22%20%2B%20Razorpay%20logo%0A-%20Terms%3A%20%22By%20subscribing%2C%20you%20agree%20to%20automatic%20renewal.%20Cancel%20anytime.%22%0A%0A%23%23%23%209.3%20Payment%20Success%20Screen%0A-%20Full-screen%20celebration%20animation%20(brief)%0A-%20%22You&#039;re%20now%20on%20Pro!%20%F0%9F%8E%89%22%0A-%20List%20of%205%20unlocked%20features%0A-%20CTA%3A%20%22Start%20Exploring%22%20%E2%86%92%20Dashboard%0A%0A%23%23%23%209.4%20Billing%20History%0A-%20List%20of%20all%20transactions%3A%20date%2C%20description%2C%20amount%2C%20status%2C%20%22Download%20Invoice%22%20link%0A-%20Filter%20by%20date%20range%0A-%20Export%20as%20PDF%2FCSV%0A%0A---%0A%0A%23%23%2010.%20Notifications%0A%0A%23%23%23%2010.1%20Notification%20Center%0A**Layout%3A**%0A-%20%22All%22%20%7C%20%22Learning%22%20%7C%20%22Achievements%22%20%7C%20%22Offers%22%20tab%20filter%0A-%20Notification%20cards%3A%20icon%20%2B%20title%20%2B%20description%20%2B%20timestamp%20%2B%20%22Mark%20as%20read%22%0A-%20Unread%3A%20slightly%20highlighted%20background%0A-%20Empty%20state%3A%20%22You&#039;re%20all%20caught%20up!%22%20illustration%0A%0A%23%23%23%2010.2%20Notification%20Settings%0A-%20Toggle%20groups%3A%20Learning%20reminders%2C%20Streak%20alerts%2C%20Achievements%2C%20New%20courses%2C%20Offers%20%26%20Promotions%0A-%20Quiet%20hours%3A%20Do%20not%20disturb%20time%20range%0A-%20Email%20digest%3A%20Daily%20%2F%20Weekly%20%2F%20Never%0A%0A---%0A%0A%23%23%2011.%20Support%0A%0A%23%23%23%2011.1%20Help%20Center%0A**Layout%3A**%0A-%20Search%20bar%3A%20%22How%20can%20we%20help%20you%3F%22%0A-%20Category%20cards%3A%20Payment%2C%20Course%20Access%2C%20Technical%2C%20Account%2C%20AI%20Assistant%0A-%20Popular%20articles%20list%0A-%20%22Contact%20Support%22%20floating%20button%0A%0A%23%23%23%2011.2%20Submit%20Support%20Ticket%0A**Fields%3A**%0A-%20Category%3A%20dropdown%0A-%20Subject%3A%20text%20field%0A-%20Description%3A%20textarea%20(min%2020%20chars)%0A-%20Attachment%3A%20optional%20file%20upload%0A-%20Priority%3A%20Low%20%2F%20Medium%20%2F%20High%20(based%20on%20issue%20type)%0A-%20CTA%3A%20%22Submit%20Ticket%22%0A%0A%23%23%23%2011.3%20My%20Tickets%0A-%20List%20with%3A%20ticket%20ID%2C%20subject%2C%20status%20badge%20(Open%2FIn%20Progress%2FResolved)%2C%20last%20updated%0A-%20Tap%20ticket%20%E2%86%92%20conversation%20thread%20view%0A-%20Reply%20field%20at%20bottom%0A-%20CSAT%20survey%20when%20ticket%20resolved%0A%0A---%0A%0A%23%23%2012.%20Profile%0A%0A%23%23%23%2012.1%20Profile%20Page%0A**Layout%3A**%0A-%20Hero%3A%20Cover%20background%20gradient%20%2B%20avatar%20%2B%20name%20%2B%20level%20badge%20%2B%20join%20date%0A-%20Stats%20row%3A%20Courses%20%7C%20Hours%20%7C%20Certificates%20%7C%20Streak%0A-%20Sections%3A%20About%2C%20Interests%2C%20Certificates%2C%20Badges%0A-%20Edit%20Profile%20button%0A%0A%23%23%23%2012.2%20Certificate%20Gallery%0A-%20Grid%20of%20earned%20certificates%20(thumbnail%20preview)%0A-%20Tap%20certificate%3A%20detail%20view%20with%20Download%2C%20Share%20to%20LinkedIn%2C%20Copy%20link%20options%0A-%20Verification%20QR%20code%20visible%20in%20detail%20view%0A%0A%23%23%23%2012.3%20Settings%20%26%20Privacy%0A-%20Account%3A%20Email%2C%20phone%2C%20password%2C%20linked%20accounts%0A-%20Preferences%3A%20Language%2C%20theme%20(Dark%2FLight%2FSystem)%2C%20notification%20settings%0A-%20Privacy%3A%20Download%20my%20data%2C%20Delete%20account%0A-%20About%3A%20App%20version%2C%20Terms%2C%20Privacy%20Policy%2C%20Open%20source%20licenses%0A%0A---%0A%0A%23%23%2013.%20Trainer%20Panel%0A%0A%23%23%23%2013.1%20Trainer%20Dashboard%0A**Layout%20(Web%2FDesktop%20primary)%3A**%0A-%20Sidebar%20navigation%3A%20Dashboard%2C%20My%20Courses%2C%20Course%20Builder%2C%20Students%2C%20Earnings%0A-%20KPI%20row%3A%20Total%20Students%20%7C%20Active%20This%20Month%20%7C%20Avg.%20Completion%20%25%20%7C%20Total%20Earnings%0A-%20Revenue%20chart%20(monthly%20bar%20graph)%0A-%20Top%20performing%20courses%20list%0A-%20Recent%20student%20activity%20feed%0A%0A%23%23%23%2013.2%20Course%20Builder%0A**Step%201%3A%20Course%20Details**%0A-%20Title%20field%20(required)%0A-%20Short%20description%20(100%E2%80%93200%20chars)%20%E2%80%94%20used%20in%20catalog%20cards%0A-%20Long%20description%20(rich%20text%20editor%3A%20bold%2C%20italic%2C%20bullet%2C%20heading)%0A-%20Category%20selector%20(required)%0A-%20Level%3A%20Beginner%20%2F%20Intermediate%20%2F%20Advanced%0A-%20Language%0A-%20Thumbnail%20upload%20(minimum%201280%C3%97720px)%0A-%20Promotional%20video%20(optional%2C%20max%203%20min)%0A-%20Prerequisites%3A%20multi-select%20from%20platform%20course%20list%0A-%20Tags%3A%20freeform%20chips%2C%20max%2010%0A%0A**Step%202%3A%20Curriculum%20Builder**%0A-%20Section%20accordion%20structure%20(add%20sections%20with%20drag%20handle)%0A-%20Within%20section%3A%20add%20lessons%20(drag%20to%20reorder)%0A-%20Lesson%20types%3A%20Video%2C%20PDF%2C%20Text%2C%20Quiz%0A-%20Each%20lesson%3A%20title%20%2B%20description%20%2B%20content%20upload%2Fcreate%20%2B%20free%20preview%20toggle%0A-%20Quiz%20lesson%3A%20inline%20quiz%20builder%20(add%20questions%2C%20options%2C%20correct%20answer%2C%20explanation)%0A%0A**Step%203%3A%20Pricing**%0A-%20Free%20%2F%20Paid%20toggle%0A-%20If%20paid%3A%20price%20input%20(INR%20and%2For%20USD)%0A-%20Discount%3A%20optional%20original%20price%20to%20show%20strike-through%0A%0A**Step%204%3A%20Review%20%26%20Submit**%0A-%20Preview%20in%20learner%20view%0A-%20Checklist%3A%20all%20required%20fields%20filled%0A-%20%22Submit%20for%20Review%22%20button%20%E2%86%92%20triggers%20content%20review%20workflow%0A%0A%23%23%23%2013.3%20Student%20Analytics%20(Per%20Course)%0A-%20Enrollment%20trend%20chart%0A-%20Completion%20funnel%3A%20Enrolled%20%E2%86%92%20Started%20%E2%86%92%2050%25%20%E2%86%92%20100%25%0A-%20Drop-off%20analysis%3A%20lesson%20with%20highest%20abandon%20rate%20highlighted%0A-%20Quiz%20performance%3A%20average%20score%20per%20quiz%0A-%20Student%20list%20with%20individual%20progress%20and%20last%20active%20date%0A%0A---%0A%0A%23%23%2014.%20Admin%20Panel%0A%0A%23%23%23%2014.1%20Admin%20Dashboard%0A**Layout%3A**%20Full%20desktop%20layout%2C%20sidebar%20%2B%20main%20content%0A-%20KPI%20cards%20row%3A%20DAU%2C%20MAU%2C%20MRR%2C%20New%20Signups%20Today%2C%20Active%20Subscriptions%2C%20Open%20Tickets%0A-%20Real-time%20activity%20feed%20(websocket%20updates)%0A-%20Quick%20action%20buttons%3A%20%22Send%20Notification%22%2C%20%22Export%20Report%22%2C%20%22Review%20Content%20Queue%22%0A-%20Charts%3A%20Revenue%20trend%20(30%20days)%2C%20User%20growth%2C%20Course%20enrollment%20heatmap%0A%0A%23%23%23%2014.2%20User%20Management%0A-%20Data%20table%3A%20name%2C%20email%2C%20role%2C%20plan%2C%20status%2C%20join%20date%2C%20last%20active%0A-%20Search%20%2B%20filter%20(role%2C%20plan%2C%20status%2C%20date%20range)%0A-%20Row%20actions%3A%20View%2C%20Edit%20Role%2C%20Suspend%2C%20Delete%0A-%20Bulk%20actions%3A%20Export%2C%20Send%20notification%2C%20Change%20plan%0A-%20User%20detail%20view%3A%20full%20profile%2C%20activity%20timeline%2C%20payment%20history%2C%20tickets%0A%0A%23%23%23%2014.3%20Content%20Management%0A-%20Course%20queue%3A%20Pending%20Review%20%7C%20Published%20%7C%20Rejected%20%7C%20Flagged%0A-%20Quick%20review%20panel%3A%20preview%20%2B%20approve%2Freject%2Ffeature%20%2B%20notes%20to%20trainer%0A-%20Batch%20approval%20option%0A%0A%23%23%23%2014.4%20Payment%20%26%20Revenue%0A-%20Transaction%20log%20with%3A%20date%2C%20user%2C%20type%2C%20amount%2C%20status%2C%20gateway%20reference%0A-%20Revenue%20dashboard%3A%20MRR%2C%20ARR%2C%20Average%20ARPU%2C%20Churn%2C%20LTV%0A-%20Payout%20management%3A%20trainer%20earnings%2C%20initiate%20payouts%0A-%20Export%3A%20CSV%20%2F%20PDF%20for%20accounting%0A%0A%23%23%23%2014.5%20Notification%20Composer%0A-%20Target%20segment%3A%20All%20Users%2C%20Plan%20type%2C%20Role%2C%20Last%20active%20date%20range%2C%20Course%20enrollment%0A-%20Estimated%20reach%20counter%20(updates%20live%20as%20filters%20applied)%0A-%20Notification%20types%3A%20Push%2C%20In-app%2C%20Email%0A-%20Message%3A%20title%20(50%20char)%2C%20body%20(150%20char)%2C%20CTA%20link%0A-%20Schedule%3A%20Now%20or%20date%2Ftime%20picker%0A-%20A%2FB%20test%20option%20(2%20message%20variants)%0A%0A---%0A%0A%23%23%2015.%20Marketing%20Website%20Screens%0A%0A%23%23%23%2015.1%20Home%20%2F%20Landing%20Page%0A**Sections%20(top%20to%20bottom)%3A**%0A1.%20**Hero%3A**%20Animated%20headline%2C%20subheadline%2C%20%22Get%20Started%20Free%22%20%2B%20%22See%20Demo%22%20CTAs%2C%20hero%20device%20mockup%0A2.%20**Social%20Proof%3A**%20Logos%20of%20featured%20companies%2Finstitutions%20%2B%20%22Join%20100%2C000%2B%20learners%22%20counter%0A3.%20**Key%20Features%3A**%203-column%20feature%20cards%20with%20icons%20and%20short%20descriptions%0A4.%20**How%20It%20Works%3A**%20Numbered%20step%20diagram%20(Register%20%E2%86%92%20Learn%20%E2%86%92%20Earn%20Certificate)%0A5.%20**Course%20Highlights%3A**%20Featured%20course%20cards%20grid%0A6.%20**Testimonials%3A**%20Carousel%20with%20user%20photos%2C%20quotes%2C%20star%20ratings%0A7.%20**Pricing%20Teaser%3A**%20Simplified%20plan%20comparison%2C%20%22See%20all%20plans%22%20link%0A8.%20**App%20Download%3A**%20iOS%20App%20Store%20%2B%20Google%20Play%20badges%20%2B%20QR%20code%0A9.%20**CTA%20Banner%3A**%20%22Start%20learning%20for%20free%20today%22%20with%20email%20capture%0A10.%20**Footer%3A**%20All%20links%2C%20social%20media%2C%20legal%0A%0A%23%23%23%2015.2%20Features%20Page%0A-%20Each%20feature%20gets%20a%20dedicated%20section%20with%3A%20headline%2C%20description%2C%20device%20mockup%20animation%2C%20stats%20(e.g.%2C%20%2240%25%20higher%20completion%20rates%22)%0A%0A%23%23%23%2015.3%20Pricing%20Page%0A-%20Full%20plan%20comparison%20table%0A-%20Annual%2FMonthly%20toggle%0A-%20FAQ%20accordion%0A-%20Enterprise%20CTA%3A%20%22Contact%20Sales%22%20form%0A%0A%23%23%23%2015.4%20About%20Page%0A-%20Mission%20statement%2C%20founding%20story%0A-%20Team%20section%20(avatars%20%2B%20roles)%0A-%20Values%20cards%0A-%20Press%20mentions%0A%0A---%0A%0A%23%23%20Responsive%20Notes%20Summary%0A%0A%7C%20Screen%20%7C%20Mobile%20(375px)%20%7C%20Tablet%20(768px)%20%7C%20Web%20(1280px)%20%7C%20Desktop%2FElectron%20(1440px)%20%7C%0A%7C---%7C---%7C---%7C---%7C---%7C%0A%7C%20Navigation%20%7C%20Bottom%20tab%20bar%20%7C%20Side%20tabs%20or%20top%20nav%20%7C%20Top%20nav%20bar%20%7C%20Sidebar%20(240px)%20%7C%0A%7C%20Course%20Grid%20%7C%202%20columns%20%7C%203%20columns%20%7C%204%20columns%20%7C%204-5%20columns%20%7C%0A%7C%20Lesson%20Player%20%7C%20Full%20width%2C%20portrait%20%7C%20Split%3A%20player%20%2B%20notes%20%7C%20Side-by-side%20%7C%20Side%20panel%20always%20visible%20%7C%0A%7C%20Admin%20Panel%20%7C%20Not%20designed%20for%20mobile%20(tablet%2B)%20%7C%202-column%20layout%20%7C%20Full%203-panel%20%7C%20Full%203-panel%20%7C%0A%7C%20AI%20Assistant%20%7C%20Slide-up%20drawer%20(90%25%20height)%20%7C%20Side%20panel%20(320px)%20%7C%20Persistent%20right%20panel%20%7C%20Persistent%20right%20panel%20%7C%0A%7C%20Dashboard%20%7C%20Single%20column%2C%20cards%20stacked%20%7C%202-column%20card%20grid%20%7C%203-column%20dashboard%20%7C%203-column%20with%20right%20panel%20%7C%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>03 Design System And Ui</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Screen-by-Screen UI Specification</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="screen-by-screen-ui-specification" class="docmd-heading"><a href="#screen-by-screen-ui-specification" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Screen-by-Screen UI Specification</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="screen-by-screen-ui-specification-overview" class="docmd-heading"><a href="#screen-by-screen-ui-specification-overview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Overview</h2>
+<p>This document specifies the layout, content, and interaction requirements for every screen in the platform, organized by section. Each screen spec includes:</p>
+<ul>
+<li><strong>Purpose:</strong> Why this screen exists</li>
+<li><strong>Layout:</strong> Structural breakdown</li>
+<li><strong>Key Elements:</strong> Required UI components</li>
+<li><strong>States:</strong> Empty, loading, error, success variants</li>
+<li><strong>Interactions:</strong> Tap/click, swipe, scroll behaviors</li>
+<li><strong>Responsive Notes:</strong> Differences between mobile, tablet, web, and desktop</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-1-authentication-screens" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Authentication Screens</h2>
+<h3 id="screen-by-screen-ui-specification-1-authentication-screens-11-splash-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens-11-splash-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.1 Splash Screen</h3>
+<p><strong>Purpose:</strong> Brand reinforcement and routing (returning vs new user)</p>
+<p><strong>Layout (Mobile):</strong></p>
+<ul>
+<li>Full-screen gradient background: <code>primary.600</code> → <code>secondary.500</code> (top-left to bottom-right)</li>
+<li>Center: Animated logo (scale-in 0.8→1, 600ms spring) + wordmark “LearnFlow AI”</li>
+<li>Sub-text: Tagline fades in 400ms after logo</li>
+<li>Bottom: “Get Started” (primary button) + “Log In” (ghost button)</li>
+<li>Loading indicator: Bottom progress bar if checking auth state</li>
+</ul>
+<p><strong>Key Elements:</strong></p>
+<ul>
+<li>Animated logo SVG (Framer Motion)</li>
+<li>Hero gradient background</li>
+<li>Two action buttons</li>
+<li>Background particle animation (subtle floating orbs)</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Auto-login: If valid refresh token exists → skip to Dashboard (no user interaction)</li>
+<li>New user: Show full splash with CTAs</li>
+<li>Network error: Show offline banner, retry button</li>
+</ul>
+<p><strong>Responsive:</strong> On web/desktop, center column (480px) with left/right decorative visual panels</p>
+<hr>
+<h3 id="screen-by-screen-ui-specification-1-authentication-screens-12-register-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens-12-register-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.2 Register Screen</h3>
+<p><strong>Purpose:</strong> New user account creation</p>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Header: “Create your account”, back arrow</li>
+<li>Form: Email input → Password input → Confirm password → “Create Account” button</li>
+<li>OR divider</li>
+<li>Social: “Continue with Google” + “Continue with Apple” (iOS only)</li>
+<li>Footer: “Already have an account? Log In” link</li>
+<li>Legal: “By registering, you agree to our Terms &amp; Privacy Policy” (12px below button)</li>
+</ul>
+<p><strong>Key Elements:</strong></p>
+<ul>
+<li>Email input with real-time validation (format check)</li>
+<li>Password strength indicator (5 levels: very weak → very strong)</li>
+<li>Show/hide password toggle</li>
+<li>Primary CTA: “Create Account” (disabled until all fields valid)</li>
+<li>Social auth buttons with brand logos</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Default: Empty form</li>
+<li>Validating: Input borders show validation state</li>
+<li>Error: “This email is already registered. Log In?” inline error</li>
+<li>Success: Transition to OTP screen</li>
+</ul>
+<p><strong>Interactions:</strong></p>
+<ul>
+<li>Form auto-scrolls to first error on submit</li>
+<li>Keyboard “Next” on email field moves focus to password</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-1-authentication-screens-13-otp-verification-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens-13-otp-verification-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.3 OTP Verification Screen</h3>
+<p><strong>Purpose:</strong> Verify phone number or email ownership</p>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Icon: Mobile/Email icon in colored circle</li>
+<li>Title: “Enter verification code”</li>
+<li>Subtitle: “We sent a 6-digit code to [email/phone]”</li>
+<li>OTP Input: 6 individual character boxes side-by-side</li>
+<li>Resend: “Didn’t receive it? Resend in 00:28” (countdown timer)</li>
+<li>Change method: “Use a different email” link</li>
+</ul>
+<p><strong>Key Elements:</strong></p>
+<ul>
+<li>6-box OTP input component (auto-advance on each digit, auto-submit on last digit)</li>
+<li>Countdown timer for resend</li>
+<li>Auto-paste from clipboard/SMS (iOS/Android)</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Default: Empty boxes</li>
+<li>Filling: Character by character highlight</li>
+<li>Error: Boxes turn red, “Incorrect code. 2 attempts remaining”</li>
+<li>Expired: “Code expired. Tap resend.” timer shows 0:00</li>
+<li>Success: Green checkmark animation → navigate to next step</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-1-authentication-screens-14-login-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens-14-login-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.4 Login Screen</h3>
+<p><strong>Purpose:</strong> Returning user authentication</p>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Title: “Welcome back”</li>
+<li>Form: Email/Phone input → Password input → “Log In” button</li>
+<li>“Forgot Password?” link (right-aligned below password)</li>
+<li>OR divider</li>
+<li>Social login buttons</li>
+<li>Footer: “New here? Create an account” link</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Default, validating, locked (after 5 failures with countdown), success</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-1-authentication-screens-15-forgot-reset-password" class="docmd-heading"><a href="#screen-by-screen-ui-specification-1-authentication-screens-15-forgot-reset-password" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1.5 Forgot / Reset Password</h3>
+<p><strong>Step 1:</strong> Email entry → “Send Reset Link” button<br>
+<strong>Step 2:</strong> “Check your email” confirmation screen, resend option<br>
+<strong>Step 3:</strong> New password form (from email link) → success → auto-login</p>
+<hr>
+<h2 id="screen-by-screen-ui-specification-2-onboarding-screens" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Onboarding Screens</h2>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-21-role-selection" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-21-role-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.1 Role Selection</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Progress: 1/5 progress dots</li>
+<li>Title: “How will you use LearnFlow AI?”</li>
+<li>Grid: 2×2 card grid, each card has icon + title + short description</li>
+<li>Cards: Student, Professional, Job Seeker, Trainer</li>
+<li>CTA: “Continue” (enabled after selection)</li>
+</ul>
+<p><strong>Interactions:</strong></p>
+<ul>
+<li>Card tap: instant selection highlight (border + background tint)</li>
+<li>Only 1 selection allowed; selecting new deselects old</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-22-goal-selection" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-22-goal-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.2 Goal Selection</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Progress: 2/5 dots</li>
+<li>Title: “What’s your main goal?”</li>
+<li>Grid: 2×3 visual goal cards (icon + short label)</li>
+<li>Select up to 2 goals</li>
+<li>Skip link bottom</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-23-interest-category-selection" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-23-interest-category-selection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.3 Interest Category Selection</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Progress: 3/5 dots</li>
+<li>Title: “What topics interest you?”</li>
+<li>Wrapping chip grid (3 columns on mobile)</li>
+<li>Chips: icon + category name</li>
+<li>Counter: “Select at least 2 (X selected)”</li>
+<li>Selected chips: filled with <code>primary.500</code></li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-24-schedule-daily-goal" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-24-schedule-daily-goal" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.4 Schedule / Daily Goal</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Progress: 4/5 dots</li>
+<li>Title: “How much time can you dedicate daily?”</li>
+<li>Row of 5 option buttons: “5 min”, “15 min”, “30 min”, “1 hour”, “Let AI decide”</li>
+<li>Visual time analogy below selection (“That’s like 1 TED Talk a day”)</li>
+<li>Skip link</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-25-profile-setup" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-25-profile-setup" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.5 Profile Setup</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Progress: 5/5 dots</li>
+<li>Avatar circle with “+” add photo icon</li>
+<li>Name input field (required)</li>
+<li>Age range dropdown (optional)</li>
+<li>CTA: “Complete Setup”</li>
+<li>Skip: “Skip for now” (photo and age only)</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-2-onboarding-screens-26-recommendations-preview-post-onboarding" class="docmd-heading"><a href="#screen-by-screen-ui-specification-2-onboarding-screens-26-recommendations-preview-post-onboarding" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2.6 Recommendations Preview (Post-Onboarding)</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Full-screen celebration background</li>
+<li>“We found 5 courses for you, [Name]!” title</li>
+<li>Horizontal scroll of 5 course cards</li>
+<li>Each card: Thumbnail + title + “Why we picked this” chip</li>
+<li>Primary CTA: “Start Learning” (enrolls in top recommended course)</li>
+<li>Secondary: “Explore All Courses”</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-3-home-dashboard" class="docmd-heading"><a href="#screen-by-screen-ui-specification-3-home-dashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Home / Dashboard</h2>
+<h3 id="screen-by-screen-ui-specification-3-home-dashboard-31-dashboard-learner" class="docmd-heading"><a href="#screen-by-screen-ui-specification-3-home-dashboard-31-dashboard-learner" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Dashboard (Learner)</h3>
+<p><strong>Layout (Mobile):</strong></p>
+<ul>
+<li>Top: Greeting (“Good morning, Priya! 🌅”) + notification bell + avatar</li>
+<li>Banner: Streak widget (flame icon + day count + daily goal progress bar)</li>
+<li>Section: “Continue Learning” — single course card (large, with progress %)</li>
+<li>Section: “Daily Quests” — 3 quest chips with XP value + completion state</li>
+<li>Section: “Recommended for You” — horizontal scroll of 5 course cards</li>
+<li>Section: “New Courses” — horizontal scroll</li>
+<li>Section: “Trending Now” — horizontal scroll</li>
+<li>Bottom: Tab bar navigation</li>
+</ul>
+<p><strong>Layout (Web/Desktop):</strong></p>
+<ul>
+<li>Left sidebar navigation (240px)</li>
+<li>Main content: 3-column grid (macOS-style dashboard)</li>
+<li>Right panel: AI assistant quick-open, upcoming reminders</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>New user: “Start your first course” hero CTA</li>
+<li>Active learner: Current course progress prominent</li>
+<li>All courses complete: “Explore more” → course catalog</li>
+</ul>
+<p><strong>Interactions:</strong></p>
+<ul>
+<li>Pull-to-refresh (mobile)</li>
+<li>Course card tap → course detail page</li>
+<li>Streak widget tap → gamification overview</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-4-course-screens" class="docmd-heading"><a href="#screen-by-screen-ui-specification-4-course-screens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Course Screens</h2>
+<h3 id="screen-by-screen-ui-specification-4-course-screens-41-course-catalog-browse" class="docmd-heading"><a href="#screen-by-screen-ui-specification-4-course-screens-41-course-catalog-browse" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.1 Course Catalog / Browse</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Search bar (top, sticky) with filter icon</li>
+<li>Category horizontal scroll chips below search</li>
+<li>Course grid: 2 columns (mobile), 3 columns (tablet), 4 columns (desktop)</li>
+<li>Sort: Newest, Most Popular, Highest Rated, Price</li>
+</ul>
+<p><strong>Filters (Bottom Sheet / Side Panel):</strong></p>
+<ul>
+<li>Level: Beginner, Intermediate, Advanced</li>
+<li>Duration: &lt; 1h, 1–5h, 5–10h, 10h+</li>
+<li>Rating: 3★+, 4★+, 4.5★+</li>
+<li>Price: Free, Paid, My Plan Includes</li>
+<li>Category: multi-select</li>
+<li>Apply + Clear buttons</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Loading: Skeleton cards (shimmer animation)</li>
+<li>No results: Illustration + “Try different keywords” + CTA</li>
+<li>Network error: Retry button</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-4-course-screens-42-course-detail-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-4-course-screens-42-course-detail-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.2 Course Detail Page</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Hero image/video thumbnail (16:9, full width)</li>
+<li>Title (h1), instructor line, star rating + review count, enrollment count</li>
+<li>Tab navigation: Overview | Curriculum | Reviews | Instructor</li>
+<li>Sticky bottom bar: Price / “Enroll Free” CTA (or “Included in Pro” badge)</li>
+<li>Badges row: Level, Duration, Language, Certificate, Last Updated</li>
+</ul>
+<p><strong>Overview Tab Content:</strong></p>
+<ul>
+<li>“What you’ll learn” checklist (5–8 items)</li>
+<li>Description text (expandable “Show more” if &gt; 3 lines)</li>
+<li>Requirements/prerequisites</li>
+<li>Target audience</li>
+</ul>
+<p><strong>Curriculum Tab Content:</strong></p>
+<ul>
+<li>Section accordions → Lesson list</li>
+<li>Each lesson: type icon + title + duration + lock icon if not enrolled</li>
+<li>Free preview lessons: “Preview” chip</li>
+</ul>
+<p><strong>Reviews Tab Content:</strong></p>
+<ul>
+<li>Overall rating (large) + breakdown bars (5★ → 1★)</li>
+<li>Review cards: avatar + name + date + star + text</li>
+<li>“See all reviews” link</li>
+</ul>
+<p><strong>Instructor Tab:</strong></p>
+<ul>
+<li>Large avatar + bio + course count + student count + rating</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-4-course-screens-43-my-courses-library" class="docmd-heading"><a href="#screen-by-screen-ui-specification-4-course-screens-43-my-courses-library" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4.3 My Courses (Library)</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Tabs: In Progress | Completed | Wishlist</li>
+<li>Course cards with progress bars (in progress), completion date (completed)</li>
+<li>Search within library</li>
+<li>Sort: Recently Accessed, Alphabetical, Progress %</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-5-lesson-player" class="docmd-heading"><a href="#screen-by-screen-ui-specification-5-lesson-player" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Lesson Player</h2>
+<h3 id="screen-by-screen-ui-specification-5-lesson-player-51-video-lesson-player" class="docmd-heading"><a href="#screen-by-screen-ui-specification-5-lesson-player-51-video-lesson-player" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 Video Lesson Player</h3>
+<p><strong>Layout (Portrait Mobile):</strong></p>
+<ul>
+<li>Video player: 16:9 top area</li>
+<li>Controls overlay: play/pause, seek bar, timestamp, fullscreen, settings</li>
+<li>Below player: lesson title, course breadcrumb</li>
+<li>Tabs: Notes | Resources | AI Help</li>
+<li>Bottom: “Mark as Complete” + “Next Lesson” button</li>
+</ul>
+<p><strong>Video Controls:</strong></p>
+<ul>
+<li>Double-tap left/right: ±10 seconds</li>
+<li>Single tap: show/hide controls (3s auto-hide)</li>
+<li>Long press: playback speed menu</li>
+<li>Settings: Quality (Auto/720p/480p/360p), Playback speed, Captions toggle</li>
+<li>PiP (Picture-in-Picture) mode: floating window while using other app</li>
+</ul>
+<p><strong>Fullscreen (Landscape):</strong></p>
+<ul>
+<li>Immersive player, controls overlay</li>
+<li>Gesture: swipe down to exit fullscreen</li>
+</ul>
+<p><strong>Desktop / Web:</strong></p>
+<ul>
+<li>Side panel: Chapter list (left), Notes (right, collapsible)</li>
+<li>No bottom sheet; lesson title in header</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Buffering: spinner overlay, video paused</li>
+<li>Error: “Video unavailable” with retry</li>
+<li>Completed: checkmark overlay, auto-advance countdown (5s) to next lesson</li>
+<li>Offline: plays from local storage, offline indicator chip</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-5-lesson-player-52-pdf-document-lesson" class="docmd-heading"><a href="#screen-by-screen-ui-specification-5-lesson-player-52-pdf-document-lesson" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 PDF / Document Lesson</h3>
+<ul>
+<li>PDF rendered inline using native PDF viewer (no browser launch)</li>
+<li>Scroll navigation</li>
+<li>Zoom: pinch-to-zoom (mobile), +/- buttons (web)</li>
+<li>Page count indicator</li>
+<li>Download button (Pro plan users)</li>
+</ul>
+<hr>
+<h3 id="screen-by-screen-ui-specification-5-lesson-player-53-notes-panel" class="docmd-heading"><a href="#screen-by-screen-ui-specification-5-lesson-player-53-notes-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.3 Notes Panel</h3>
+<ul>
+<li>Markdown-lite text editor (bold, italic, bullet list, heading)</li>
+<li>Auto-saves every 30 seconds</li>
+<li>“Copy lesson timestamp” button (inserts [4:32] marker in note)</li>
+<li>Export: “Download notes as PDF”</li>
+<li>All notes searchable in Profile → Notes section</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-6-quiz-assessment-screens" class="docmd-heading"><a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Quiz &amp; Assessment Screens</h2>
+<h3 id="screen-by-screen-ui-specification-6-quiz-assessment-screens-61-quiz-intro-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-61-quiz-intro-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Quiz Intro Screen</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Course + quiz name header</li>
+<li>Info cards: Question count, Time limit, Passing score, Attempts remaining</li>
+<li>“Start Quiz” button</li>
+<li>“Review materials first” link (goes back to lesson)</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-6-quiz-assessment-screens-62-quiz-question-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-62-quiz-question-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 Quiz Question Screen</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Question counter: “Question 3 of 10”</li>
+<li>Timer bar (top, full width, shrinks left→right, turns red at 20%)</li>
+<li>Question card: question text + optional image</li>
+<li>Options list: radio buttons (MCQ) or checkboxes (multi-select) or text input (fill-blank)</li>
+<li>“Next” button (disabled until answer selected)</li>
+<li>“Skip” button (available for non-required quizzes)</li>
+</ul>
+<p><strong>Interactions:</strong></p>
+<ul>
+<li>Option tap: immediate visual selection</li>
+<li>“Next” → auto-advance; “Back” if previous navigation enabled</li>
+<li>Timer expired: auto-submit current answer, move to next or submit quiz</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-6-quiz-assessment-screens-63-quiz-results-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-63-quiz-results-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Quiz Results Screen</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Large circular score indicator (correct/total) with pass/fail color</li>
+<li>Grade message: “Excellent! 🎉” / “Good Job!” / “Keep Practicing”</li>
+<li>XP awarded: amber pill badge (animated in)</li>
+<li>Badge earned notification (if criteria met)</li>
+<li>Stats: Time taken, Correct / Incorrect, Skipped</li>
+<li>Action buttons: “Review Answers” | “Retry” (with cooldown timer if active) | “Continue Course”</li>
+<li>AI explanation prompt: “Get AI to explain any answer →”</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-6-quiz-assessment-screens-64-answer-review-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-64-answer-review-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.4 Answer Review Screen</h3>
+<ul>
+<li>All questions listed with: your answer, correct answer, correct/incorrect indicator</li>
+<li>“Explain this” button per question → opens AI panel with explanation</li>
+<li>Filter: “Show incorrect only”</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-7-ai-assistant" class="docmd-heading"><a href="#screen-by-screen-ui-specification-7-ai-assistant" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. AI Assistant</h2>
+<h3 id="screen-by-screen-ui-specification-7-ai-assistant-71-ai-chat-interface" class="docmd-heading"><a href="#screen-by-screen-ui-specification-7-ai-assistant-71-ai-chat-interface" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.1 AI Chat Interface</h3>
+<p><strong>Layout (Mobile — Slide-up Drawer):</strong></p>
+<ul>
+<li>Handle bar at top</li>
+<li>Header: “LearnFlow AI” + query quota (e.g., “12/50 queries today”)</li>
+<li>Chat message list (scroll)</li>
+<li>User message: right-aligned bubble, primary tint</li>
+<li>AI message: left-aligned bubble, glass card style, with “Explain more” and “Related course” chips</li>
+<li>Input: text field + send button + voice button</li>
+<li>Quick suggestions: horizontal scroll of 4 pre-set prompts (“Explain this concept”, “Give me a quiz”, “Study plan”, “What’s next?”)</li>
+</ul>
+<p><strong>Layout (Web/Desktop — Side Panel):</strong></p>
+<ul>
+<li>Persistent right panel (320px wide, collapsible)</li>
+<li>Full conversation history</li>
+<li>History sidebar: past 10 conversations</li>
+</ul>
+<p><strong>AI Response Features:</strong></p>
+<ul>
+<li>Markdown rendering (bold, code blocks, lists)</li>
+<li>“Copy response” button</li>
+<li>“This is helpful / Not helpful” thumbs up/down</li>
+<li>“Save to Notes” option</li>
+<li>Source citation: “Based on [Lesson Name] in [Course Name]”</li>
+</ul>
+<p><strong>States:</strong></p>
+<ul>
+<li>Typing indicator: animated 3-dot bubble</li>
+<li>Error: “Something went wrong. Try again” with retry</li>
+<li>Quota reached (free plan): “You’ve used all 10 daily queries. Upgrade to Pro for unlimited AI”</li>
+<li>Off-topic refusal: Friendly message with redirect</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-8-progress-analytics" class="docmd-heading"><a href="#screen-by-screen-ui-specification-8-progress-analytics" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Progress &amp; Analytics</h2>
+<h3 id="screen-by-screen-ui-specification-8-progress-analytics-81-progress-dashboard" class="docmd-heading"><a href="#screen-by-screen-ui-specification-8-progress-analytics-81-progress-dashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.1 Progress Dashboard</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Top: Level badge + XP bar (current → next level)</li>
+<li>Stats row: Courses Completed | Lessons Done | Hours Learned | Certificates Earned</li>
+<li>Current streak widget</li>
+<li>Weekly learning chart (bar graph, 7 days)</li>
+<li>Enrolled courses with individual progress bars</li>
+<li>Recent activity feed</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-8-progress-analytics-82-badge-collection" class="docmd-heading"><a href="#screen-by-screen-ui-specification-8-progress-analytics-82-badge-collection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.2 Badge Collection</h3>
+<ul>
+<li>Grid of all badges (earned: full color; unearned: greyed out with “?” icon)</li>
+<li>Tap badge: modal with description, criteria, date earned</li>
+<li>Progress on near-completion badges: “2/5 reviews written”</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-8-progress-analytics-83-leaderboard" class="docmd-heading"><a href="#screen-by-screen-ui-specification-8-progress-analytics-83-leaderboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.3 Leaderboard</h3>
+<ul>
+<li>Tab selector: Global | Course | Friends | Institution</li>
+<li>Rank list: user avatar + name + XP + rank number</li>
+<li>User’s own rank: sticky at bottom if not in top 10</li>
+<li>Reset timer: “Resets in 3 days 14h”</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-9-membership-payments" class="docmd-heading"><a href="#screen-by-screen-ui-specification-9-membership-payments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Membership &amp; Payments</h2>
+<h3 id="screen-by-screen-ui-specification-9-membership-payments-91-membership-plans-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-9-membership-payments-91-membership-plans-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.1 Membership Plans Page</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Toggle: Monthly / Annual (annual shows “Save 20%” badge)</li>
+<li>Plan cards (vertical stack mobile, horizontal desktop):
+<ul>
+<li>Plan name, price, billing period</li>
+<li>Feature checklist (✓ included, ✗ not included)</li>
+<li>“Current Plan” badge (if active)</li>
+<li>CTA: “Upgrade” / “Start Free Trial” / “Contact Sales”</li>
+</ul>
+</li>
+<li>“Most Popular” badge on Pro plan</li>
+<li>FAQ section at bottom</li>
+<li>“Money-back guarantee” trust badge</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-9-membership-payments-92-payment-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-9-membership-payments-92-payment-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.2 Payment Screen</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Order summary: Plan name, price, discount applied, total</li>
+<li>Payment method selector: UPI (Razorpay), Card, Net Banking, Wallet</li>
+<li>UPI: Enter UPI ID field or “Pay with GPay/PhonePe” app buttons</li>
+<li>Card: Card number, expiry, CVV, name</li>
+<li>“Pay ₹[amount]” button (disabled until valid payment info)</li>
+<li>Security badges: “256-bit SSL” + Razorpay logo</li>
+<li>Terms: “By subscribing, you agree to automatic renewal. Cancel anytime.”</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-9-membership-payments-93-payment-success-screen" class="docmd-heading"><a href="#screen-by-screen-ui-specification-9-membership-payments-93-payment-success-screen" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.3 Payment Success Screen</h3>
+<ul>
+<li>Full-screen celebration animation (brief)</li>
+<li>“You’re now on Pro! 🎉”</li>
+<li>List of 5 unlocked features</li>
+<li>CTA: “Start Exploring” → Dashboard</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-9-membership-payments-94-billing-history" class="docmd-heading"><a href="#screen-by-screen-ui-specification-9-membership-payments-94-billing-history" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.4 Billing History</h3>
+<ul>
+<li>List of all transactions: date, description, amount, status, “Download Invoice” link</li>
+<li>Filter by date range</li>
+<li>Export as PDF/CSV</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-10-notifications" class="docmd-heading"><a href="#screen-by-screen-ui-specification-10-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10. Notifications</h2>
+<h3 id="screen-by-screen-ui-specification-10-notifications-101-notification-center" class="docmd-heading"><a href="#screen-by-screen-ui-specification-10-notifications-101-notification-center" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10.1 Notification Center</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>“All” | “Learning” | “Achievements” | “Offers” tab filter</li>
+<li>Notification cards: icon + title + description + timestamp + “Mark as read”</li>
+<li>Unread: slightly highlighted background</li>
+<li>Empty state: “You’re all caught up!” illustration</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-10-notifications-102-notification-settings" class="docmd-heading"><a href="#screen-by-screen-ui-specification-10-notifications-102-notification-settings" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10.2 Notification Settings</h3>
+<ul>
+<li>Toggle groups: Learning reminders, Streak alerts, Achievements, New courses, Offers &amp; Promotions</li>
+<li>Quiet hours: Do not disturb time range</li>
+<li>Email digest: Daily / Weekly / Never</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-11-support" class="docmd-heading"><a href="#screen-by-screen-ui-specification-11-support" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11. Support</h2>
+<h3 id="screen-by-screen-ui-specification-11-support-111-help-center" class="docmd-heading"><a href="#screen-by-screen-ui-specification-11-support-111-help-center" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11.1 Help Center</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Search bar: “How can we help you?”</li>
+<li>Category cards: Payment, Course Access, Technical, Account, AI Assistant</li>
+<li>Popular articles list</li>
+<li>“Contact Support” floating button</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-11-support-112-submit-support-ticket" class="docmd-heading"><a href="#screen-by-screen-ui-specification-11-support-112-submit-support-ticket" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11.2 Submit Support Ticket</h3>
+<p><strong>Fields:</strong></p>
+<ul>
+<li>Category: dropdown</li>
+<li>Subject: text field</li>
+<li>Description: textarea (min 20 chars)</li>
+<li>Attachment: optional file upload</li>
+<li>Priority: Low / Medium / High (based on issue type)</li>
+<li>CTA: “Submit Ticket”</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-11-support-113-my-tickets" class="docmd-heading"><a href="#screen-by-screen-ui-specification-11-support-113-my-tickets" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11.3 My Tickets</h3>
+<ul>
+<li>List with: ticket ID, subject, status badge (Open/In Progress/Resolved), last updated</li>
+<li>Tap ticket → conversation thread view</li>
+<li>Reply field at bottom</li>
+<li>CSAT survey when ticket resolved</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-12-profile" class="docmd-heading"><a href="#screen-by-screen-ui-specification-12-profile" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12. Profile</h2>
+<h3 id="screen-by-screen-ui-specification-12-profile-121-profile-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-12-profile-121-profile-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12.1 Profile Page</h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li>Hero: Cover background gradient + avatar + name + level badge + join date</li>
+<li>Stats row: Courses | Hours | Certificates | Streak</li>
+<li>Sections: About, Interests, Certificates, Badges</li>
+<li>Edit Profile button</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-12-profile-122-certificate-gallery" class="docmd-heading"><a href="#screen-by-screen-ui-specification-12-profile-122-certificate-gallery" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12.2 Certificate Gallery</h3>
+<ul>
+<li>Grid of earned certificates (thumbnail preview)</li>
+<li>Tap certificate: detail view with Download, Share to LinkedIn, Copy link options</li>
+<li>Verification QR code visible in detail view</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-12-profile-123-settings-privacy" class="docmd-heading"><a href="#screen-by-screen-ui-specification-12-profile-123-settings-privacy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12.3 Settings &amp; Privacy</h3>
+<ul>
+<li>Account: Email, phone, password, linked accounts</li>
+<li>Preferences: Language, theme (Dark/Light/System), notification settings</li>
+<li>Privacy: Download my data, Delete account</li>
+<li>About: App version, Terms, Privacy Policy, Open source licenses</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-13-trainer-panel" class="docmd-heading"><a href="#screen-by-screen-ui-specification-13-trainer-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>13. Trainer Panel</h2>
+<h3 id="screen-by-screen-ui-specification-13-trainer-panel-131-trainer-dashboard" class="docmd-heading"><a href="#screen-by-screen-ui-specification-13-trainer-panel-131-trainer-dashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>13.1 Trainer Dashboard</h3>
+<p><strong>Layout (Web/Desktop primary):</strong></p>
+<ul>
+<li>Sidebar navigation: Dashboard, My Courses, Course Builder, Students, Earnings</li>
+<li>KPI row: Total Students | Active This Month | Avg. Completion % | Total Earnings</li>
+<li>Revenue chart (monthly bar graph)</li>
+<li>Top performing courses list</li>
+<li>Recent student activity feed</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-13-trainer-panel-132-course-builder" class="docmd-heading"><a href="#screen-by-screen-ui-specification-13-trainer-panel-132-course-builder" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>13.2 Course Builder</h3>
+<p><strong>Step 1: Course Details</strong></p>
+<ul>
+<li>Title field (required)</li>
+<li>Short description (100–200 chars) — used in catalog cards</li>
+<li>Long description (rich text editor: bold, italic, bullet, heading)</li>
+<li>Category selector (required)</li>
+<li>Level: Beginner / Intermediate / Advanced</li>
+<li>Language</li>
+<li>Thumbnail upload (minimum 1280×720px)</li>
+<li>Promotional video (optional, max 3 min)</li>
+<li>Prerequisites: multi-select from platform course list</li>
+<li>Tags: freeform chips, max 10</li>
+</ul>
+<p><strong>Step 2: Curriculum Builder</strong></p>
+<ul>
+<li>Section accordion structure (add sections with drag handle)</li>
+<li>Within section: add lessons (drag to reorder)</li>
+<li>Lesson types: Video, PDF, Text, Quiz</li>
+<li>Each lesson: title + description + content upload/create + free preview toggle</li>
+<li>Quiz lesson: inline quiz builder (add questions, options, correct answer, explanation)</li>
+</ul>
+<p><strong>Step 3: Pricing</strong></p>
+<ul>
+<li>Free / Paid toggle</li>
+<li>If paid: price input (INR and/or USD)</li>
+<li>Discount: optional original price to show strike-through</li>
+</ul>
+<p><strong>Step 4: Review &amp; Submit</strong></p>
+<ul>
+<li>Preview in learner view</li>
+<li>Checklist: all required fields filled</li>
+<li>“Submit for Review” button → triggers content review workflow</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-13-trainer-panel-133-student-analytics-per-course" class="docmd-heading"><a href="#screen-by-screen-ui-specification-13-trainer-panel-133-student-analytics-per-course" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>13.3 Student Analytics (Per Course)</h3>
+<ul>
+<li>Enrollment trend chart</li>
+<li>Completion funnel: Enrolled → Started → 50% → 100%</li>
+<li>Drop-off analysis: lesson with highest abandon rate highlighted</li>
+<li>Quiz performance: average score per quiz</li>
+<li>Student list with individual progress and last active date</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-14-admin-panel" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14. Admin Panel</h2>
+<h3 id="screen-by-screen-ui-specification-14-admin-panel-141-admin-dashboard" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel-141-admin-dashboard" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14.1 Admin Dashboard</h3>
+<p><strong>Layout:</strong> Full desktop layout, sidebar + main content</p>
+<ul>
+<li>KPI cards row: DAU, MAU, MRR, New Signups Today, Active Subscriptions, Open Tickets</li>
+<li>Real-time activity feed (websocket updates)</li>
+<li>Quick action buttons: “Send Notification”, “Export Report”, “Review Content Queue”</li>
+<li>Charts: Revenue trend (30 days), User growth, Course enrollment heatmap</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-14-admin-panel-142-user-management" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel-142-user-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14.2 User Management</h3>
+<ul>
+<li>Data table: name, email, role, plan, status, join date, last active</li>
+<li>Search + filter (role, plan, status, date range)</li>
+<li>Row actions: View, Edit Role, Suspend, Delete</li>
+<li>Bulk actions: Export, Send notification, Change plan</li>
+<li>User detail view: full profile, activity timeline, payment history, tickets</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-14-admin-panel-143-content-management" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel-143-content-management" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14.3 Content Management</h3>
+<ul>
+<li>Course queue: Pending Review | Published | Rejected | Flagged</li>
+<li>Quick review panel: preview + approve/reject/feature + notes to trainer</li>
+<li>Batch approval option</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-14-admin-panel-144-payment-revenue" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel-144-payment-revenue" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14.4 Payment &amp; Revenue</h3>
+<ul>
+<li>Transaction log with: date, user, type, amount, status, gateway reference</li>
+<li>Revenue dashboard: MRR, ARR, Average ARPU, Churn, LTV</li>
+<li>Payout management: trainer earnings, initiate payouts</li>
+<li>Export: CSV / PDF for accounting</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-14-admin-panel-145-notification-composer" class="docmd-heading"><a href="#screen-by-screen-ui-specification-14-admin-panel-145-notification-composer" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>14.5 Notification Composer</h3>
+<ul>
+<li>Target segment: All Users, Plan type, Role, Last active date range, Course enrollment</li>
+<li>Estimated reach counter (updates live as filters applied)</li>
+<li>Notification types: Push, In-app, Email</li>
+<li>Message: title (50 char), body (150 char), CTA link</li>
+<li>Schedule: Now or date/time picker</li>
+<li>A/B test option (2 message variants)</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-15-marketing-website-screens" class="docmd-heading"><a href="#screen-by-screen-ui-specification-15-marketing-website-screens" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>15. Marketing Website Screens</h2>
+<h3 id="screen-by-screen-ui-specification-15-marketing-website-screens-151-home-landing-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-15-marketing-website-screens-151-home-landing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>15.1 Home / Landing Page</h3>
+<p><strong>Sections (top to bottom):</strong></p>
+<ol>
+<li><strong>Hero:</strong> Animated headline, subheadline, “Get Started Free” + “See Demo” CTAs, hero device mockup</li>
+<li><strong>Social Proof:</strong> Logos of featured companies/institutions + “Join 100,000+ learners” counter</li>
+<li><strong>Key Features:</strong> 3-column feature cards with icons and short descriptions</li>
+<li><strong>How It Works:</strong> Numbered step diagram (Register → Learn → Earn Certificate)</li>
+<li><strong>Course Highlights:</strong> Featured course cards grid</li>
+<li><strong>Testimonials:</strong> Carousel with user photos, quotes, star ratings</li>
+<li><strong>Pricing Teaser:</strong> Simplified plan comparison, “See all plans” link</li>
+<li><strong>App Download:</strong> iOS App Store + Google Play badges + QR code</li>
+<li><strong>CTA Banner:</strong> “Start learning for free today” with email capture</li>
+<li><strong>Footer:</strong> All links, social media, legal</li>
+</ol>
+<h3 id="screen-by-screen-ui-specification-15-marketing-website-screens-152-features-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-15-marketing-website-screens-152-features-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>15.2 Features Page</h3>
+<ul>
+<li>Each feature gets a dedicated section with: headline, description, device mockup animation, stats (e.g., “40% higher completion rates”)</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-15-marketing-website-screens-153-pricing-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-15-marketing-website-screens-153-pricing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>15.3 Pricing Page</h3>
+<ul>
+<li>Full plan comparison table</li>
+<li>Annual/Monthly toggle</li>
+<li>FAQ accordion</li>
+<li>Enterprise CTA: “Contact Sales” form</li>
+</ul>
+<h3 id="screen-by-screen-ui-specification-15-marketing-website-screens-154-about-page" class="docmd-heading"><a href="#screen-by-screen-ui-specification-15-marketing-website-screens-154-about-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>15.4 About Page</h3>
+<ul>
+<li>Mission statement, founding story</li>
+<li>Team section (avatars + roles)</li>
+<li>Values cards</li>
+<li>Press mentions</li>
+</ul>
+<hr>
+<h2 id="screen-by-screen-ui-specification-responsive-notes-summary" class="docmd-heading"><a href="#screen-by-screen-ui-specification-responsive-notes-summary" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Responsive Notes Summary</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Mobile (375px)</th>
+<th>Tablet (768px)</th>
+<th>Web (1280px)</th>
+<th>Desktop/Electron (1440px)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Navigation</td>
+<td>Bottom tab bar</td>
+<td>Side tabs or top nav</td>
+<td>Top nav bar</td>
+<td>Sidebar (240px)</td>
+</tr>
+<tr>
+<td>Course Grid</td>
+<td>2 columns</td>
+<td>3 columns</td>
+<td>4 columns</td>
+<td>4-5 columns</td>
+</tr>
+<tr>
+<td>Lesson Player</td>
+<td>Full width, portrait</td>
+<td>Split: player + notes</td>
+<td>Side-by-side</td>
+<td>Side panel always visible</td>
+</tr>
+<tr>
+<td>Admin Panel</td>
+<td>Not designed for mobile (tablet+)</td>
+<td>2-column layout</td>
+<td>Full 3-panel</td>
+<td>Full 3-panel</td>
+</tr>
+<tr>
+<td>AI Assistant</td>
+<td>Slide-up drawer (90% height)</td>
+<td>Side panel (320px)</td>
+<td>Persistent right panel</td>
+<td>Persistent right panel</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Single column, cards stacked</td>
+<td>2-column card grid</td>
+<td>3-column dashboard</td>
+<td>3-column with right panel</td>
+</tr>
+</tbody>
+</table>
+</div>
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Low-Fidelity Wireframe Prompts
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../03_design_system_and_ui/ux_latest_design_system/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            UX Latest Design System
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#screen-by-screen-ui-specification" class="toc-link">Screen-by-Screen UI Specification</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-overview" class="toc-link">Overview</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens" class="toc-link">1. Authentication Screens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens-11-splash-screen" class="toc-link">1.1 Splash Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens-12-register-screen" class="toc-link">1.2 Register Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens-13-otp-verification-screen" class="toc-link">1.3 OTP Verification Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens-14-login-screen" class="toc-link">1.4 Login Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-1-authentication-screens-15-forgot-reset-password" class="toc-link">1.5 Forgot / Reset Password</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens" class="toc-link">2. Onboarding Screens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-21-role-selection" class="toc-link">2.1 Role Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-22-goal-selection" class="toc-link">2.2 Goal Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-23-interest-category-selection" class="toc-link">2.3 Interest Category Selection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-24-schedule-daily-goal" class="toc-link">2.4 Schedule / Daily Goal</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-25-profile-setup" class="toc-link">2.5 Profile Setup</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-2-onboarding-screens-26-recommendations-preview-post-onboarding" class="toc-link">2.6 Recommendations Preview (Post-Onboarding)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-3-home-dashboard" class="toc-link">3. Home / Dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-3-home-dashboard-31-dashboard-learner" class="toc-link">3.1 Dashboard (Learner)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-4-course-screens" class="toc-link">4. Course Screens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-4-course-screens-41-course-catalog-browse" class="toc-link">4.1 Course Catalog / Browse</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-4-course-screens-42-course-detail-page" class="toc-link">4.2 Course Detail Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-4-course-screens-43-my-courses-library" class="toc-link">4.3 My Courses (Library)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-5-lesson-player" class="toc-link">5. Lesson Player</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-5-lesson-player-51-video-lesson-player" class="toc-link">5.1 Video Lesson Player</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-5-lesson-player-52-pdf-document-lesson" class="toc-link">5.2 PDF / Document Lesson</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-5-lesson-player-53-notes-panel" class="toc-link">5.3 Notes Panel</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens" class="toc-link">6. Quiz &amp; Assessment Screens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-61-quiz-intro-screen" class="toc-link">6.1 Quiz Intro Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-62-quiz-question-screen" class="toc-link">6.2 Quiz Question Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-63-quiz-results-screen" class="toc-link">6.3 Quiz Results Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-6-quiz-assessment-screens-64-answer-review-screen" class="toc-link">6.4 Answer Review Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-7-ai-assistant" class="toc-link">7. AI Assistant</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-7-ai-assistant-71-ai-chat-interface" class="toc-link">7.1 AI Chat Interface</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-8-progress-analytics" class="toc-link">8. Progress &amp; Analytics</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-8-progress-analytics-81-progress-dashboard" class="toc-link">8.1 Progress Dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-8-progress-analytics-82-badge-collection" class="toc-link">8.2 Badge Collection</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-8-progress-analytics-83-leaderboard" class="toc-link">8.3 Leaderboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-9-membership-payments" class="toc-link">9. Membership &amp; Payments</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-9-membership-payments-91-membership-plans-page" class="toc-link">9.1 Membership Plans Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-9-membership-payments-92-payment-screen" class="toc-link">9.2 Payment Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-9-membership-payments-93-payment-success-screen" class="toc-link">9.3 Payment Success Screen</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-9-membership-payments-94-billing-history" class="toc-link">9.4 Billing History</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-10-notifications" class="toc-link">10. Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-10-notifications-101-notification-center" class="toc-link">10.1 Notification Center</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-10-notifications-102-notification-settings" class="toc-link">10.2 Notification Settings</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-11-support" class="toc-link">11. Support</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-11-support-111-help-center" class="toc-link">11.1 Help Center</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-11-support-112-submit-support-ticket" class="toc-link">11.2 Submit Support Ticket</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-11-support-113-my-tickets" class="toc-link">11.3 My Tickets</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-12-profile" class="toc-link">12. Profile</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-12-profile-121-profile-page" class="toc-link">12.1 Profile Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-12-profile-122-certificate-gallery" class="toc-link">12.2 Certificate Gallery</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-12-profile-123-settings-privacy" class="toc-link">12.3 Settings &amp; Privacy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-13-trainer-panel" class="toc-link">13. Trainer Panel</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-13-trainer-panel-131-trainer-dashboard" class="toc-link">13.1 Trainer Dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-13-trainer-panel-132-course-builder" class="toc-link">13.2 Course Builder</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-13-trainer-panel-133-student-analytics-per-course" class="toc-link">13.3 Student Analytics (Per Course)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel" class="toc-link">14. Admin Panel</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel-141-admin-dashboard" class="toc-link">14.1 Admin Dashboard</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel-142-user-management" class="toc-link">14.2 User Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel-143-content-management" class="toc-link">14.3 Content Management</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel-144-payment-revenue" class="toc-link">14.4 Payment &amp; Revenue</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-14-admin-panel-145-notification-composer" class="toc-link">14.5 Notification Composer</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-15-marketing-website-screens" class="toc-link">15. Marketing Website Screens</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-15-marketing-website-screens-151-home-landing-page" class="toc-link">15.1 Home / Landing Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-15-marketing-website-screens-152-features-page" class="toc-link">15.2 Features Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-15-marketing-website-screens-153-pricing-page" class="toc-link">15.3 Pricing Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#screen-by-screen-ui-specification-15-marketing-website-screens-154-about-page" class="toc-link">15.4 About Page</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#screen-by-screen-ui-specification-responsive-notes-summary" class="toc-link">Responsive Notes Summary</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

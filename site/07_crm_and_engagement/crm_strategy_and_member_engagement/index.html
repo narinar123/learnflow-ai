@@ -1,0 +1,2064 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.8.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      var siteRoot = "../../";
+      if (siteRoot && !siteRoot.endsWith('/')) siteRoot += '/';
+      if (siteRoot === '') siteRoot = './';
+      window.DOCMD_SITE_ROOT = siteRoot;
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <title>
+      CRM Strategy &amp; Member Engagement : Eduai
+    </title>
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mrau3vyn">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mrau3vyn" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mrau3vyn" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="">
+<link rel="canonical" href="/07_crm_and_engagement/crm_strategy_and_member_engagement/">
+<meta property="og:title" content="CRM Strategy &amp; Member Engagement - Eduai">
+<meta property="og:description" content="">
+<meta property="og:url" content="/07_crm_and_engagement/crm_strategy_and_member_engagement/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CRM Strategy &amp; Member Engagement - Eduai">
+<meta name="twitter:description" content="">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mrau3vyn" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mrau3vyn" >
+
+    
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/07_crm_and_engagement/crm_strategy_and_member_engagement.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+            <h1><a href="../../">
+                Eduai
+              </a></h1>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            01 Business And Prd
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_requirements_document_prd/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Requirements Document (PRD)
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../01_business_and_prd/product_vision_and_business_goals/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Product Vision &amp; Business Goals
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            02 User And Ux
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/onboarding_and_gamification_mechanics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Onboarding &amp; Gamification Mechanics
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/user_roles_and_permissions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            User Roles &amp; Permissions Matrix
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../02_user_and_ux/ux_research_and_journey_flows/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Research &amp; Journey Flows
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            03 Design System And Ui
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/high_fidelity_ui_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            High-Fidelity UI Design Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/low_fidelity_wireframe_prompts/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Low-Fidelity Wireframe Prompts
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/screen_by_screen_ui_spec/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Screen-by-Screen UI Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../03_design_system_and_ui/ux_latest_design_system/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            UX Latest Design System
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            04 Technical Architecture
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/backend_architecture_and_apis/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Backend Architecture &amp; API Specification
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/database_schema_and_orm/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Database Schema &amp; ORM Design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/frontend_architecture_flutter_react/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Frontend Architecture — Flutter &amp; React/Next.js
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../04_technical_architecture/security_and_compliance/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Security &amp; Compliance
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            05 Ai Integration
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../05_ai_integration/ai_integration_and_prompt_engineering_guide/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            AI Integration &amp; Prompt Engineering Guide
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            06 Testing And Qa
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Testing Strategy &amp; QA Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            07 Crm And Engagement
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active" >
+      
+        <a href="../../07_crm_and_engagement/crm_strategy_and_member_engagement/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            CRM Strategy &amp; Member Engagement
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            08 Marketing
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Marketing Website Copy &amp; Content Plan
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <span class="nav-label nav-group">
+          
+          <span class="nav-item-title">
+            09 Pitch And Presentation
+          </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../09_pitch_and_presentation/pitch_deck_and_presentation_script/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Pitch Deck &amp; Presentation Script
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      
+      
+      <div class="main-content-wrapper">
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  CRM Strategy &amp; Member Engagement
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+                
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20CRM%20Strategy%20%26%20Member%20Engagement%0A**AI%20Learning%20%26%20Member%20Management%20Platform%20%E2%80%94%20LearnFlow%20AI**%0A**Version%3A**%201.0%20%7C%20**Date%3A**%20July%202026%0A%0A---%0A%0A%23%23%201.%20CRM%20Philosophy%0A%0ALearnFlow%20AI&#039;s%20CRM%20strategy%20is%20built%20around%20**Relationship%20Intelligence**%20%E2%80%94%20understanding%20each%20learner&#039;s%20journey%2C%20motivations%2C%20and%20friction%20points%2C%20and%20using%20that%20insight%20to%20deliver%20the%20right%20message%2C%20at%20the%20right%20time%2C%20through%20the%20right%20channel.%20We%20do%20not%20blast%20generic%20marketing.%20Every%20communication%20should%20feel%20personal%20and%20relevant.%0A%0A**Three%20CRM%20Pillars%3A**%0A1.%20**Activate**%20%E2%80%94%20Convert%20free%20users%20to%20paying%20subscribers%0A2.%20**Engage**%20%E2%80%94%20Keep%20active%20learners%20progressing%20and%20motivated%0A3.%20**Retain**%20%E2%80%94%20Win%20back%20at-risk%20and%20churned%20members%0A%0A---%0A%0A%23%23%202.%20Member%20Lifecycle%20Stages%0A%0A%60%60%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20%20VISITOR%20%20%20%20%E2%94%82%20(Marketing%20site%20visitor)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20Sign%20Up%20(Free)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20NEW%20USER%20%20%20%20%E2%94%82%20(Day%200%E2%80%937%2C%20onboarding)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20First%20lesson%20completed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20%20ENGAGED%20%20%20%20%E2%94%82%20(Active%2C%20returning%20learner)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20Upgrade%20to%20Pro%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%8C%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%96%BC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%90%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20SUBSCRIBER%20%20%E2%94%82%20(Paying%20member)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%94%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%AC%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%20%20%20%20%20%20%20%20%20%20%20%20%5C%0A%20%20%20%20%20%20%20%20%20Regular%20%20%20%20%20%20%20%20%E2%86%90%E2%86%92%20%20%20%20%20%20AT%20RISK%20(14%2B%20days%20inactive)%0A%20%20%20%20%20%20%20%20%20%E2%86%93%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%86%93%0A%20%20%20%20ADVOCATE%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%86%90%E2%80%94%20%20%20%20%20%20%20CHURNED%0A(Refers%2C%20reviews)%20%20%20%20%20%20%20Win-back%20%20%20%20(Cancelled)%0A%60%60%60%0A%0A---%0A%0A%23%23%203.%20Member%20Segmentation%0A%0A%23%23%23%203.1%20Behavioral%20Segments%0A%7C%20Segment%20%7C%20Criteria%20%7C%20Size%20Estimate%20%7C%20Priority%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%20Power%20Learners%20%7C%20%E2%89%A5%205%20lessons%2Fweek%2C%20%E2%89%A5%2030%20min%2Fday%20%7C%2015%25%20%7C%20High%20(advocates)%20%7C%0A%7C%20Steady%20Learners%20%7C%202%E2%80%934%20lessons%2Fweek%20%7C%2035%25%20%7C%20High%20(sustain)%20%7C%0A%7C%20Casual%20Learners%20%7C%20%E2%89%A4%201%20lesson%2Fweek%20%7C%2030%25%20%7C%20Medium%20(activate)%20%7C%0A%7C%20At-Risk%20%7C%207%E2%80%9314%20days%20inactive%20%7C%2012%25%20%7C%20Critical%20(save)%20%7C%0A%7C%20Churned%20%7C%2014%2B%20days%20inactive%20or%20cancelled%20%7C%208%25%20%7C%20Low%20(win-back)%20%7C%0A%0A%23%23%23%203.2%20Lifecycle%20Segments%0A%7C%20Segment%20%7C%20Criteria%20%7C%0A%7C---%7C---%7C%0A%7C%20New%20(Day%200%E2%80%937)%20%7C%20Registered%20in%20last%207%20days%20%7C%0A%7C%20Activating%20(Day%207%E2%80%9330)%20%7C%207%E2%80%9330%20days%2C%20%3C%203%20lessons%20completed%20%7C%0A%7C%20Active%20Learner%20%7C%20%E2%89%A5%203%20lessons%2Fmonth%2C%20%E2%89%A4%2014%20days%20since%20last%20activity%20%7C%0A%7C%20Course%20Completer%20%7C%20Completed%20%E2%89%A5%201%20course%20%7C%0A%7C%20Certificate%20Holder%20%7C%20Earned%20%E2%89%A5%201%20certificate%20%7C%0A%7C%20Free%20Trial%20%7C%20On%20free%20plan%20%E2%89%A5%207%20days%20%7C%0A%7C%20Pro%20Subscriber%20%7C%20Active%20Pro%2FPremium%20subscription%20%7C%0A%7C%20At-Risk%20Pro%20%7C%20Pro%20subscriber%2C%207%2B%20days%20inactive%20%7C%0A%7C%20Churned%20Pro%20%7C%20Cancelled%20subscription%20in%20last%2090%20days%20%7C%0A%0A%23%23%23%203.3%20Goal-Based%20Segments%0A%7C%20Segment%20%7C%20Communication%20Focus%20%7C%0A%7C---%7C---%7C%0A%7C%20Job%20Seekers%20%7C%20Certificate%20urgency%2C%20LinkedIn%20sharing%2C%20portfolio%20building%20%7C%0A%7C%20Career%20Upskilling%20%7C%20ROI%20messaging%2C%20enterprise%20features%20%7C%0A%7C%20Students%20%7C%20Peer%20engagement%2C%20community%2C%20affordable%20plans%20%7C%0A%7C%20Seniors%20(55%2B)%20%7C%20Patience%2C%20support-first%2C%20simplified%20UI%20messaging%20%7C%0A%7C%20Institution%20Members%20%7C%20Progress%20reports%20to%20admin%2C%20team%20completion%20challenges%20%7C%0A%0A---%0A%0A%23%23%204.%20Communication%20Channels%0A%0A%7C%20Channel%20%7C%20Primary%20Use%20%7C%20Platform%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20In-App%20Notifications%20%7C%20Real-time%20activity%20feedback%2C%20streaks%2C%20achievements%20%7C%20Firebase%20Cloud%20Messaging%20%7C%0A%7C%20Push%20Notifications%20%7C%20Reminders%2C%20new%20content%2C%20streak%20alerts%20%7C%20FCM%20(Android)%2C%20APNs%20(iOS)%20%7C%0A%7C%20Email%20%7C%20Campaigns%2C%20newsletters%2C%20transactional%20%7C%20SendGrid%20%7C%0A%7C%20SMS%20%7C%20OTP%20only%20(not%20marketing)%20%7C%20Twilio%20%7C%0A%7C%20In-App%20Chat%20(AI)%20%7C%20Personalized%20learning%20guidance%20%7C%20Gemini%20AI%20%7C%0A%7C%20Onboarding%20Tooltips%20%7C%20Feature%20discovery%2C%20contextual%20help%20%7C%20Custom%20Flutter%2FReact%20overlay%20%7C%0A%7C%20In-Product%20Banners%20%7C%20Upgrade%20prompts%2C%20feature%20announcements%20%7C%20In-app%20component%20%7C%0A%0A---%0A%0A%23%23%205.%20Automated%20Lifecycle%20Email%20Sequences%0A%0A%23%23%23%205.1%20New%20User%20Onboarding%20(Day%200%E2%80%9314)%0A%0A%7C%20Day%20%7C%20Email%20%7C%20Subject%20%7C%20Content%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%200%20%7C%20Welcome%20%7C%20%22You&#039;re%20in!%20%F0%9F%8E%89%20Start%20your%20first%20lesson%22%20%7C%20Account%20confirmation%20%2B%20top%203%20recommendations%20%7C%0A%7C%201%20%7C%20First%20Lesson%20Nudge%20%7C%20%22Your%20course%20is%20waiting%20for%20you%2C%20%5BName%5D%22%20%7C%20Link%20to%20recommended%20course%2C%20%2215%20min%20is%20all%20it%20takes%22%20%7C%0A%7C%203%20%7C%20Tip%20Email%20%7C%20%223%20learners%20with%20your%20goal%20who%20succeeded%22%20%7C%20Social%20proof%20stories%20%2B%20their%20courses%20%7C%0A%7C%205%20%7C%20Feature%20Discovery%20%7C%20%22Did%20you%20know%20LearnFlow%20AI%20can...%22%20%7C%20AI%20assistant%20feature%20introduction%20%7C%0A%7C%207%20%7C%20Progress%20Check%20%7C%20%22You&#039;ve%20been%20here%20a%20week!%22%20%7C%20Progress%20summary%2C%20streak%20reminder%2C%20free%20trial%20upgrade%20nudge%20%7C%0A%7C%2010%20%7C%20Upgrade%20Intro%20%7C%20%22Unlock%20unlimited%20AI%20%2B%20500%2B%20courses%22%20%7C%20Soft%20upgrade%20pitch%2C%20comparison%20table%20%7C%0A%7C%2014%20%7C%20Upgrade%20Push%20%7C%20%22Your%20free%20trial%20features%20expire%20soon%22%20%7C%20Stronger%20upgrade%20CTA%2C%207-day%20Pro%20trial%20offer%20%7C%0A%0A%23%23%23%205.2%20Engagement%20Re-activation%20(At-Risk)%0A%0A%7C%20Trigger%20%7C%20Delay%20%7C%20Channel%20%7C%20Message%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%203%20days%20inactive%20%7C%20Day%203%20%7C%20Push%20%7C%20%22Your%20streak%20is%20at%20risk!%20%F0%9F%94%A5%20Quick%2C%205%20min%20lesson%20inside%22%20%7C%0A%7C%207%20days%20inactive%20%7C%20Day%207%20%7C%20Push%20%2B%20Email%20%7C%20%22We%20miss%20you%2C%20%5BName%5D!%20Here&#039;s%20what%20you%20missed%22%20%E2%80%94%20course%20updates%20%7C%0A%7C%2010%20days%20inactive%20%7C%20Day%2010%20%7C%20Email%20%7C%20%22Your%20progress%20is%20waiting%20%E2%80%94%20%5BCourse%20Name%5D%20at%2067%25%22%20%7C%0A%7C%2014%20days%20inactive%20%7C%20Day%2014%20%7C%20Email%20%7C%20%22Don&#039;t%20give%20up%20now%20%E2%80%94%20%5BName%5D%2C%20you&#039;re%20so%20close%22%20%E2%80%94%20personalized%20%7C%0A%7C%2021%20days%20inactive%20%7C%20Day%2021%20%7C%20Email%20%7C%20Win-back%20offer%3A%20%22Come%20back%20with%2050%25%20off%20Pro%20this%20week%22%20%7C%0A%7C%2030%20days%20inactive%20%7C%20Day%2030%20%7C%20Email%20%7C%20Final%20%22We&#039;re%20saving%20your%20progress%22%20%E2%80%94%20option%20to%20pause%20account%20%7C%0A%0A%23%23%23%205.3%20Conversion%20Journey%20(Free%20%E2%86%92%20Pro)%0A%0A%7C%20Trigger%20%7C%20Channel%20%7C%20Message%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Hit%20AI%20query%20limit%20%7C%20In-app%20banner%20%2B%20email%20%7C%20%22You&#039;ve%20used%20all%2010%20AI%20queries%20today.%20Upgrade%20for%20unlimited.%22%20%7C%0A%7C%20Try%20to%20access%20Pro%20course%20%7C%20Modal%20%7C%20%22This%20course%20is%20included%20in%20Pro.%20See%20what%20you%20unlock.%22%20%7C%0A%7C%20Complete%20first%20course%20%7C%20Email%20%7C%20%22You%20just%20earned%20your%20first%20certificate!%20Pro%20unlocks%2050%20more.%22%20%7C%0A%7C%2030%20days%20active%20on%20free%20%7C%20Email%20%7C%20%22You&#039;ve%20been%20consistent%20for%2030%20days!%20Invest%20in%20your%20growth.%22%20%7C%0A%7C%20New%20job-relevant%20course%20published%20%7C%20Push%20%7C%20%22New%3A%20%5BCourse%20Name%5D%20%E2%80%94%20included%20in%20Pro%20%F0%9F%8E%AF%22%20%7C%0A%0A%23%23%23%205.4%20Subscriber%20Retention%0A%0A%7C%20Trigger%20%7C%20Timing%20%7C%20Channel%20%7C%20Message%20%7C%0A%7C---%7C---%7C---%7C---%7C%0A%7C%207%20days%20before%20renewal%20%7C%207%20days%20%7C%20Email%20%7C%20%22Your%20Pro%20renewal%20is%20coming%20up%20%E2%80%94%20here&#039;s%20your%20progress%20%F0%9F%93%8A%22%20%7C%0A%7C%20At-risk%20subscriber%20(7%2B%20days%20inactive)%20%7C%20Day%207%20%7C%20Email%20%7C%20%22We%20want%20you%20to%20keep%20learning%20%E2%80%94%20here&#039;s%20a%20curated%20list%20for%20you%22%20%7C%0A%7C%20Cancellation%20initiated%20%7C%20On%20action%20%7C%20In-app%20%7C%20Pause%20option%2C%20downgrade%20to%20free%20option%2C%20discount%20offer%20%7C%0A%7C%20Post-cancellation%20%7C%20Day%201%20%7C%20Email%20%7C%20%22You%20can%20still%20access%20your%20content%20until%20%5Bdate%5D%22%20%7C%0A%7C%20Post-cancellation%20%7C%20Day%2030%20%7C%20Email%20%7C%20Win-back%3A%20%22Ready%20to%20pick%20up%20where%20you%20left%20off%3F%2030%25%20off%22%20%7C%0A%7C%20Anniversary%20%7C%201%20year%20%7C%20Email%20%7C%20%22Happy%201-year%20anniversary%2C%20%5BName%5D!%20%F0%9F%8E%82%20Here&#039;s%20a%20surprise%20gift%22%20%E2%80%94%20bonus%20XP%20or%20discount%20%7C%0A%0A---%0A%0A%23%23%206.%20Push%20Notification%20Playbook%0A%0A%23%23%23%206.1%20Daily%20Learning%20Reminders%0A%60%60%60%0ATime%3A%20User-set%20preferred%20time%20(default%3A%208pm%20local%20time)%0AFormat%3A%20%22%5BName%5D%2C%20it&#039;s%20time%20to%20learn!%20%F0%9F%8E%AF%20Continue%20%5BCourse%20Name%5D%22%0ACondition%3A%20User%20has%20not%20logged%20in%20today%0ARespect%20quiet%20hours%3A%20Yes%0AFrequency%20cap%3A%20Max%201%20per%20day%0A%60%60%60%0A%0A%23%23%23%206.2%20Streak%20Notifications%0A%60%60%60%0AStreak%20at%20risk%20(23%3A00%20if%20not%20learned%20today)%3A%0A%20%20%22%5BName%5D%2C%20your%2014-day%20streak%20is%20at%20risk!%20%F0%9F%94%A5%205%20minutes%20%3D%20saved%20streak%22%0A%20%20%0AStreak%20milestone%20achieved%3A%0A%20%20%22%F0%9F%94%A5%207-day%20streak!%20You&#039;re%20on%20fire%2C%20%5BName%5D.%20Keep%20going!%22%0A%20%20%0ALongest%20streak%20broken%3A%0A%20%20%22Your%20streak%20ended%20today%2C%20but%20that&#039;s%20okay!%20%F0%9F%92%AA%20Start%20a%20new%20one%20right%20now%22%0A%60%60%60%0A%0A%23%23%23%206.3%20Achievement%20Notifications%0A%60%60%60%0ABadge%20earned%3A%0A%20%20%22%F0%9F%8F%86%20New%20Badge%3A%20%5BBadge%20Name%5D!%20You%20earned%20&#039;%5BDescription%5D&#039;%22%0A%20%20%0ALevel%20up%3A%0A%20%20%22%E2%AC%86%EF%B8%8F%20Level%20Up!%20You&#039;re%20now%20Level%20%5BN%5D%20%E2%80%94%20%5BLevel%20Name%5D.%20Check%20your%20rewards!%22%0A%20%20%0ACourse%20completed%3A%0A%20%20%22%F0%9F%8E%93%20Course%20Complete!%20Your%20certificate%20for%20%5BCourse%20Name%5D%20is%20ready%20to%20download.%22%0A%20%20%0ALeaderboard%20rank%20improved%3A%0A%20%20%22%F0%9F%93%88%20You%20moved%20to%20%23%5BRank%5D%20on%20the%20Weekly%20Leaderboard!%20Keep%20it%20up!%22%0A%60%60%60%0A%0A%23%23%23%206.4%20Social%20%26%20Community%20Notifications%0A%60%60%60%0ANew%20course%20by%20followed%20instructor%3A%0A%20%20%22%5BInstructor%20Name%5D%20just%20published%20a%20new%20course%3A%20%5BTitle%5D%22%0A%20%20%0AFriend%20started%20same%20course%3A%0A%20%20%22%5BFriend%20Name%5D%20just%20started%20%5BCourse%20Name%5D%20%E2%80%94%20race%20to%20finish%20first!%20%F0%9F%8F%81%22%0A%60%60%60%0A%0A---%0A%0A%23%23%207.%20CRM%20Dashboard%20(Admin%20Panel)%0A%0A%23%23%23%207.1%20Key%20CRM%20Metrics%20to%20Monitor%0A%7C%20Metric%20%7C%20Definition%20%7C%20Target%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20DAU%2FMAU%20Ratio%20%7C%20Engagement%20depth%20%7C%20%E2%89%A5%200.30%20%7C%0A%7C%20D7%20Retention%20%7C%20%25%20users%20active%20on%20Day%207%20%7C%20%E2%89%A5%2045%25%20%7C%0A%7C%20D30%20Retention%20%7C%20%25%20users%20active%20on%20Day%2030%20%7C%20%E2%89%A5%2025%25%20%7C%0A%7C%20Free-to-Pro%20Conversion%20%7C%20%25%20free%20users%20who%20upgrade%20%7C%20%E2%89%A5%208%25%20within%2030%20days%20%7C%0A%7C%20Monthly%20Churn%20Rate%20%7C%20%25%20Pro%20subscribers%20who%20cancel%20%7C%20%E2%89%A4%203%25%20%7C%0A%7C%20Email%20Open%20Rate%20%7C%20Campaign%20open%20rate%20%7C%20%E2%89%A5%2025%25%20%7C%0A%7C%20Email%20CTR%20%7C%20Click-through%20rate%20%7C%20%E2%89%A5%204%25%20%7C%0A%7C%20Push%20Click%20Rate%20%7C%20Push%20notification%20CTR%20%7C%20%E2%89%A5%2012%25%20%7C%0A%7C%20Average%20Session%20Duration%20%7C%20Time%20per%20session%20%7C%20%E2%89%A5%2018%20minutes%20%7C%0A%7C%20Net%20Promoter%20Score%20(NPS)%20%7C%20Monthly%20survey%20%7C%20%E2%89%A5%2050%20%7C%0A%0A%23%23%23%207.2%20Cohort%20Analysis%0ATrack%20monthly%20cohorts%20to%20understand%20retention%20curves%3A%0A-%20Day%201%2C%20Day%207%2C%20Day%2014%2C%20Day%2030%2C%20Day%2060%2C%20Day%2090%20retention%20per%20signup%20cohort%0A-%20Revenue%20per%20cohort%20month%20over%20month%0A-%20Feature%20adoption%20rate%20by%20cohort%20(who%20uses%20AI%2C%20who%20completes%20quizzes%2C%20etc.)%0A%0A---%0A%0A%23%23%208.%20NPS%20%26%20User%20Feedback%20System%0A%0A%23%23%23%208.1%20NPS%20Survey%20Triggers%0A%7C%20Trigger%20%7C%20Timing%20%7C%20Target%20Group%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20After%20first%20course%20completion%20%7C%201%20hour%20post%20completion%20%7C%20All%20users%20%7C%0A%7C%20After%2030%20days%20as%20Pro%20subscriber%20%7C%20Day%2030%20%7C%20Pro%20subscribers%20%7C%0A%7C%20After%20support%20ticket%20resolved%20%7C%2024%20hours%20post-resolution%20%7C%20Ticket%20submitters%20%7C%0A%7C%20Monthly%20random%20sample%20%7C%201st%20of%20month%20%7C%205%25%20random%20sample%20%7C%0A%0A%23%23%23%208.2%20NPS%20Survey%20Design%0A%60%60%60%0AQ1%3A%20%22How%20likely%20are%20you%20to%20recommend%20LearnFlow%20AI%20to%20a%20friend%20or%20colleague%3F%22%0A%20%20%20%20%5B0%5D%20%5B1%5D%20%5B2%5D%20%5B3%5D%20%5B4%5D%20%5B5%5D%20%5B6%5D%20%5B7%5D%20%5B8%5D%20%5B9%5D%20%5B10%5D%0A%20%20%20%20Not%20at%20all%20likely%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Extremely%20likely%0A%0AQ2%20(if%20score%200-6)%3A%20%22What%20can%20we%20do%20to%20improve%20your%20experience%3F%22%0AQ2%20(if%20score%209-10)%3A%20%22What%20do%20you%20love%20most%20about%20LearnFlow%20AI%3F%22%0AOptional%20Q3%3A%20%22What&#039;s%20the%20most%20important%20thing%20you&#039;d%20like%20us%20to%20add%3F%22%0A%60%60%60%0A%0A%23%23%23%208.3%20Course-Level%20Feedback%20(CSAT)%0AAfter%20each%20course%20completion%3A%0A%60%60%60%0A%22How%20would%20you%20rate%20%5BCourse%20Name%5D%3F%22%0A%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%E2%AD%90%0A%22Tell%20us%20what%20you%20think%20(optional)%3A%22%20%5Btext%20area%5D%0A%22Would%20you%20recommend%20this%20course%20to%20others%3F%22%20%5BYes%20%2F%20No%5D%0A%60%60%60%0A%0A---%0A%0A%23%23%209.%20Trainer%20CRM%20(B2B%20Partner%20Engagement)%0A%0A%23%23%23%209.1%20Trainer%20Success%20Email%20Sequences%0A%7C%20Trigger%20%7C%20Email%20%7C%20Content%20%7C%0A%7C---%7C---%7C---%7C%0A%7C%20Course%20published%20%7C%20%22Your%20course%20is%20live!%20%F0%9F%8E%89%22%20%7C%20Share%20link%2C%20promote%20tips%20%7C%0A%7C%20First%20enrollment%20%7C%20%22Your%20first%20student%20enrolled!%22%20%7C%20Encourage%2C%20platform%20tips%20%7C%0A%7C%2010%20enrollments%20%7C%20%2210%20students%20are%20learning%20from%20you!%22%20%7C%20Growing%20audience%20message%20%7C%0A%7C%20Monthly%20%7C%20Monthly%20Analytics%20Report%20%7C%20Student%20count%2C%20revenue%2C%20completion%20rate%2C%20reviews%20%7C%0A%7C%20Inactive%20(30%20days%20no%20course%20update)%20%7C%20%22Your%20students%20are%20waiting...%22%20%7C%20Encourage%20content%20update%20%7C%0A%7C%20Payment%20processed%20%7C%20%22Your%20earnings%20are%20on%20the%20way%22%20%7C%20Payout%20summary%20%7C%0A%0A%23%23%23%209.2%20Trainer%20Health%20Score%0AMetric%20composite%20for%20identifying%20at-risk%20trainers%3A%0A-%20Course%20completion%20rate%20(weight%3A%2030%25)%0A-%20Average%20rating%20(weight%3A%2025%25)%0A-%20Last%20content%20update%20(weight%3A%2020%25)%0A-%20Monthly%20new%20enrollments%20(weight%3A%2015%25)%0A-%20Response%20rate%20to%20student%20questions%20(weight%3A%2010%25)%0A%0ALow%20health%20score%20(%3C%2060)%20%E2%86%92%20proactive%20outreach%20from%20trainer%20success%20team.%0A%0A---%0A%0A%23%23%2010.%20Referral%20%26%20Advocacy%20Program%0A%0A%23%23%23%2010.1%20Learner%20Referral%20Program%0A%60%60%60%0AReferral%20mechanics%3A%0A-%20Every%20user%20gets%20a%20unique%20referral%20link%20(e.g.%2C%20learnflow.ai%2Fr%2Fpriya123)%0A-%20Referee%3A%201-month%20Pro%20trial%20(or%2020%25%20off%20first%20subscription)%0A-%20Referrer%3A%20%E2%82%B9200%20platform%20credit%20per%20successful%20paying%20referral%0A-%20Milestone%20bonuses%3A%0A%20%20-%205%20referrals%3A%20%22Community%20Leader%22%20badge%20%2B%20%E2%82%B9100%20extra%20credit%0A%20%20-%2010%20referrals%3A%20Exclusive%20%22Ambassador%22%20badge%20%2B%201%20month%20Pro%20free%0A%0ATracking%3A%20Attribution%20cookie%20(30-day)%20%2B%20UTM%20parameters%20%2B%20server-side%20validation%0AAnti-fraud%3A%20Self-referral%20detection%2C%20IP%20check%2C%20email%20domain%20check%0A%60%60%60%0A%0A%23%23%23%2010.2%20LinkedIn%20Certificate%20Sharing%0A%60%60%60%0AAfter%20earning%20a%20certificate%3A%0A-%20One-tap%20%22Share%20on%20LinkedIn%22%20button%0A-%20Pre-populated%20post%3A%20%22%F0%9F%8E%93%20Excited%20to%20share%20that%20I%20just%20completed%20%5BCourse%20Name%5D%20%0A%20%20on%20%40LearnFlowAI!%20%23Learning%20%23%5BCategory%5D%20%23Certificate%22%0A-%20Course%20trainer%20is%20tagged%20if%20they%20have%20a%20LinkedIn%20profile%0A-%20Tracking%3A%20UTM%20parameter%20on%20LearnFlow%20link%20in%20post%0A%60%60%60%0A%0A%23%23%23%2010.3%20Review%20%26%20Testimonial%20Collection%0A%60%60%60%0ATrigger%3A%207%20days%20after%20course%20completion%0AChannel%3A%20In-app%20prompt%20%2B%20email%0AIncentive%3A%2050%20XP%20for%20leaving%20a%20review%0ACTA%3A%20%22Rate%20your%20experience%20with%20%5BCourse%20Name%5D%22%0AModeration%3A%20Approved%20automatically%20(rating%20%E2%89%A5%204%E2%98%85)%20or%20reviewed%20(1-3%E2%98%85)%0AResponse%3A%20AI-assisted%20draft%20for%20trainer%20responses%0A%60%60%60%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>07 Crm And Engagement</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>CRM Strategy &amp; Member Engagement</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="crm-strategy-member-engagement" class="docmd-heading"><a href="#crm-strategy-member-engagement" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>CRM Strategy &amp; Member Engagement</h1>
+<p><strong>AI Learning &amp; Member Management Platform — LearnFlow AI</strong><br>
+<strong>Version:</strong> 1.0 | <strong>Date:</strong> July 2026</p>
+<hr>
+<h2 id="crm-strategy-member-engagement-1-crm-philosophy" class="docmd-heading"><a href="#crm-strategy-member-engagement-1-crm-philosophy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. CRM Philosophy</h2>
+<p>LearnFlow AI’s CRM strategy is built around <strong>Relationship Intelligence</strong> — understanding each learner’s journey, motivations, and friction points, and using that insight to deliver the right message, at the right time, through the right channel. We do not blast generic marketing. Every communication should feel personal and relevant.</p>
+<p><strong>Three CRM Pillars:</strong></p>
+<ol>
+<li><strong>Activate</strong> — Convert free users to paying subscribers</li>
+<li><strong>Engage</strong> — Keep active learners progressing and motivated</li>
+<li><strong>Retain</strong> — Win back at-risk and churned members</li>
+</ol>
+<hr>
+<h2 id="crm-strategy-member-engagement-2-member-lifecycle-stages" class="docmd-heading"><a href="#crm-strategy-member-engagement-2-member-lifecycle-stages" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Member Lifecycle Stages</h2>
+<pre class="hljs"><code>                    ┌──────────────┐
+                    │   VISITOR    │ (Marketing site visitor)
+                    └──────┬───────┘
+                           │ Sign <span class="hljs-title function_">Up</span> (Free)
+                    ┌──────▼───────┐
+                    │  NEW USER    │ (Day <span class="hljs-number">0</span>–<span class="hljs-number">7</span>, onboarding)
+                    └──────┬───────┘
+                           │ First lesson completed
+                    ┌──────▼───────┐
+                    │   ENGAGED    │ (Active, returning learner)
+                    └──────┬───────┘
+                           │ Upgrade to Pro
+                    ┌──────▼───────┐
+                    │  SUBSCRIBER  │ (Paying member)
+                    └──────┬───────┘
+                     <span class="hljs-punctuation">/</span>            \
+         Regular        ←→      AT <span class="hljs-title function_">RISK</span> (<span class="hljs-number">14</span><span class="hljs-punctuation">+</span> days inactive)
+         ↓                              ↓
+    ADVOCATE              ←—       <span class="hljs-title function_">CHURNED</span>
+(Refers, reviews)       Win<span class="hljs-punctuation">-</span><span class="hljs-title function_">back</span>    (Cancelled)
+</code></pre>
+<hr>
+<h2 id="crm-strategy-member-engagement-3-member-segmentation" class="docmd-heading"><a href="#crm-strategy-member-engagement-3-member-segmentation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Member Segmentation</h2>
+<h3 id="crm-strategy-member-engagement-3-member-segmentation-31-behavioral-segments" class="docmd-heading"><a href="#crm-strategy-member-engagement-3-member-segmentation-31-behavioral-segments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.1 Behavioral Segments</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Criteria</th>
+<th>Size Estimate</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Power Learners</td>
+<td>≥ 5 lessons/week, ≥ 30 min/day</td>
+<td>15%</td>
+<td>High (advocates)</td>
+</tr>
+<tr>
+<td>Steady Learners</td>
+<td>2–4 lessons/week</td>
+<td>35%</td>
+<td>High (sustain)</td>
+</tr>
+<tr>
+<td>Casual Learners</td>
+<td>≤ 1 lesson/week</td>
+<td>30%</td>
+<td>Medium (activate)</td>
+</tr>
+<tr>
+<td>At-Risk</td>
+<td>7–14 days inactive</td>
+<td>12%</td>
+<td>Critical (save)</td>
+</tr>
+<tr>
+<td>Churned</td>
+<td>14+ days inactive or cancelled</td>
+<td>8%</td>
+<td>Low (win-back)</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-3-member-segmentation-32-lifecycle-segments" class="docmd-heading"><a href="#crm-strategy-member-engagement-3-member-segmentation-32-lifecycle-segments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.2 Lifecycle Segments</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New (Day 0–7)</td>
+<td>Registered in last 7 days</td>
+</tr>
+<tr>
+<td>Activating (Day 7–30)</td>
+<td>7–30 days, &lt; 3 lessons completed</td>
+</tr>
+<tr>
+<td>Active Learner</td>
+<td>≥ 3 lessons/month, ≤ 14 days since last activity</td>
+</tr>
+<tr>
+<td>Course Completer</td>
+<td>Completed ≥ 1 course</td>
+</tr>
+<tr>
+<td>Certificate Holder</td>
+<td>Earned ≥ 1 certificate</td>
+</tr>
+<tr>
+<td>Free Trial</td>
+<td>On free plan ≥ 7 days</td>
+</tr>
+<tr>
+<td>Pro Subscriber</td>
+<td>Active Pro/Premium subscription</td>
+</tr>
+<tr>
+<td>At-Risk Pro</td>
+<td>Pro subscriber, 7+ days inactive</td>
+</tr>
+<tr>
+<td>Churned Pro</td>
+<td>Cancelled subscription in last 90 days</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-3-member-segmentation-33-goal-based-segments" class="docmd-heading"><a href="#crm-strategy-member-engagement-3-member-segmentation-33-goal-based-segments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3.3 Goal-Based Segments</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Communication Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Job Seekers</td>
+<td>Certificate urgency, LinkedIn sharing, portfolio building</td>
+</tr>
+<tr>
+<td>Career Upskilling</td>
+<td>ROI messaging, enterprise features</td>
+</tr>
+<tr>
+<td>Students</td>
+<td>Peer engagement, community, affordable plans</td>
+</tr>
+<tr>
+<td>Seniors (55+)</td>
+<td>Patience, support-first, simplified UI messaging</td>
+</tr>
+<tr>
+<td>Institution Members</td>
+<td>Progress reports to admin, team completion challenges</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="crm-strategy-member-engagement-4-communication-channels" class="docmd-heading"><a href="#crm-strategy-member-engagement-4-communication-channels" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Communication Channels</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Primary Use</th>
+<th>Platform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>In-App Notifications</td>
+<td>Real-time activity feedback, streaks, achievements</td>
+<td>Firebase Cloud Messaging</td>
+</tr>
+<tr>
+<td>Push Notifications</td>
+<td>Reminders, new content, streak alerts</td>
+<td>FCM (Android), APNs (iOS)</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Campaigns, newsletters, transactional</td>
+<td>SendGrid</td>
+</tr>
+<tr>
+<td>SMS</td>
+<td>OTP only (not marketing)</td>
+<td>Twilio</td>
+</tr>
+<tr>
+<td>In-App Chat (AI)</td>
+<td>Personalized learning guidance</td>
+<td>Gemini AI</td>
+</tr>
+<tr>
+<td>Onboarding Tooltips</td>
+<td>Feature discovery, contextual help</td>
+<td>Custom Flutter/React overlay</td>
+</tr>
+<tr>
+<td>In-Product Banners</td>
+<td>Upgrade prompts, feature announcements</td>
+<td>In-app component</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="crm-strategy-member-engagement-5-automated-lifecycle-email-sequences" class="docmd-heading"><a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Automated Lifecycle Email Sequences</h2>
+<h3 id="crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-51-new-user-onboarding-day-014" class="docmd-heading"><a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-51-new-user-onboarding-day-014" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.1 New User Onboarding (Day 0–14)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Email</th>
+<th>Subject</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Welcome</td>
+<td>“You’re in! 🎉 Start your first lesson”</td>
+<td>Account confirmation + top 3 recommendations</td>
+</tr>
+<tr>
+<td>1</td>
+<td>First Lesson Nudge</td>
+<td>“Your course is waiting for you, [Name]”</td>
+<td>Link to recommended course, “15 min is all it takes”</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tip Email</td>
+<td>“3 learners with your goal who succeeded”</td>
+<td>Social proof stories + their courses</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Feature Discovery</td>
+<td>“Did you know LearnFlow AI can…”</td>
+<td>AI assistant feature introduction</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Progress Check</td>
+<td>“You’ve been here a week!”</td>
+<td>Progress summary, streak reminder, free trial upgrade nudge</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Upgrade Intro</td>
+<td>“Unlock unlimited AI + 500+ courses”</td>
+<td>Soft upgrade pitch, comparison table</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Upgrade Push</td>
+<td>“Your free trial features expire soon”</td>
+<td>Stronger upgrade CTA, 7-day Pro trial offer</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-52-engagement-re-activation-at-risk" class="docmd-heading"><a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-52-engagement-re-activation-at-risk" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.2 Engagement Re-activation (At-Risk)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Delay</th>
+<th>Channel</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 days inactive</td>
+<td>Day 3</td>
+<td>Push</td>
+<td>“Your streak is at risk! 🔥 Quick, 5 min lesson inside”</td>
+</tr>
+<tr>
+<td>7 days inactive</td>
+<td>Day 7</td>
+<td>Push + Email</td>
+<td>“We miss you, [Name]! Here’s what you missed” — course updates</td>
+</tr>
+<tr>
+<td>10 days inactive</td>
+<td>Day 10</td>
+<td>Email</td>
+<td>“Your progress is waiting — [Course Name] at 67%”</td>
+</tr>
+<tr>
+<td>14 days inactive</td>
+<td>Day 14</td>
+<td>Email</td>
+<td>“Don’t give up now — [Name], you’re so close” — personalized</td>
+</tr>
+<tr>
+<td>21 days inactive</td>
+<td>Day 21</td>
+<td>Email</td>
+<td>Win-back offer: “Come back with 50% off Pro this week”</td>
+</tr>
+<tr>
+<td>30 days inactive</td>
+<td>Day 30</td>
+<td>Email</td>
+<td>Final “We’re saving your progress” — option to pause account</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-53-conversion-journey-free-pro" class="docmd-heading"><a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-53-conversion-journey-free-pro" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.3 Conversion Journey (Free → Pro)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Channel</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hit AI query limit</td>
+<td>In-app banner + email</td>
+<td>“You’ve used all 10 AI queries today. Upgrade for unlimited.”</td>
+</tr>
+<tr>
+<td>Try to access Pro course</td>
+<td>Modal</td>
+<td>“This course is included in Pro. See what you unlock.”</td>
+</tr>
+<tr>
+<td>Complete first course</td>
+<td>Email</td>
+<td>“You just earned your first certificate! Pro unlocks 50 more.”</td>
+</tr>
+<tr>
+<td>30 days active on free</td>
+<td>Email</td>
+<td>“You’ve been consistent for 30 days! Invest in your growth.”</td>
+</tr>
+<tr>
+<td>New job-relevant course published</td>
+<td>Push</td>
+<td>“New: [Course Name] — included in Pro 🎯”</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-54-subscriber-retention" class="docmd-heading"><a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-54-subscriber-retention" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5.4 Subscriber Retention</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Timing</th>
+<th>Channel</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7 days before renewal</td>
+<td>7 days</td>
+<td>Email</td>
+<td>“Your Pro renewal is coming up — here’s your progress 📊”</td>
+</tr>
+<tr>
+<td>At-risk subscriber (7+ days inactive)</td>
+<td>Day 7</td>
+<td>Email</td>
+<td>“We want you to keep learning — here’s a curated list for you”</td>
+</tr>
+<tr>
+<td>Cancellation initiated</td>
+<td>On action</td>
+<td>In-app</td>
+<td>Pause option, downgrade to free option, discount offer</td>
+</tr>
+<tr>
+<td>Post-cancellation</td>
+<td>Day 1</td>
+<td>Email</td>
+<td>“You can still access your content until [date]”</td>
+</tr>
+<tr>
+<td>Post-cancellation</td>
+<td>Day 30</td>
+<td>Email</td>
+<td>Win-back: “Ready to pick up where you left off? 30% off”</td>
+</tr>
+<tr>
+<td>Anniversary</td>
+<td>1 year</td>
+<td>Email</td>
+<td>“Happy 1-year anniversary, [Name]! 🎂 Here’s a surprise gift” — bonus XP or discount</td>
+</tr>
+</tbody>
+</table>
+</div><hr>
+<h2 id="crm-strategy-member-engagement-6-push-notification-playbook" class="docmd-heading"><a href="#crm-strategy-member-engagement-6-push-notification-playbook" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Push Notification Playbook</h2>
+<h3 id="crm-strategy-member-engagement-6-push-notification-playbook-61-daily-learning-reminders" class="docmd-heading"><a href="#crm-strategy-member-engagement-6-push-notification-playbook-61-daily-learning-reminders" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.1 Daily Learning Reminders</h3>
+<pre class="hljs"><code>Time<span class="hljs-punctuation">:</span> User<span class="hljs-punctuation">-</span><span class="hljs-keyword">set</span> preferred <span class="hljs-title function_">time</span> (<span class="hljs-keyword">default</span><span class="hljs-punctuation">:</span> 8pm local time)
+Format<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[Name], it&#039;s time to learn! 🎯 Continue [Course Name]&quot;</span>
+Condition<span class="hljs-punctuation">:</span> User has not logged <span class="hljs-keyword">in</span> today
+Respect quiet hours<span class="hljs-punctuation">:</span> Yes
+Frequency cap<span class="hljs-punctuation">:</span> Max <span class="hljs-number">1</span> per day
+</code></pre>
+<h3 id="crm-strategy-member-engagement-6-push-notification-playbook-62-streak-notifications" class="docmd-heading"><a href="#crm-strategy-member-engagement-6-push-notification-playbook-62-streak-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.2 Streak Notifications</h3>
+<pre class="hljs"><code>Streak at <span class="hljs-title function_">risk</span> (<span class="hljs-number">23</span><span class="hljs-punctuation">:</span><span class="hljs-number">00</span> <span class="hljs-keyword">if</span> not learned today)<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;[Name], your 14-day streak is at risk! 🔥 5 minutes = saved streak&quot;</span>
+  
+Streak milestone achieved<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;🔥 7-day streak! You&#039;re on fire, [Name]. Keep going!&quot;</span>
+  
+Longest streak broken<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;Your streak ended today, but that&#039;s okay! 💪 Start a new one right now&quot;</span>
+</code></pre>
+<h3 id="crm-strategy-member-engagement-6-push-notification-playbook-63-achievement-notifications" class="docmd-heading"><a href="#crm-strategy-member-engagement-6-push-notification-playbook-63-achievement-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.3 Achievement Notifications</h3>
+<pre class="hljs"><code>Badge earned<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;🏆 New Badge: [Badge Name]! You earned &#039;[Description]&#039;&quot;</span>
+  
+Level up<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;⬆️ Level Up! You&#039;re now Level [N] — [Level Name]. Check your rewards!&quot;</span>
+  
+Course completed<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;🎓 Course Complete! Your certificate for [Course Name] is ready to download.&quot;</span>
+  
+Leaderboard rank improved<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;📈 You moved to #[Rank] on the Weekly Leaderboard! Keep it up!&quot;</span>
+</code></pre>
+<h3 id="crm-strategy-member-engagement-6-push-notification-playbook-64-social-community-notifications" class="docmd-heading"><a href="#crm-strategy-member-engagement-6-push-notification-playbook-64-social-community-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6.4 Social &amp; Community Notifications</h3>
+<pre class="hljs"><code>New course by followed instructor<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;[Instructor Name] just published a new course: [Title]&quot;</span>
+  
+Friend started same course<span class="hljs-punctuation">:</span>
+  <span class="hljs-string">&quot;[Friend Name] just started [Course Name] — race to finish first! 🏁&quot;</span>
+</code></pre>
+<hr>
+<h2 id="crm-strategy-member-engagement-7-crm-dashboard-admin-panel" class="docmd-heading"><a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. CRM Dashboard (Admin Panel)</h2>
+<h3 id="crm-strategy-member-engagement-7-crm-dashboard-admin-panel-71-key-crm-metrics-to-monitor" class="docmd-heading"><a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel-71-key-crm-metrics-to-monitor" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.1 Key CRM Metrics to Monitor</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Definition</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DAU/MAU Ratio</td>
+<td>Engagement depth</td>
+<td>≥ 0.30</td>
+</tr>
+<tr>
+<td>D7 Retention</td>
+<td>% users active on Day 7</td>
+<td>≥ 45%</td>
+</tr>
+<tr>
+<td>D30 Retention</td>
+<td>% users active on Day 30</td>
+<td>≥ 25%</td>
+</tr>
+<tr>
+<td>Free-to-Pro Conversion</td>
+<td>% free users who upgrade</td>
+<td>≥ 8% within 30 days</td>
+</tr>
+<tr>
+<td>Monthly Churn Rate</td>
+<td>% Pro subscribers who cancel</td>
+<td>≤ 3%</td>
+</tr>
+<tr>
+<td>Email Open Rate</td>
+<td>Campaign open rate</td>
+<td>≥ 25%</td>
+</tr>
+<tr>
+<td>Email CTR</td>
+<td>Click-through rate</td>
+<td>≥ 4%</td>
+</tr>
+<tr>
+<td>Push Click Rate</td>
+<td>Push notification CTR</td>
+<td>≥ 12%</td>
+</tr>
+<tr>
+<td>Average Session Duration</td>
+<td>Time per session</td>
+<td>≥ 18 minutes</td>
+</tr>
+<tr>
+<td>Net Promoter Score (NPS)</td>
+<td>Monthly survey</td>
+<td>≥ 50</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-7-crm-dashboard-admin-panel-72-cohort-analysis" class="docmd-heading"><a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel-72-cohort-analysis" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7.2 Cohort Analysis</h3>
+<p>Track monthly cohorts to understand retention curves:</p>
+<ul>
+<li>Day 1, Day 7, Day 14, Day 30, Day 60, Day 90 retention per signup cohort</li>
+<li>Revenue per cohort month over month</li>
+<li>Feature adoption rate by cohort (who uses AI, who completes quizzes, etc.)</li>
+</ul>
+<hr>
+<h2 id="crm-strategy-member-engagement-8-nps-user-feedback-system" class="docmd-heading"><a href="#crm-strategy-member-engagement-8-nps-user-feedback-system" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. NPS &amp; User Feedback System</h2>
+<h3 id="crm-strategy-member-engagement-8-nps-user-feedback-system-81-nps-survey-triggers" class="docmd-heading"><a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-81-nps-survey-triggers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.1 NPS Survey Triggers</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Timing</th>
+<th>Target Group</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>After first course completion</td>
+<td>1 hour post completion</td>
+<td>All users</td>
+</tr>
+<tr>
+<td>After 30 days as Pro subscriber</td>
+<td>Day 30</td>
+<td>Pro subscribers</td>
+</tr>
+<tr>
+<td>After support ticket resolved</td>
+<td>24 hours post-resolution</td>
+<td>Ticket submitters</td>
+</tr>
+<tr>
+<td>Monthly random sample</td>
+<td>1st of month</td>
+<td>5% random sample</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-8-nps-user-feedback-system-82-nps-survey-design" class="docmd-heading"><a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-82-nps-survey-design" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.2 NPS Survey Design</h3>
+<pre class="hljs"><code>Q1<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;How likely are you to recommend LearnFlow AI to a friend or colleague?&quot;</span>
+    [<span class="hljs-number">0</span>] [<span class="hljs-number">1</span>] [<span class="hljs-number">2</span>] [<span class="hljs-number">3</span>] [<span class="hljs-number">4</span>] [<span class="hljs-number">5</span>] [<span class="hljs-number">6</span>] [<span class="hljs-number">7</span>] [<span class="hljs-number">8</span>] [<span class="hljs-number">9</span>] [<span class="hljs-number">10</span>]
+    Not at all likely                  Extremely likely
+
+<span class="hljs-title function_">Q2</span> (<span class="hljs-keyword">if</span> score <span class="hljs-number">0</span><span class="hljs-punctuation">-</span><span class="hljs-number">6</span>)<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What can we do to improve your experience?&quot;</span>
+<span class="hljs-title function_">Q2</span> (<span class="hljs-keyword">if</span> score <span class="hljs-number">9</span><span class="hljs-punctuation">-</span><span class="hljs-number">10</span>)<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What do you love most about LearnFlow AI?&quot;</span>
+Optional Q3<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;What&#039;s the most important thing you&#039;d like us to add?&quot;</span>
+</code></pre>
+<h3 id="crm-strategy-member-engagement-8-nps-user-feedback-system-83-course-level-feedback-csat" class="docmd-heading"><a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-83-course-level-feedback-csat" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8.3 Course-Level Feedback (CSAT)</h3>
+<p>After each course completion:</p>
+<pre class="hljs"><code><span class="hljs-string">&quot;How would you rate [Course Name]?&quot;</span>
+⭐⭐⭐⭐⭐
+<span class="hljs-string">&quot;Tell us what you think (optional):&quot;</span> [text area]
+<span class="hljs-string">&quot;Would you recommend this course to others?&quot;</span> [Yes <span class="hljs-punctuation">/</span> No]
+</code></pre>
+<hr>
+<h2 id="crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement" class="docmd-heading"><a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Trainer CRM (B2B Partner Engagement)</h2>
+<h3 id="crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-91-trainer-success-email-sequences" class="docmd-heading"><a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-91-trainer-success-email-sequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.1 Trainer Success Email Sequences</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Email</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Course published</td>
+<td>“Your course is live! 🎉”</td>
+<td>Share link, promote tips</td>
+</tr>
+<tr>
+<td>First enrollment</td>
+<td>“Your first student enrolled!”</td>
+<td>Encourage, platform tips</td>
+</tr>
+<tr>
+<td>10 enrollments</td>
+<td>“10 students are learning from you!”</td>
+<td>Growing audience message</td>
+</tr>
+<tr>
+<td>Monthly</td>
+<td>Monthly Analytics Report</td>
+<td>Student count, revenue, completion rate, reviews</td>
+</tr>
+<tr>
+<td>Inactive (30 days no course update)</td>
+<td>“Your students are waiting…”</td>
+<td>Encourage content update</td>
+</tr>
+<tr>
+<td>Payment processed</td>
+<td>“Your earnings are on the way”</td>
+<td>Payout summary</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-92-trainer-health-score" class="docmd-heading"><a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-92-trainer-health-score" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9.2 Trainer Health Score</h3>
+<p>Metric composite for identifying at-risk trainers:</p>
+<ul>
+<li>Course completion rate (weight: 30%)</li>
+<li>Average rating (weight: 25%)</li>
+<li>Last content update (weight: 20%)</li>
+<li>Monthly new enrollments (weight: 15%)</li>
+<li>Response rate to student questions (weight: 10%)</li>
+</ul>
+<p>Low health score (&lt; 60) → proactive outreach from trainer success team.</p>
+<hr>
+<h2 id="crm-strategy-member-engagement-10-referral-advocacy-program" class="docmd-heading"><a href="#crm-strategy-member-engagement-10-referral-advocacy-program" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10. Referral &amp; Advocacy Program</h2>
+<h3 id="crm-strategy-member-engagement-10-referral-advocacy-program-101-learner-referral-program" class="docmd-heading"><a href="#crm-strategy-member-engagement-10-referral-advocacy-program-101-learner-referral-program" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10.1 Learner Referral Program</h3>
+<pre class="hljs"><code>Referral mechanics<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> Every user gets a unique referral <span class="hljs-title function_">link</span> (e.<span class="hljs-attr">g</span>., learnflow.<span class="hljs-attr">ai</span><span class="hljs-punctuation">/</span>r<span class="hljs-punctuation">/</span>priya123)
+<span class="hljs-punctuation">-</span> Referee<span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">-</span>month Pro <span class="hljs-title function_">trial</span> (or <span class="hljs-number">20</span><span class="hljs-punctuation">%</span> off first subscription)
+<span class="hljs-punctuation">-</span> Referrer<span class="hljs-punctuation">:</span> ₹<span class="hljs-number">200</span> platform credit per successful paying referral
+<span class="hljs-punctuation">-</span> Milestone bonuses<span class="hljs-punctuation">:</span>
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">5</span> referrals<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Community Leader&quot;</span> badge <span class="hljs-punctuation">+</span> ₹<span class="hljs-number">100</span> extra credit
+  <span class="hljs-punctuation">-</span> <span class="hljs-number">10</span> referrals<span class="hljs-punctuation">:</span> Exclusive <span class="hljs-string">&quot;Ambassador&quot;</span> badge <span class="hljs-punctuation">+</span> <span class="hljs-number">1</span> month Pro <span class="hljs-keyword">free</span>
+
+Tracking<span class="hljs-punctuation">:</span> Attribution <span class="hljs-title function_">cookie</span> (<span class="hljs-number">30</span><span class="hljs-punctuation">-</span>day) <span class="hljs-punctuation">+</span> UTM parameters <span class="hljs-punctuation">+</span> server<span class="hljs-punctuation">-</span>side validation
+Anti<span class="hljs-punctuation">-</span>fraud<span class="hljs-punctuation">:</span> Self<span class="hljs-punctuation">-</span>referral detection, IP check, email domain check
+</code></pre>
+<h3 id="crm-strategy-member-engagement-10-referral-advocacy-program-102-linkedin-certificate-sharing" class="docmd-heading"><a href="#crm-strategy-member-engagement-10-referral-advocacy-program-102-linkedin-certificate-sharing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10.2 LinkedIn Certificate Sharing</h3>
+<pre class="hljs"><code>After earning a certificate<span class="hljs-punctuation">:</span>
+<span class="hljs-punctuation">-</span> One<span class="hljs-punctuation">-</span>tap <span class="hljs-string">&quot;Share on LinkedIn&quot;</span> button
+<span class="hljs-punctuation">-</span> Pre<span class="hljs-punctuation">-</span>populated post<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;🎓 Excited to share that I just completed [Course Name] 
+  on @LearnFlowAI! #Learning #[Category] #Certificate&quot;</span>
+<span class="hljs-punctuation">-</span> Course trainer is tagged <span class="hljs-keyword">if</span> they have a LinkedIn profile
+<span class="hljs-punctuation">-</span> Tracking<span class="hljs-punctuation">:</span> UTM parameter on LearnFlow link <span class="hljs-keyword">in</span> post
+</code></pre>
+<h3 id="crm-strategy-member-engagement-10-referral-advocacy-program-103-review-testimonial-collection" class="docmd-heading"><a href="#crm-strategy-member-engagement-10-referral-advocacy-program-103-review-testimonial-collection" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10.3 Review &amp; Testimonial Collection</h3>
+<pre class="hljs"><code>Trigger<span class="hljs-punctuation">:</span> <span class="hljs-number">7</span> days after course completion
+Channel<span class="hljs-punctuation">:</span> In<span class="hljs-punctuation">-</span>app prompt <span class="hljs-punctuation">+</span> email
+Incentive<span class="hljs-punctuation">:</span> <span class="hljs-number">50</span> XP <span class="hljs-keyword">for</span> leaving a review
+CTA<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Rate your experience with [Course Name]&quot;</span>
+Moderation<span class="hljs-punctuation">:</span> Approved <span class="hljs-title function_">automatically</span> (rating ≥ <span class="hljs-number">4</span>★) or <span class="hljs-title function_">reviewed</span> (<span class="hljs-number">1</span><span class="hljs-punctuation">-</span><span class="hljs-number">3</span>★)
+Response<span class="hljs-punctuation">:</span> AI<span class="hljs-punctuation">-</span>assisted draft <span class="hljs-keyword">for</span> trainer responses
+</code></pre>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../06_testing_and_qa/testing_strategy_and_qa_plan/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Testing Strategy &amp; QA Plan
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../08_marketing/marketing_website_copy_and_content_plan/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Marketing Website Copy &amp; Content Plan
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#crm-strategy-member-engagement" class="toc-link">CRM Strategy &amp; Member Engagement</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-1-crm-philosophy" class="toc-link">1. CRM Philosophy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-2-member-lifecycle-stages" class="toc-link">2. Member Lifecycle Stages</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-3-member-segmentation" class="toc-link">3. Member Segmentation</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-3-member-segmentation-31-behavioral-segments" class="toc-link">3.1 Behavioral Segments</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-3-member-segmentation-32-lifecycle-segments" class="toc-link">3.2 Lifecycle Segments</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-3-member-segmentation-33-goal-based-segments" class="toc-link">3.3 Goal-Based Segments</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-4-communication-channels" class="toc-link">4. Communication Channels</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences" class="toc-link">5. Automated Lifecycle Email Sequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-51-new-user-onboarding-day-014" class="toc-link">5.1 New User Onboarding (Day 0–14)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-52-engagement-re-activation-at-risk" class="toc-link">5.2 Engagement Re-activation (At-Risk)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-53-conversion-journey-free-pro" class="toc-link">5.3 Conversion Journey (Free → Pro)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-5-automated-lifecycle-email-sequences-54-subscriber-retention" class="toc-link">5.4 Subscriber Retention</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-6-push-notification-playbook" class="toc-link">6. Push Notification Playbook</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-6-push-notification-playbook-61-daily-learning-reminders" class="toc-link">6.1 Daily Learning Reminders</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-6-push-notification-playbook-62-streak-notifications" class="toc-link">6.2 Streak Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-6-push-notification-playbook-63-achievement-notifications" class="toc-link">6.3 Achievement Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-6-push-notification-playbook-64-social-community-notifications" class="toc-link">6.4 Social &amp; Community Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel" class="toc-link">7. CRM Dashboard (Admin Panel)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel-71-key-crm-metrics-to-monitor" class="toc-link">7.1 Key CRM Metrics to Monitor</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-7-crm-dashboard-admin-panel-72-cohort-analysis" class="toc-link">7.2 Cohort Analysis</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-8-nps-user-feedback-system" class="toc-link">8. NPS &amp; User Feedback System</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-81-nps-survey-triggers" class="toc-link">8.1 NPS Survey Triggers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-82-nps-survey-design" class="toc-link">8.2 NPS Survey Design</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-8-nps-user-feedback-system-83-course-level-feedback-csat" class="toc-link">8.3 Course-Level Feedback (CSAT)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement" class="toc-link">9. Trainer CRM (B2B Partner Engagement)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-91-trainer-success-email-sequences" class="toc-link">9.1 Trainer Success Email Sequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-9-trainer-crm-b2b-partner-engagement-92-trainer-health-score" class="toc-link">9.2 Trainer Health Score</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#crm-strategy-member-engagement-10-referral-advocacy-program" class="toc-link">10. Referral &amp; Advocacy Program</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-10-referral-advocacy-program-101-learner-referral-program" class="toc-link">10.1 Learner Referral Program</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-10-referral-advocacy-program-102-linkedin-certificate-sharing" class="toc-link">10.2 LinkedIn Certificate Sharing</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#crm-strategy-member-engagement-10-referral-advocacy-program-103-review-testimonial-collection" class="toc-link">10.3 Review &amp; Testimonial Collection</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1783405463000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1783405463000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="AI Assistant">
+                            
+                              <img src="https://www.gravatar.com/avatar/2c3af2cf0fdad574d90516129e2781e1?d=mp&amp;s=64" alt="AI Assistant">
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="Initial commit">Initial commit</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">AI Assistant</span>
+                              <span class="git-commit-date" data-timestamp="1783405463000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">© 2026</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mrau3vyn"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mrau3vyn"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mrau3vyn" ></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" ></script>
+<script src="../../assets/js/docmd-search.js?v=mrau3vyn" ></script>
+<script src="../../assets/js/docmd-git.js?v=mrau3vyn" type="module"></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+      
+      
+  </body>
+</html>

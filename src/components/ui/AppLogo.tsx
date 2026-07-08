@@ -14,7 +14,7 @@ const sizes = {
 };
 
 /**
- * AppLogo — LearnFlow AI brand logo with downloaded gsgroups-logo.png.
+ * AppLogo — GUIDESOFT IT SOLUTIONS brand logo with downloaded gsgroups-logo.png.
  */
 export function AppLogo({
   size = 'md',
@@ -29,7 +29,7 @@ export function AppLogo({
   return (
     <div
       className={`flex items-center gap-2.5 ${className}`}
-      aria-label="LearnFlow AI — Home"
+      aria-label="GUIDESOFT IT SOLUTIONS — Home"
     >
       {/* Icon Mark */}
       <div
@@ -80,7 +80,7 @@ export function AppIcon({ size = 36, className = '' }: { size?: number; classNam
   return (
     <img
       src="/assets/images/app_logo.png"
-      alt="LearnFlow AI Logo"
+      alt="GUIDESOFT IT SOLUTIONS Logo"
       width={size}
       height={size}
       className={`object-contain rounded-lg ${className}`}

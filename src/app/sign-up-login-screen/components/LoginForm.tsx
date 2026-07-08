@@ -46,11 +46,35 @@ export function LoginForm({ onSwitchToSignUp }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with real API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.push('/dashboard');
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        const code = data?.error?.code;
+        if (code === 'AUTH_ACCOUNT_SUSPENDED') {
+          setErrors({ general: 'Your account has been suspended. Please contact support.' });
+        } else {
+          setErrors({ general: 'Invalid email or password. Please try again.' });
+        }
+        return;
+      }
+
+      // Store tokens
+      localStorage.setItem('accessToken', data.data.accessToken);
+      localStorage.setItem('refreshToken', data.data.refreshToken);
+
+      // Route based on role
+      const role = data.data.user.role;
+      if (role === 'RECRUITER') router.push('/recruiter/dashboard');
+      else if (role === 'SUPER_ADMIN' || role === 'ADMIN') router.push('/admin/dashboard');
+      else if (role === 'TRAINER') router.push('/trainer/dashboard');
+      else router.push('/dashboard');
     } catch {
-      setErrors({ general: 'Invalid email or password. Please try again.' });
+      setErrors({ general: 'Network error. Please check your connection and try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +237,7 @@ export function LoginForm({ onSwitchToSignUp }: LoginFormProps) {
 
       {/* Switch to Sign Up */}
       <p className="text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
-        New to LearnFlow AI?{' '}
+        New to GUIDESOFT IT SOLUTIONS?{' '}
         <button
           type="button"
           onClick={onSwitchToSignUp}

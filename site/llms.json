@@ -1,0 +1,114 @@
+{
+  "title": "Eduai",
+  "description": "",
+  "pages": [
+    {
+      "title": "Product Requirements Document (PRD)",
+      "url": "/01_business_and_prd/product_requirements_document_prd/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Product Vision & Business Goals",
+      "url": "/01_business_and_prd/product_vision_and_business_goals/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Onboarding & Gamification Mechanics",
+      "url": "/02_user_and_ux/onboarding_and_gamification_mechanics/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "User Roles & Permissions Matrix",
+      "url": "/02_user_and_ux/user_roles_and_permissions/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "UX Research & Journey Flows",
+      "url": "/02_user_and_ux/ux_research_and_journey_flows/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "High-Fidelity UI Design Prompts",
+      "url": "/03_design_system_and_ui/high_fidelity_ui_prompts/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Low-Fidelity Wireframe Prompts",
+      "url": "/03_design_system_and_ui/low_fidelity_wireframe_prompts/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Screen-by-Screen UI Specification",
+      "url": "/03_design_system_and_ui/screen_by_screen_ui_spec/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "UX Latest Design System",
+      "url": "/03_design_system_and_ui/ux_latest_design_system/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Backend Architecture & API Specification",
+      "url": "/04_technical_architecture/backend_architecture_and_apis/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Database Schema & ORM Design",
+      "url": "/04_technical_architecture/database_schema_and_orm/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Frontend Architecture — Flutter & React/Next.js",
+      "url": "/04_technical_architecture/frontend_architecture_flutter_react/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Security & Compliance",
+      "url": "/04_technical_architecture/security_and_compliance/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "AI Integration & Prompt Engineering Guide",
+      "url": "/05_ai_integration/ai_integration_and_prompt_engineering_guide/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Testing Strategy & QA Plan",
+      "url": "/06_testing_and_qa/testing_strategy_and_qa_plan/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "CRM Strategy & Member Engagement",
+      "url": "/07_crm_and_engagement/crm_strategy_and_member_engagement/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Marketing Website Copy & Content Plan",
+      "url": "/08_marketing/marketing_website_copy_and_content_plan/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "Pitch Deck & Presentation Script",
+      "url": "/09_pitch_and_presentation/pitch_deck_and_presentation_script/",
+      "description": "",
+      "priority": "medium"
+    }
+  ]
+}

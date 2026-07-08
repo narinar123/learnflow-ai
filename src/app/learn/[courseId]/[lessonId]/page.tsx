@@ -1,43 +1,52 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, Play, BookOpen, FileText, CheckCircle, 
-  ChevronRight, Sparkles, Send, FileDown, Clock, Save, Edit3
+  ArrowLeft, Play, BookOpen, FileText, CheckCircle, Bookmark,
+  ChevronRight, Sparkles, Send, FileDown, Clock, Save, Edit3,
+  ZoomIn, ZoomOut, Moon, Sun, Maximize2 
 } from 'lucide-react';
 import { AppLayout } from '@/components/ui/AppLayout';
 import { courses } from '@/lib/data';
 import { toast } from 'sonner';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     courseId: string;
     lessonId: string;
-  };
+  }>;
 }
 
 export default function LessonPlayerPage({ params }: PageProps) {
   const router = useRouter();
+  const { courseId, lessonId } = use(params);
+  
   const [activeTab, setActiveTab] = useState<'ai' | 'notes' | 'resources'>('ai');
   const [noteText, setNoteText] = useState('');
   const [chatInput, setChatInput] = useState('');
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [chatHistory, setChatHistory] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([]);
 
+  // PDF states
+  const [pdfPage, setPdfPage] = useState(1);
+  const [pdfZoom, setPdfZoom] = useState(100);
+  const [pdfDarkMode, setPdfDarkMode] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
   const course = useMemo(() => {
-    return courses.find(c => c.id === params.courseId || c.slug === params.courseId);
-  }, [params.courseId]);
+    return courses.find(c => c.id === courseId || c.slug === courseId);
+  }, [courseId]);
 
   const currentLesson = useMemo(() => {
     if (!course) return null;
     for (const section of course.sections) {
-      const found = section.lessons.find(l => l.id === params.lessonId);
+      const found = section.lessons.find(l => l.id === lessonId);
       if (found) return found;
     }
     return null;
-  }, [course, params.lessonId]);
+  }, [course, lessonId]);
 
   const currentSection = useMemo(() => {
     if (!course || !currentLesson) return null;
@@ -55,11 +64,17 @@ export default function LessonPlayerPage({ params }: PageProps) {
     };
   }, [course, currentLesson]);
 
-  // Load saved notes from local storage
+  // Load saved notes & bookmark state from local storage
   useEffect(() => {
-    if (currentLesson) {
-      const saved = localStorage.getItem(`note_${course?.id}_${currentLesson.id}`);
+    if (currentLesson && course) {
+      const saved = localStorage.getItem(`note_${course.id}_${currentLesson.id}`);
       setNoteText(saved || '');
+
+      const bks = localStorage.getItem('student_bookmarks');
+      if (bks) {
+        const list = JSON.parse(bks);
+        setIsBookmarked(list.includes(currentLesson.id));
+      }
       
       // Reset chat history with a welcome message relevant to the current lesson
       setChatHistory([
@@ -68,14 +83,50 @@ export default function LessonPlayerPage({ params }: PageProps) {
           text: `Hello Priya! I've loaded the context for "${currentLesson.title}". Ask me any questions, or say "Summarize this lesson" to get started.`
         }
       ]);
+
+      // Reset PDF states for new lesson
+      setPdfPage(1);
     }
-  }, [currentLesson, course?.id]);
+  }, [currentLesson, course]);
 
   const handleSaveNote = () => {
-    if (currentLesson) {
-      localStorage.setItem(`note_${course?.id}_${currentLesson.id}`, noteText);
+    if (currentLesson && course) {
+      localStorage.setItem(`note_${course.id}_${currentLesson.id}`, noteText);
       toast.success('Notes auto-saved successfully.');
     }
+  };
+
+  const handleToggleBookmark = () => {
+    if (!currentLesson) return;
+    const bks = localStorage.getItem('student_bookmarks');
+    let list = bks ? JSON.parse(bks) : [];
+    
+    if (list.includes(currentLesson.id)) {
+      list = list.filter((id: string) => id !== currentLesson.id);
+      setIsBookmarked(false);
+      toast.info('Bookmark removed for this lesson.');
+    } else {
+      list.push(currentLesson.id);
+      setIsBookmarked(true);
+      toast.success('Lesson bookmarked successfully.');
+    }
+    localStorage.setItem('student_bookmarks', JSON.stringify(list));
+  };
+
+  const handleDownloadResource = (name: string) => {
+    toast.info(`Downloading resource: ${name}...`);
+    
+    // Track downloads locally
+    const dls = localStorage.getItem('student_downloads');
+    let list = dls ? JSON.parse(dls) : [];
+    if (!list.includes(name)) {
+      list.push(name);
+      localStorage.setItem('student_downloads', JSON.stringify(list));
+    }
+    
+    setTimeout(() => {
+      toast.success(`${name} downloaded. Available in offline downloads.`);
+    }, 1200);
   };
 
   const handleSendChatMessage = async (e: React.FormEvent) => {
@@ -121,13 +172,20 @@ export default function LessonPlayerPage({ params }: PageProps) {
     );
   }
 
+  // Mock PDF pages content
+  const pdfPages = [
+    `LESSON MANUAL OVERVIEW: ${currentLesson.title} (Page 1 of 3)\n\nWelcome to this module. In this manual, we discuss the core design principles and baseline constraints that define modern system architectures.\n\nKey Concepts:\n- Single source of truth across relational directories.\n- Encapsulation configurations protecting parameters.\n- Clean abstraction layers dividing user experiences.`,
+    `IMPLEMENTATION SPECIFICS (Page 2 of 3)\n\nWe structure modules around responsive units. Components resize automatically to adapt to browser screens. When importing classes, use strictly typed variables.\n\nCode Pattern:\nclass UserSession:\n    def __init__(self, token):\n        self.__token = token # private backing\n\nEnsure proper validation occurs inside helper loops.`,
+    `CHECKPOINTS & ASSIGNMENTS (Page 3 of 3)\n\nReview this manual before taking the Section Quiz. Download the syntax reference cheat sheets from the Resources tab below to review code patterns.\n\nSuggested Tasks:\n1. Solve Two Sum challenge in Practice Lab.\n2. Open Banking Simulator assignment panel.\n3. Commit daily study hours block inside scheduler.`
+  ];
+
   return (
     <AppLayout>
       <div className="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto pb-10">
         
         {/* Left Column: Player & Metadata & Help Tab */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Back button */}
+          {/* Back button and Bookmark toggle */}
           <div className="flex items-center justify-between">
             <Link 
               href={`/courses/${course.id}`} 
@@ -136,12 +194,25 @@ export default function LessonPlayerPage({ params }: PageProps) {
               <ArrowLeft size={14} />
               Back to Course Details
             </Link>
-            <span className="badge badge-primary text-[10px]">
-              {course.title}
-            </span>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleToggleBookmark}
+                className={`p-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface-2)] transition ${
+                  isBookmarked ? 'text-yellow-500' : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark lesson'}
+              >
+                <Bookmark size={14} fill={isBookmarked ? 'currentColor' : 'none'} />
+              </button>
+              <span className="badge badge-primary text-[10px]">
+                {course.title}
+              </span>
+            </div>
           </div>
 
-          {/* Immersive Video Player */}
+          {/* Immersive Video Player OR PDF Reader */}
           <div className="relative aspect-video rounded-3xl overflow-hidden bg-black border border-[var(--border-color)]">
             {currentLesson.type === 'video' && currentLesson.videoId ? (
               <iframe
@@ -152,12 +223,76 @@ export default function LessonPlayerPage({ params }: PageProps) {
                 allowFullScreen
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-[var(--bg-surface-2)]">
-                <FileText size={48} className="text-emerald-400 mb-4" />
-                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">Reading Assignment: {currentLesson.title}</h3>
-                <p className="text-xs text-[var(--text-secondary)] max-w-sm">
-                  This is a document-based lesson. Review the summary details below or download resources in the tab below.
-                </p>
+              // PREMIUM INTERACTIVE PDF READER
+              <div className={`w-full h-full flex flex-col justify-between ${pdfDarkMode ? 'bg-[#0f0a1c] text-slate-100' : 'bg-[#f8fafc] text-slate-900'}`}>
+                {/* PDF Toolbar */}
+                <div className="px-4 py-2 border-b border-[var(--border-color)] bg-slate-900/10 flex items-center justify-between shrink-0 text-slate-400 text-xs font-semibold">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setPdfPage(p => Math.max(1, p - 1))}
+                      disabled={pdfPage === 1}
+                      className="px-2 py-1 rounded bg-black/10 hover:bg-black/20 disabled:opacity-40"
+                    >
+                      Prev
+                    </button>
+                    <span>Page {pdfPage} of 3</span>
+                    <button
+                      onClick={() => setPdfPage(p => Math.min(3, p + 1))}
+                      disabled={pdfPage === 3}
+                      className="px-2 py-1 rounded bg-black/10 hover:bg-black/20 disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setPdfZoom(z => Math.max(75, z - 25))}
+                      className="p-1 text-slate-400 hover:text-white"
+                      title="Zoom Out"
+                    >
+                      <ZoomOut size={14} />
+                    </button>
+                    <span className="text-[10px]">{pdfZoom}%</span>
+                    <button
+                      onClick={() => setPdfZoom(z => Math.min(150, z + 25))}
+                      className="p-1 text-slate-400 hover:text-white"
+                      title="Zoom In"
+                    >
+                      <ZoomIn size={14} />
+                    </button>
+                    
+                    <span className="w-px h-4 bg-slate-700 mx-1" />
+
+                    <button
+                      onClick={() => setPdfDarkMode(!pdfDarkMode)}
+                      className="p-1 text-slate-400 hover:text-white"
+                      title="Toggle Reading Dark Mode"
+                    >
+                      {pdfDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* PDF Page Viewport */}
+                <div className="flex-1 p-6 overflow-y-auto scrollbar-thin flex justify-center items-center">
+                  <div 
+                    className="max-w-md w-full p-6 rounded-2xl shadow-xl leading-relaxed whitespace-pre-wrap font-sans text-xs border text-left transition-all duration-300"
+                    style={{
+                      transform: `scale(${pdfZoom / 100})`,
+                      background: pdfDarkMode ? '#17153a' : '#ffffff',
+                      borderColor: pdfDarkMode ? '#2d2a6a' : '#e2e8f0',
+                      color: pdfDarkMode ? '#e2e8f0' : '#1e293b'
+                    }}
+                  >
+                    {pdfPages[pdfPage - 1]}
+                  </div>
+                </div>
+
+                {/* PDF Footer status */}
+                <div className="px-4 py-1.5 border-t border-[var(--border-color)] bg-slate-900/10 text-[9px] text-slate-500 shrink-0 text-right">
+                  Secured document viewer integration · PDF Mode
+                </div>
               </div>
             )}
           </div>
@@ -337,7 +472,7 @@ export default function LessonPlayerPage({ params }: PageProps) {
                         </div>
                         <button
                           type="button"
-                          onClick={() => toast.success(`Downloading ${res.name}...`)}
+                          onClick={() => handleDownloadResource(res.name)}
                           className="text-xs font-bold text-indigo-400 hover:underline"
                         >
                           Download
@@ -367,7 +502,7 @@ export default function LessonPlayerPage({ params }: PageProps) {
                   
                   <ul className="space-y-0.5" role="list">
                     {section.lessons.map((lesson) => {
-                      const isActive = lesson.id === params.lessonId;
+                      const isActive = lesson.id === lessonId;
                       
                       return (
                         <li key={lesson.id}>
